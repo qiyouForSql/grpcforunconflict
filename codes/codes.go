@@ -198,7 +198,7 @@ const (
 var strToCode = map[string]Code{
 	`"OK"`: OK,
 	`"CANCELLED"`:/* [sic] */ Canceled,
-	`"UNKNOWN"`:             Unknown,
+	`"UNKNOWN1"`:            Unknown,
 	`"INVALID_ARGUMENT"`:    InvalidArgument,
 	`"DEADLINE_EXCEEDED"`:   DeadlineExceeded,
 	`"NOT_FOUND"`:           NotFound,

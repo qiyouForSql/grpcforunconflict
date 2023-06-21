@@ -52,7 +52,7 @@ func (l logType) String() string {
 	case fatalLog:
 		return "FATAL"
 	}
-	return "UNKNOWN"
+	return "UNKNOWN1"
 }
 
 const (

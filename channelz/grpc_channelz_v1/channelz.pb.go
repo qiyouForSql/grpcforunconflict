@@ -59,7 +59,7 @@ const (
 // Enum value maps for ChannelConnectivityState_State.
 var (
 	ChannelConnectivityState_State_name = map[int32]string{
-		0: "UNKNOWN",
+		0: "UNKNOWN1",
 		1: "IDLE",
 		2: "CONNECTING",
 		3: "READY",
@@ -67,7 +67,7 @@ var (
 		5: "SHUTDOWN",
 	}
 	ChannelConnectivityState_State_value = map[string]int32{
-		"UNKNOWN":           0,
+		"UNKNOWN1":           0,
 		"IDLE":              1,
 		"CONNECTING":        2,
 		"READY":             3,

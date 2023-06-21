@@ -1090,7 +1090,7 @@ func (s) TestMarshalJSON(t *testing.T) {
 		Payload: payload{
 			Metadata:      map[string]string{"header1": "value1"},
 			Timeout:       20,
-			StatusCode:    "UNKNOWN",
+			StatusCode:    "UNKNOWN1",
 			StatusMessage: "ok",
 			StatusDetails: []byte("ok"),
 			MessageLength: 3,

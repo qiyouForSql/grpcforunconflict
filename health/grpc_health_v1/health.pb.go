@@ -49,13 +49,13 @@ const (
 // Enum value maps for HealthCheckResponse_ServingStatus.
 var (
 	HealthCheckResponse_ServingStatus_name = map[int32]string{
-		0: "UNKNOWN",
+		0: "UNKNOWN1",
 		1: "SERVING",
 		2: "NOT_SERVING",
 		3: "SERVICE_UNKNOWN",
 	}
 	HealthCheckResponse_ServingStatus_value = map[string]int32{
-		"UNKNOWN":         0,
+		"UNKNOWN1":         0,
 		"SERVING":         1,
 		"NOT_SERVING":     2,
 		"SERVICE_UNKNOWN": 3,

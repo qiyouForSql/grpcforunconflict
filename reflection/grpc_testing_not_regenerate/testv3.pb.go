@@ -62,14 +62,14 @@ const (
 )
 
 var SearchResponseV3_State_name = map[int32]string{
-	0: "UNKNOWN",
-	1: "FRESH",
-	2: "STALE",
+	0: "UNKNOWN1",
+	1: "FRESH1",
+	2: "STALE1",
 }
 var SearchResponseV3_State_value = map[string]int32{
-	"UNKNOWN": 0,
-	"FRESH":   1,
-	"STALE":   2,
+	"UNKNOWN1": 0,
+	"FRESH1":   1,
+	"STALE1":   2,
 }
 
 func (x SearchResponseV3_State) String() string {

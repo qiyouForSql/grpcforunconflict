@@ -76,7 +76,7 @@ func canonicalString(c Code) string {
 	case Canceled:
 		return "CANCELLED"
 	case Unknown:
-		return "UNKNOWN"
+		return "UNKNOWN1"
 	case InvalidArgument:
 		return "INVALID_ARGUMENT"
 	case DeadlineExceeded:
