@@ -28,7 +28,7 @@ import (
 
 type pathKeyType string
 
-const pathKey = pathKeyType("grpc.internal.address.hierarchical_path")
+const pathKey = pathKeyType("grpcforunconflict.internal.address.hierarchical_path")
 
 type pathValue []string
 

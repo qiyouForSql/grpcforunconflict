@@ -48,7 +48,7 @@ func serve() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 	pb.RegisterEchoServer(s, &server{})
 
 	if err := s.Serve(lis); err != nil {
@@ -57,7 +57,7 @@ func serve() {
 }
 
 func main() {
-	conn, err := grpc.Dial("localhost:50053", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpcforunconflict.Dial("localhost:50053", grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
@@ -88,7 +88,7 @@ func main() {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 
-		_, err := c.UnaryEcho(ctx, &pb.EchoRequest{Message: "Hi!"}, grpc.WaitForReady(true))
+		_, err := c.UnaryEcho(ctx, &pb.EchoRequest{Message: "Hi!"}, grpcforunconflict.WaitForReady(true))
 
 		got := status.Code(err)
 		fmt.Printf("[2] wanted = %v, got = %v\n", codes.OK, got)
@@ -102,7 +102,7 @@ func main() {
 		ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 		defer cancel()
 
-		_, err := c.UnaryEcho(ctx, &pb.EchoRequest{Message: "Hi!"}, grpc.WaitForReady(true))
+		_, err := c.UnaryEcho(ctx, &pb.EchoRequest{Message: "Hi!"}, grpcforunconflict.WaitForReady(true))
 
 		got := status.Code(err)
 		fmt.Printf("[3] wanted = %v, got = %v\n", codes.DeadlineExceeded, got)

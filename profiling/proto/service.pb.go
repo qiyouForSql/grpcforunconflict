@@ -452,20 +452,20 @@ func file_profiling_proto_service_proto_rawDescGZIP() []byte {
 
 var file_profiling_proto_service_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_profiling_proto_service_proto_goTypes = []interface{}{
-	(*EnableRequest)(nil),          // 0: grpc.go.profiling.v1alpha.EnableRequest
-	(*EnableResponse)(nil),         // 1: grpc.go.profiling.v1alpha.EnableResponse
-	(*GetStreamStatsRequest)(nil),  // 2: grpc.go.profiling.v1alpha.GetStreamStatsRequest
-	(*GetStreamStatsResponse)(nil), // 3: grpc.go.profiling.v1alpha.GetStreamStatsResponse
-	(*Timer)(nil),                  // 4: grpc.go.profiling.v1alpha.Timer
-	(*Stat)(nil),                   // 5: grpc.go.profiling.v1alpha.Stat
+	(*EnableRequest)(nil),          // 0:grpcforunconflict.go.profiling.v1alpha.EnableRequest
+	(*EnableResponse)(nil),         // 1:grpcforunconflict.go.profiling.v1alpha.EnableResponse
+	(*GetStreamStatsRequest)(nil),  // 2:grpcforunconflict.go.profiling.v1alpha.GetStreamStatsRequest
+	(*GetStreamStatsResponse)(nil), // 3:grpcforunconflict.go.profiling.v1alpha.GetStreamStatsResponse
+	(*Timer)(nil),                  // 4:grpcforunconflict.go.profiling.v1alpha.Timer
+	(*Stat)(nil),                   // 5:grpcforunconflict.go.profiling.v1alpha.Stat
 }
 var file_profiling_proto_service_proto_depIdxs = []int32{
-	5, // 0: grpc.go.profiling.v1alpha.GetStreamStatsResponse.stream_stats:type_name -> grpc.go.profiling.v1alpha.Stat
-	4, // 1: grpc.go.profiling.v1alpha.Stat.timers:type_name -> grpc.go.profiling.v1alpha.Timer
-	0, // 2: grpc.go.profiling.v1alpha.Profiling.Enable:input_type -> grpc.go.profiling.v1alpha.EnableRequest
-	2, // 3: grpc.go.profiling.v1alpha.Profiling.GetStreamStats:input_type -> grpc.go.profiling.v1alpha.GetStreamStatsRequest
-	1, // 4: grpc.go.profiling.v1alpha.Profiling.Enable:output_type -> grpc.go.profiling.v1alpha.EnableResponse
-	3, // 5: grpc.go.profiling.v1alpha.Profiling.GetStreamStats:output_type -> grpc.go.profiling.v1alpha.GetStreamStatsResponse
+	5, // 0:grpcforunconflict.go.profiling.v1alpha.GetStreamStatsResponse.stream_stats:type_name ->grpcforunconflict.go.profiling.v1alpha.Stat
+	4, // 1:grpcforunconflict.go.profiling.v1alpha.Stat.timers:type_name ->grpcforunconflict.go.profiling.v1alpha.Timer
+	0, // 2:grpcforunconflict.go.profiling.v1alpha.Profiling.Enable:input_type ->grpcforunconflict.go.profiling.v1alpha.EnableRequest
+	2, // 3:grpcforunconflict.go.profiling.v1alpha.Profiling.GetStreamStats:input_type ->grpcforunconflict.go.profiling.v1alpha.GetStreamStatsRequest
+	1, // 4:grpcforunconflict.go.profiling.v1alpha.Profiling.Enable:output_type ->grpcforunconflict.go.profiling.v1alpha.EnableResponse
+	3, // 5:grpcforunconflict.go.profiling.v1alpha.Profiling.GetStreamStats:output_type ->grpcforunconflict.go.profiling.v1alpha.GetStreamStatsResponse
 	4, // [4:6] is the sub-list for method output_type
 	2, // [2:4] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name

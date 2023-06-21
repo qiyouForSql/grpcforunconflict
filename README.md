@@ -17,7 +17,7 @@ RPC framework that puts mobile and HTTP/2 first. For more information see the
 With [Go module][] support (Go 1.11+), simply add the following import
 
 ```go
-import "google.golang.org/grpc"
+import "github.com/qiyouForSql/grpcforunconflict"
 ```
 
 to your code, and then `go [build|run|test]` will automatically fetch the
@@ -49,7 +49,7 @@ produces an error like the following when this happens:
 
 ```console
 $ go get -u google.golang.org/grpc
-package google.golang.org/grpc: unrecognized import path "google.golang.org/grpc" (https fetch: Get https://google.golang.org/grpc?go-get=1: dial tcp 216.239.37.1:443: i/o timeout)
+package google.golang.org/grpc: unrecognized import path "github.com/qiyouForSql/grpcforunconflict" (https fetch: Get https://google.golang.org/grpc?go-get=1: dial tcp 216.239.37.1:443: i/o timeout)
 ```
 
 To build Go code, there are several options:
@@ -78,7 +78,7 @@ To build Go code, there are several options:
   Again, this will need to be done for all transitive dependencies hosted on
   golang.org as well. For details, refer to [golang/go issue #28652](https://github.com/golang/go/issues/28652).
 
-### Compiling error, undefined: grpc.SupportPackageIsVersion
+### Compiling error, undefined:grpcforunconflict.SupportPackageIsVersion
 
 #### If you are using Go modules:
 
@@ -134,8 +134,8 @@ errors.
 [API]: https://pkg.go.dev/google.golang.org/grpc
 [Go]: https://golang.org
 [Go module]: https://github.com/golang/go/wiki/Modules
-[gRPC]: https://grpc.io
-[Go gRPC docs]: https://grpc.io/docs/languages/go
+[gRPC]: https://grpcforunconflict.io
+[Go gRPC docs]: https://grpcforunconflict.io/docs/languages/go
 [Performance benchmark]: https://performance-dot-grpc-testing.appspot.com/explore?dashboard=5180705743044608
-[quick start]: https://grpc.io/docs/languages/go/quickstart
+[quick start]: https://grpcforunconflict.io/docs/languages/go/quickstart
 [go-releases]: https://golang.org/doc/devel/release.html

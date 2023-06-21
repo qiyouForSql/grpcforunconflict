@@ -32,7 +32,7 @@ import (
 
 const (
 	exampleScheme      = "example"
-	exampleServiceName = "lb.example.grpc.io"
+	exampleServiceName = "lb.example.grpcforunconflict.io"
 )
 
 var addrs = []string{"localhost:50051", "localhost:50052"}
@@ -47,7 +47,7 @@ func callUnaryEcho(c ecpb.EchoClient, message string) {
 	fmt.Println(r.Message)
 }
 
-func makeRPCs(cc *grpc.ClientConn, n int) {
+func makeRPCs(cc *grpcforunconflict.ClientConn, n int) {
 	hwc := ecpb.NewEchoClient(cc)
 	for i := 0; i < n; i++ {
 		callUnaryEcho(hwc, "this is examples/load_balancing")
@@ -56,9 +56,9 @@ func makeRPCs(cc *grpc.ClientConn, n int) {
 
 func main() {
 	// "pick_first" is the default, so there's no need to set the load balancing policy.
-	pickfirstConn, err := grpc.Dial(
+	pickfirstConn, err := grpcforunconflict.Dial(
 		fmt.Sprintf("%s:///%s", exampleScheme, exampleServiceName),
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
@@ -71,10 +71,10 @@ func main() {
 	fmt.Println()
 
 	// Make another ClientConn with round_robin policy.
-	roundrobinConn, err := grpc.Dial(
+	roundrobinConn, err := grpcforunconflict.Dial(
 		fmt.Sprintf("%s:///%s", exampleScheme, exampleServiceName),
-		grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"round_robin":{}}]}`), // This sets the initial balancing policy.
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"round_robin":{}}]}`), // This sets the initial balancing policy.
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)

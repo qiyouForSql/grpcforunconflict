@@ -462,7 +462,7 @@ func InTapHandle(h tap.ServerInHandle) ServerOption {
 func StatsHandler(h stats.Handler) ServerOption {
 	return newFuncServerOption(func(o *serverOptions) {
 		if h == nil {
-			logger.Error("ignoring nil parameter in grpc.StatsHandler ServerOption")
+			logger.Error("ignoring nil parameter in grpcforunconflict.StatsHandler ServerOption")
 			// Do not allow a nil stats handler, which would otherwise cause
 			// panics.
 			return
@@ -618,7 +618,7 @@ func NewServer(opt ...ServerOption) *Server {
 	s.cv = sync.NewCond(&s.mu)
 	if EnableTracing {
 		_, file, line, _ := runtime.Caller(1)
-		s.events = trace.NewEventLog("grpc.Server", fmt.Sprintf("%s:%d", file, line))
+		s.events = trace.NewEventLog("grpcforunconflict.Server", fmt.Sprintf("%s:%d", file, line))
 	}
 
 	if s.opts.numServerWorkers > 0 {
@@ -647,7 +647,7 @@ func (s *Server) errorf(format string, a ...interface{}) {
 }
 
 // ServiceRegistrar wraps a single method that supports service registration. It
-// enables users to pass concrete types other than grpc.Server to the service
+// enables users to pass concrete types other than grpcforunconflict.Server to the service
 // registration methods exported by the IDL generated code.
 type ServiceRegistrar interface {
 	// RegisterService registers a service and its implementation to the
@@ -962,7 +962,7 @@ func (s *Server) serveStreams(st transport.ServerTransport) {
 		if !EnableTracing {
 			return ctx
 		}
-		tr := trace.New("grpc.Recv."+methodFamily(method), method)
+		tr := trace.New("grpcforunconflict.Recv."+methodFamily(method), method)
 		return trace.NewContext(ctx, tr)
 	})
 	wg.Wait()
@@ -1762,7 +1762,7 @@ func NewContextWithServerTransportStream(ctx context.Context, stream ServerTrans
 
 // ServerTransportStream is a minimal interface that a transport stream must
 // implement. This can be used to mock an actual transport stream for tests of
-// handler code that use, for example, grpc.SetHeader (which requires some
+// handler code that use, for example, grpcforunconflict.SetHeader (which requires some
 // stream to be in context).
 //
 // See also NewContextWithServerTransportStream.
@@ -1903,7 +1903,7 @@ func (s *Server) getCodec(contentSubtype string) baseCodec {
 // When called multiple times, all the provided metadata will be merged.  All
 // the metadata will be sent out when one of the following happens:
 //
-//   - grpc.SendHeader is called, or for streaming handlers, stream.SendHeader.
+//   - grpcforunconflict.SendHeader is called, or for streaming handlers, stream.SendHeader.
 //   - The first response message is sent.  For unary handlers, this occurs when
 //     the handler returns; for streaming handlers, this can happen when stream's
 //     SendMsg method is called.

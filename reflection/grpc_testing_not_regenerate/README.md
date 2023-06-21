@@ -1,4 +1,4 @@
-testv3.pb.go is generated with an older version of codegen, to test reflection behavior with `grpc.SupportPackageIsVersion3`. DO NOT REGENERATE!
+testv3.pb.go is generated with an older version of codegen, to test reflection behavior with `grpcforunconflict.SupportPackageIsVersion3`. DO NOT REGENERATE!
 
 testv3.pb.go is manually edited to replace `"golang.org/x/net/context"` with `"context"`.
 

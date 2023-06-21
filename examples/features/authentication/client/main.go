@@ -54,18 +54,18 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to load credentials: %v", err)
 	}
-	opts := []grpc.DialOption{
-		// In addition to the following grpc.DialOption, callers may also use
-		// the grpc.CallOption grpc.PerRPCCredentials with the RPC invocation
+	opts := []grpcforunconflict.DialOption{
+		// In addition to the followinggrpcforunconflict.DialOption, callers may also use
+		// thegrpcforunconflict.CallOptiongrpcforunconflict.PerRPCCredentials with the RPC invocation
 		// itself.
 		// See: https://godoc.org/google.golang.org/grpc#PerRPCCredentials
-		grpc.WithPerRPCCredentials(perRPC),
+		grpcforunconflict.WithPerRPCCredentials(perRPC),
 		// oauth.TokenSource requires the configuration of transport
 		// credentials.
-		grpc.WithTransportCredentials(creds),
+		grpcforunconflict.WithTransportCredentials(creds),
 	}
 
-	conn, err := grpc.Dial(*addr, opts...)
+	conn, err := grpcforunconflict.Dial(*addr, opts...)
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}

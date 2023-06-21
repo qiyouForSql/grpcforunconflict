@@ -421,7 +421,7 @@ func (cs *clientStream) newAttemptLocked(isTransparent bool) (*csAttempt, error)
 	var trInfo *traceInfo
 	if EnableTracing {
 		trInfo = &traceInfo{
-			tr: trace.New("grpc.Sent."+methodFamily(method), method),
+			tr: trace.New("grpcforunconflict.Sent."+methodFamily(method), method),
 			firstLine: firstLine{
 				client: true,
 			},

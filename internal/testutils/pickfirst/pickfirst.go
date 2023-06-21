@@ -25,12 +25,9 @@ import (
 	"fmt"
 	"time"
 
+	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	"github.com/qiyouForSql/grpcforunconflict/peer"
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
-	"google.golang.org/grpc"
-
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
-	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 // CheckRPCsToBackend makes a bunch of RPCs on the given ClientConn and verifies
@@ -38,8 +35,8 @@ import (
 //
 // Returns a non-nil error if context deadline expires before all RPCs begin to
 // be routed to the peer matching wantAddr, or if the backend returns RPC errors.
-func CheckRPCsToBackend(ctx context.Context, cc *grpc.ClientConn, wantAddr resolver.Address) error {
-	client := testgrpc.NewTestServiceClient(cc)
+func CheckRPCsToBackend(ctx context.Context, cc *grpcforunconflict.ClientConn, wantAddr resolver.Address) error {
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	peer := &peer.Peer{}
 	// Make sure that 20 RPCs in a row reach the expected backend. Some
 	// tests switch from round_robin back to pick_first and call this
@@ -52,7 +49,7 @@ func CheckRPCsToBackend(ctx context.Context, cc *grpc.ClientConn, wantAddr resol
 		if ctx.Err() != nil {
 			return fmt.Errorf("timeout waiting for RPC to be routed to %s", wantAddr.Addr)
 		}
-		if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.Peer(peer)); err != nil {
+		if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Peer(peer)); err != nil {
 			// Some tests remove backends and check if pick_first is happening across
 			// the remaining backends. In such cases, RPCs can initially fail on the
 			// connection using the removed backend. Just keep retrying and eventually
@@ -71,7 +68,7 @@ func CheckRPCsToBackend(ctx context.Context, cc *grpc.ClientConn, wantAddr resol
 	}
 	// Make sure subsequent RPCs are all routed to the same backend.
 	for i := 0; i < 10; i++ {
-		if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.Peer(peer)); err != nil {
+		if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Peer(peer)); err != nil {
 			return fmt.Errorf("EmptyCall() = %v, want <nil>", err)
 		}
 		if gotAddr := peer.Addr.String(); gotAddr != wantAddr.Addr {

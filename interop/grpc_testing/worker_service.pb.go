@@ -68,23 +68,23 @@ var file_grpc_testing_worker_service_proto_rawDesc = []byte{
 }
 
 var file_grpc_testing_worker_service_proto_goTypes = []interface{}{
-	(*ServerArgs)(nil),   // 0: grpc.testing.ServerArgs
-	(*ClientArgs)(nil),   // 1: grpc.testing.ClientArgs
-	(*CoreRequest)(nil),  // 2: grpc.testing.CoreRequest
-	(*Void)(nil),         // 3: grpc.testing.Void
-	(*ServerStatus)(nil), // 4: grpc.testing.ServerStatus
-	(*ClientStatus)(nil), // 5: grpc.testing.ClientStatus
-	(*CoreResponse)(nil), // 6: grpc.testing.CoreResponse
+	(*ServerArgs)(nil),   // 0:grpcforunconflict.testing.ServerArgs
+	(*ClientArgs)(nil),   // 1:grpcforunconflict.testing.ClientArgs
+	(*CoreRequest)(nil),  // 2:grpcforunconflict.testing.CoreRequest
+	(*Void)(nil),         // 3:grpcforunconflict.testing.Void
+	(*ServerStatus)(nil), // 4:grpcforunconflict.testing.ServerStatus
+	(*ClientStatus)(nil), // 5:grpcforunconflict.testing.ClientStatus
+	(*CoreResponse)(nil), // 6:grpcforunconflict.testing.CoreResponse
 }
 var file_grpc_testing_worker_service_proto_depIdxs = []int32{
-	0, // 0: grpc.testing.WorkerService.RunServer:input_type -> grpc.testing.ServerArgs
-	1, // 1: grpc.testing.WorkerService.RunClient:input_type -> grpc.testing.ClientArgs
-	2, // 2: grpc.testing.WorkerService.CoreCount:input_type -> grpc.testing.CoreRequest
-	3, // 3: grpc.testing.WorkerService.QuitWorker:input_type -> grpc.testing.Void
-	4, // 4: grpc.testing.WorkerService.RunServer:output_type -> grpc.testing.ServerStatus
-	5, // 5: grpc.testing.WorkerService.RunClient:output_type -> grpc.testing.ClientStatus
-	6, // 6: grpc.testing.WorkerService.CoreCount:output_type -> grpc.testing.CoreResponse
-	3, // 7: grpc.testing.WorkerService.QuitWorker:output_type -> grpc.testing.Void
+	0, // 0:grpcforunconflict.testing.WorkerService.RunServer:input_type ->grpcforunconflict.testing.ServerArgs
+	1, // 1:grpcforunconflict.testing.WorkerService.RunClient:input_type ->grpcforunconflict.testing.ClientArgs
+	2, // 2:grpcforunconflict.testing.WorkerService.CoreCount:input_type ->grpcforunconflict.testing.CoreRequest
+	3, // 3:grpcforunconflict.testing.WorkerService.QuitWorker:input_type ->grpcforunconflict.testing.Void
+	4, // 4:grpcforunconflict.testing.WorkerService.RunServer:output_type ->grpcforunconflict.testing.ServerStatus
+	5, // 5:grpcforunconflict.testing.WorkerService.RunClient:output_type ->grpcforunconflict.testing.ClientStatus
+	6, // 6:grpcforunconflict.testing.WorkerService.CoreCount:output_type ->grpcforunconflict.testing.CoreResponse
+	3, // 7:grpcforunconflict.testing.WorkerService.QuitWorker:output_type ->grpcforunconflict.testing.Void
 	4, // [4:8] is the sub-list for method output_type
 	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name

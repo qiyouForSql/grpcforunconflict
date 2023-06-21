@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal"
 	"github.com/qiyouForSql/grpcforunconflict/internal/envconfig"
@@ -30,7 +31,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/rls"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/xds/e2e"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/durationpb"
 
 	v3clusterpb "github.com/envoyproxy/go-control-plane/envoy/config/cluster/v3"
@@ -38,7 +38,6 @@ import (
 	v3listenerpb "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
 	v3routepb "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
 	rlspb "github.com/qiyouForSql/grpcforunconflict/internal/proto/grpc_lookup_v1"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 
 	_ "github.com/qiyouForSql/grpcforunconflict/balancer/rls" // Register the RLS Load Balancing policy.
@@ -120,7 +119,7 @@ func testRLSinxDS(t *testing.T, lbPolicy e2e.LoadBalancingPolicy) {
 	lis := testutils.NewListenerWrapper(t, nil)
 	rlsServer, rlsRequestCh := rls.SetupFakeRLSServer(t, lis)
 	rlsProto := &rlspb.RouteLookupConfig{
-		GrpcKeybuilders:      []*rlspb.GrpcKeyBuilder{{Names: []*rlspb.GrpcKeyBuilder_Name{{Service: "grpc.testing.TestService"}}}},
+		GrpcKeybuilders:      []*rlspb.GrpcKeyBuilder{{Names: []*rlspb.GrpcKeyBuilder_Name{{Service: "grpcforunconflict.testing.TestService"}}}},
 		LookupService:        rlsServer.Address,
 		LookupServiceTimeout: durationpb.New(defaultTestTimeout),
 		CacheSizeBytes:       1024,
@@ -148,16 +147,16 @@ func testRLSinxDS(t *testing.T, lbPolicy e2e.LoadBalancingPolicy) {
 	})
 
 	// Create a ClientConn and make a successful RPC.
-	cc, err := grpc.Dial(fmt.Sprintf("xds:///%s", serviceName), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(resolver))
+	cc, err := grpcforunconflict.Dial(fmt.Sprintf("xds:///%s", serviceName), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(resolver))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
 	defer cc.Close()
 
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	// Successfully sending the RPC will require the RLS Load Balancer to
 	// communicate with the fake RLS Server for information about the target.
-	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); err != nil {
+	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); err != nil {
 		t.Fatalf("rpc EmptyCall() failed: %v", err)
 	}
 

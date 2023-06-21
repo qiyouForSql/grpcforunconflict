@@ -24,12 +24,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -48,7 +47,7 @@ func (s) TestStreamCleanup(t *testing.T) {
 			return &testpb.Empty{}, nil
 		},
 	}
-	if err := ss.Start(nil, grpc.WithDefaultCallOptions(grpc.MaxCallRecvMsgSize(int(callRecvMsgSize))), grpc.WithInitialWindowSize(int32(initialWindowSize))); err != nil {
+	if err := ss.Start(nil, grpcforunconflict.WithDefaultCallOptions(grpcforunconflict.MaxCallRecvMsgSize(int(callRecvMsgSize))), grpcforunconflict.WithInitialWindowSize(int32(initialWindowSize))); err != nil {
 		t.Fatalf("Error starting endpoint server: %v", err)
 	}
 	defer ss.Stop()
@@ -70,7 +69,7 @@ func (s) TestStreamCleanupAfterSendStatus(t *testing.T) {
 	serverReturnedStatus := make(chan struct{})
 
 	ss := &stubserver.StubServer{
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			defer func() {
 				close(serverReturnedStatus)
 			}()
@@ -81,7 +80,7 @@ func (s) TestStreamCleanupAfterSendStatus(t *testing.T) {
 			})
 		},
 	}
-	if err := ss.Start(nil, grpc.WithInitialWindowSize(int32(initialWindowSize))); err != nil {
+	if err := ss.Start(nil, grpcforunconflict.WithInitialWindowSize(int32(initialWindowSize))); err != nil {
 		t.Fatalf("Error starting endpoint server: %v", err)
 	}
 	defer ss.Stop()

@@ -44,7 +44,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 	pb.RegisterEchoServer(s, &ecServer{addr: addr})
 	log.Printf("serving on %s\n", addr)
 	if err := s.Serve(lis); err != nil {

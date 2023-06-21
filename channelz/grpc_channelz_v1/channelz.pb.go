@@ -344,7 +344,7 @@ type ChannelConnectivityState struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	State ChannelConnectivityState_State `protobuf:"varint,1,opt,name=state,proto3,enum=grpc.channelz.v1.ChannelConnectivityState_State" json:"state,omitempty"`
+	State ChannelConnectivityState_State `protobuf:"varint,1,opt,name=state,proto3,enum=grpcforunconflict.channelz.v1.ChannelConnectivityState_State" json:"state,omitempty"`
 }
 
 func (x *ChannelConnectivityState) Reset() {
@@ -500,7 +500,7 @@ type ChannelTraceEvent struct {
 	// High level description of the event.
 	Description string `protobuf:"bytes,1,opt,name=description,proto3" json:"description,omitempty"`
 	// the severity of the trace event
-	Severity ChannelTraceEvent_Severity `protobuf:"varint,2,opt,name=severity,proto3,enum=grpc.channelz.v1.ChannelTraceEvent_Severity" json:"severity,omitempty"`
+	Severity ChannelTraceEvent_Severity `protobuf:"varint,2,opt,name=severity,proto3,enum=grpcforunconflict.channelz.v1.ChannelTraceEvent_Severity" json:"severity,omitempty"`
 	// When this event occurred.
 	Timestamp *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
 	// ref of referenced channel or subchannel.
@@ -3590,121 +3590,121 @@ func file_grpc_channelz_v1_channelz_proto_rawDescGZIP() []byte {
 var file_grpc_channelz_v1_channelz_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_grpc_channelz_v1_channelz_proto_msgTypes = make([]protoimpl.MessageInfo, 39)
 var file_grpc_channelz_v1_channelz_proto_goTypes = []interface{}{
-	(ChannelConnectivityState_State)(0), // 0: grpc.channelz.v1.ChannelConnectivityState.State
-	(ChannelTraceEvent_Severity)(0),     // 1: grpc.channelz.v1.ChannelTraceEvent.Severity
-	(*Channel)(nil),                     // 2: grpc.channelz.v1.Channel
-	(*Subchannel)(nil),                  // 3: grpc.channelz.v1.Subchannel
-	(*ChannelConnectivityState)(nil),    // 4: grpc.channelz.v1.ChannelConnectivityState
-	(*ChannelData)(nil),                 // 5: grpc.channelz.v1.ChannelData
-	(*ChannelTraceEvent)(nil),           // 6: grpc.channelz.v1.ChannelTraceEvent
-	(*ChannelTrace)(nil),                // 7: grpc.channelz.v1.ChannelTrace
-	(*ChannelRef)(nil),                  // 8: grpc.channelz.v1.ChannelRef
-	(*SubchannelRef)(nil),               // 9: grpc.channelz.v1.SubchannelRef
-	(*SocketRef)(nil),                   // 10: grpc.channelz.v1.SocketRef
-	(*ServerRef)(nil),                   // 11: grpc.channelz.v1.ServerRef
-	(*Server)(nil),                      // 12: grpc.channelz.v1.Server
-	(*ServerData)(nil),                  // 13: grpc.channelz.v1.ServerData
-	(*Socket)(nil),                      // 14: grpc.channelz.v1.Socket
-	(*SocketData)(nil),                  // 15: grpc.channelz.v1.SocketData
-	(*Address)(nil),                     // 16: grpc.channelz.v1.Address
-	(*Security)(nil),                    // 17: grpc.channelz.v1.Security
-	(*SocketOption)(nil),                // 18: grpc.channelz.v1.SocketOption
-	(*SocketOptionTimeout)(nil),         // 19: grpc.channelz.v1.SocketOptionTimeout
-	(*SocketOptionLinger)(nil),          // 20: grpc.channelz.v1.SocketOptionLinger
-	(*SocketOptionTcpInfo)(nil),         // 21: grpc.channelz.v1.SocketOptionTcpInfo
-	(*GetTopChannelsRequest)(nil),       // 22: grpc.channelz.v1.GetTopChannelsRequest
-	(*GetTopChannelsResponse)(nil),      // 23: grpc.channelz.v1.GetTopChannelsResponse
-	(*GetServersRequest)(nil),           // 24: grpc.channelz.v1.GetServersRequest
-	(*GetServersResponse)(nil),          // 25: grpc.channelz.v1.GetServersResponse
-	(*GetServerRequest)(nil),            // 26: grpc.channelz.v1.GetServerRequest
-	(*GetServerResponse)(nil),           // 27: grpc.channelz.v1.GetServerResponse
-	(*GetServerSocketsRequest)(nil),     // 28: grpc.channelz.v1.GetServerSocketsRequest
-	(*GetServerSocketsResponse)(nil),    // 29: grpc.channelz.v1.GetServerSocketsResponse
-	(*GetChannelRequest)(nil),           // 30: grpc.channelz.v1.GetChannelRequest
-	(*GetChannelResponse)(nil),          // 31: grpc.channelz.v1.GetChannelResponse
-	(*GetSubchannelRequest)(nil),        // 32: grpc.channelz.v1.GetSubchannelRequest
-	(*GetSubchannelResponse)(nil),       // 33: grpc.channelz.v1.GetSubchannelResponse
-	(*GetSocketRequest)(nil),            // 34: grpc.channelz.v1.GetSocketRequest
-	(*GetSocketResponse)(nil),           // 35: grpc.channelz.v1.GetSocketResponse
-	(*Address_TcpIpAddress)(nil),        // 36: grpc.channelz.v1.Address.TcpIpAddress
-	(*Address_UdsAddress)(nil),          // 37: grpc.channelz.v1.Address.UdsAddress
-	(*Address_OtherAddress)(nil),        // 38: grpc.channelz.v1.Address.OtherAddress
-	(*Security_Tls)(nil),                // 39: grpc.channelz.v1.Security.Tls
-	(*Security_OtherSecurity)(nil),      // 40: grpc.channelz.v1.Security.OtherSecurity
+	(ChannelConnectivityState_State)(0), // 0:grpcforunconflict.channelz.v1.ChannelConnectivityState.State
+	(ChannelTraceEvent_Severity)(0),     // 1:grpcforunconflict.channelz.v1.ChannelTraceEvent.Severity
+	(*Channel)(nil),                     // 2:grpcforunconflict.channelz.v1.Channel
+	(*Subchannel)(nil),                  // 3:grpcforunconflict.channelz.v1.Subchannel
+	(*ChannelConnectivityState)(nil),    // 4:grpcforunconflict.channelz.v1.ChannelConnectivityState
+	(*ChannelData)(nil),                 // 5:grpcforunconflict.channelz.v1.ChannelData
+	(*ChannelTraceEvent)(nil),           // 6:grpcforunconflict.channelz.v1.ChannelTraceEvent
+	(*ChannelTrace)(nil),                // 7:grpcforunconflict.channelz.v1.ChannelTrace
+	(*ChannelRef)(nil),                  // 8:grpcforunconflict.channelz.v1.ChannelRef
+	(*SubchannelRef)(nil),               // 9:grpcforunconflict.channelz.v1.SubchannelRef
+	(*SocketRef)(nil),                   // 10:grpcforunconflict.channelz.v1.SocketRef
+	(*ServerRef)(nil),                   // 11:grpcforunconflict.channelz.v1.ServerRef
+	(*Server)(nil),                      // 12:grpcforunconflict.channelz.v1.Server
+	(*ServerData)(nil),                  // 13:grpcforunconflict.channelz.v1.ServerData
+	(*Socket)(nil),                      // 14:grpcforunconflict.channelz.v1.Socket
+	(*SocketData)(nil),                  // 15:grpcforunconflict.channelz.v1.SocketData
+	(*Address)(nil),                     // 16:grpcforunconflict.channelz.v1.Address
+	(*Security)(nil),                    // 17:grpcforunconflict.channelz.v1.Security
+	(*SocketOption)(nil),                // 18:grpcforunconflict.channelz.v1.SocketOption
+	(*SocketOptionTimeout)(nil),         // 19:grpcforunconflict.channelz.v1.SocketOptionTimeout
+	(*SocketOptionLinger)(nil),          // 20:grpcforunconflict.channelz.v1.SocketOptionLinger
+	(*SocketOptionTcpInfo)(nil),         // 21:grpcforunconflict.channelz.v1.SocketOptionTcpInfo
+	(*GetTopChannelsRequest)(nil),       // 22:grpcforunconflict.channelz.v1.GetTopChannelsRequest
+	(*GetTopChannelsResponse)(nil),      // 23:grpcforunconflict.channelz.v1.GetTopChannelsResponse
+	(*GetServersRequest)(nil),           // 24:grpcforunconflict.channelz.v1.GetServersRequest
+	(*GetServersResponse)(nil),          // 25:grpcforunconflict.channelz.v1.GetServersResponse
+	(*GetServerRequest)(nil),            // 26:grpcforunconflict.channelz.v1.GetServerRequest
+	(*GetServerResponse)(nil),           // 27:grpcforunconflict.channelz.v1.GetServerResponse
+	(*GetServerSocketsRequest)(nil),     // 28:grpcforunconflict.channelz.v1.GetServerSocketsRequest
+	(*GetServerSocketsResponse)(nil),    // 29:grpcforunconflict.channelz.v1.GetServerSocketsResponse
+	(*GetChannelRequest)(nil),           // 30:grpcforunconflict.channelz.v1.GetChannelRequest
+	(*GetChannelResponse)(nil),          // 31:grpcforunconflict.channelz.v1.GetChannelResponse
+	(*GetSubchannelRequest)(nil),        // 32:grpcforunconflict.channelz.v1.GetSubchannelRequest
+	(*GetSubchannelResponse)(nil),       // 33:grpcforunconflict.channelz.v1.GetSubchannelResponse
+	(*GetSocketRequest)(nil),            // 34:grpcforunconflict.channelz.v1.GetSocketRequest
+	(*GetSocketResponse)(nil),           // 35:grpcforunconflict.channelz.v1.GetSocketResponse
+	(*Address_TcpIpAddress)(nil),        // 36:grpcforunconflict.channelz.v1.Address.TcpIpAddress
+	(*Address_UdsAddress)(nil),          // 37:grpcforunconflict.channelz.v1.Address.UdsAddress
+	(*Address_OtherAddress)(nil),        // 38:grpcforunconflict.channelz.v1.Address.OtherAddress
+	(*Security_Tls)(nil),                // 39:grpcforunconflict.channelz.v1.Security.Tls
+	(*Security_OtherSecurity)(nil),      // 40:grpcforunconflict.channelz.v1.Security.OtherSecurity
 	(*timestamppb.Timestamp)(nil),       // 41: google.protobuf.Timestamp
 	(*wrapperspb.Int64Value)(nil),       // 42: google.protobuf.Int64Value
 	(*anypb.Any)(nil),                   // 43: google.protobuf.Any
 	(*durationpb.Duration)(nil),         // 44: google.protobuf.Duration
 }
 var file_grpc_channelz_v1_channelz_proto_depIdxs = []int32{
-	8,  // 0: grpc.channelz.v1.Channel.ref:type_name -> grpc.channelz.v1.ChannelRef
-	5,  // 1: grpc.channelz.v1.Channel.data:type_name -> grpc.channelz.v1.ChannelData
-	8,  // 2: grpc.channelz.v1.Channel.channel_ref:type_name -> grpc.channelz.v1.ChannelRef
-	9,  // 3: grpc.channelz.v1.Channel.subchannel_ref:type_name -> grpc.channelz.v1.SubchannelRef
-	10, // 4: grpc.channelz.v1.Channel.socket_ref:type_name -> grpc.channelz.v1.SocketRef
-	9,  // 5: grpc.channelz.v1.Subchannel.ref:type_name -> grpc.channelz.v1.SubchannelRef
-	5,  // 6: grpc.channelz.v1.Subchannel.data:type_name -> grpc.channelz.v1.ChannelData
-	8,  // 7: grpc.channelz.v1.Subchannel.channel_ref:type_name -> grpc.channelz.v1.ChannelRef
-	9,  // 8: grpc.channelz.v1.Subchannel.subchannel_ref:type_name -> grpc.channelz.v1.SubchannelRef
-	10, // 9: grpc.channelz.v1.Subchannel.socket_ref:type_name -> grpc.channelz.v1.SocketRef
-	0,  // 10: grpc.channelz.v1.ChannelConnectivityState.state:type_name -> grpc.channelz.v1.ChannelConnectivityState.State
-	4,  // 11: grpc.channelz.v1.ChannelData.state:type_name -> grpc.channelz.v1.ChannelConnectivityState
-	7,  // 12: grpc.channelz.v1.ChannelData.trace:type_name -> grpc.channelz.v1.ChannelTrace
-	41, // 13: grpc.channelz.v1.ChannelData.last_call_started_timestamp:type_name -> google.protobuf.Timestamp
-	1,  // 14: grpc.channelz.v1.ChannelTraceEvent.severity:type_name -> grpc.channelz.v1.ChannelTraceEvent.Severity
-	41, // 15: grpc.channelz.v1.ChannelTraceEvent.timestamp:type_name -> google.protobuf.Timestamp
-	8,  // 16: grpc.channelz.v1.ChannelTraceEvent.channel_ref:type_name -> grpc.channelz.v1.ChannelRef
-	9,  // 17: grpc.channelz.v1.ChannelTraceEvent.subchannel_ref:type_name -> grpc.channelz.v1.SubchannelRef
-	41, // 18: grpc.channelz.v1.ChannelTrace.creation_timestamp:type_name -> google.protobuf.Timestamp
-	6,  // 19: grpc.channelz.v1.ChannelTrace.events:type_name -> grpc.channelz.v1.ChannelTraceEvent
-	11, // 20: grpc.channelz.v1.Server.ref:type_name -> grpc.channelz.v1.ServerRef
-	13, // 21: grpc.channelz.v1.Server.data:type_name -> grpc.channelz.v1.ServerData
-	10, // 22: grpc.channelz.v1.Server.listen_socket:type_name -> grpc.channelz.v1.SocketRef
-	7,  // 23: grpc.channelz.v1.ServerData.trace:type_name -> grpc.channelz.v1.ChannelTrace
-	41, // 24: grpc.channelz.v1.ServerData.last_call_started_timestamp:type_name -> google.protobuf.Timestamp
-	10, // 25: grpc.channelz.v1.Socket.ref:type_name -> grpc.channelz.v1.SocketRef
-	15, // 26: grpc.channelz.v1.Socket.data:type_name -> grpc.channelz.v1.SocketData
-	16, // 27: grpc.channelz.v1.Socket.local:type_name -> grpc.channelz.v1.Address
-	16, // 28: grpc.channelz.v1.Socket.remote:type_name -> grpc.channelz.v1.Address
-	17, // 29: grpc.channelz.v1.Socket.security:type_name -> grpc.channelz.v1.Security
-	41, // 30: grpc.channelz.v1.SocketData.last_local_stream_created_timestamp:type_name -> google.protobuf.Timestamp
-	41, // 31: grpc.channelz.v1.SocketData.last_remote_stream_created_timestamp:type_name -> google.protobuf.Timestamp
-	41, // 32: grpc.channelz.v1.SocketData.last_message_sent_timestamp:type_name -> google.protobuf.Timestamp
-	41, // 33: grpc.channelz.v1.SocketData.last_message_received_timestamp:type_name -> google.protobuf.Timestamp
-	42, // 34: grpc.channelz.v1.SocketData.local_flow_control_window:type_name -> google.protobuf.Int64Value
-	42, // 35: grpc.channelz.v1.SocketData.remote_flow_control_window:type_name -> google.protobuf.Int64Value
-	18, // 36: grpc.channelz.v1.SocketData.option:type_name -> grpc.channelz.v1.SocketOption
-	36, // 37: grpc.channelz.v1.Address.tcpip_address:type_name -> grpc.channelz.v1.Address.TcpIpAddress
-	37, // 38: grpc.channelz.v1.Address.uds_address:type_name -> grpc.channelz.v1.Address.UdsAddress
-	38, // 39: grpc.channelz.v1.Address.other_address:type_name -> grpc.channelz.v1.Address.OtherAddress
-	39, // 40: grpc.channelz.v1.Security.tls:type_name -> grpc.channelz.v1.Security.Tls
-	40, // 41: grpc.channelz.v1.Security.other:type_name -> grpc.channelz.v1.Security.OtherSecurity
-	43, // 42: grpc.channelz.v1.SocketOption.additional:type_name -> google.protobuf.Any
-	44, // 43: grpc.channelz.v1.SocketOptionTimeout.duration:type_name -> google.protobuf.Duration
-	44, // 44: grpc.channelz.v1.SocketOptionLinger.duration:type_name -> google.protobuf.Duration
-	2,  // 45: grpc.channelz.v1.GetTopChannelsResponse.channel:type_name -> grpc.channelz.v1.Channel
-	12, // 46: grpc.channelz.v1.GetServersResponse.server:type_name -> grpc.channelz.v1.Server
-	12, // 47: grpc.channelz.v1.GetServerResponse.server:type_name -> grpc.channelz.v1.Server
-	10, // 48: grpc.channelz.v1.GetServerSocketsResponse.socket_ref:type_name -> grpc.channelz.v1.SocketRef
-	2,  // 49: grpc.channelz.v1.GetChannelResponse.channel:type_name -> grpc.channelz.v1.Channel
-	3,  // 50: grpc.channelz.v1.GetSubchannelResponse.subchannel:type_name -> grpc.channelz.v1.Subchannel
-	14, // 51: grpc.channelz.v1.GetSocketResponse.socket:type_name -> grpc.channelz.v1.Socket
-	43, // 52: grpc.channelz.v1.Address.OtherAddress.value:type_name -> google.protobuf.Any
-	43, // 53: grpc.channelz.v1.Security.OtherSecurity.value:type_name -> google.protobuf.Any
-	22, // 54: grpc.channelz.v1.Channelz.GetTopChannels:input_type -> grpc.channelz.v1.GetTopChannelsRequest
-	24, // 55: grpc.channelz.v1.Channelz.GetServers:input_type -> grpc.channelz.v1.GetServersRequest
-	26, // 56: grpc.channelz.v1.Channelz.GetServer:input_type -> grpc.channelz.v1.GetServerRequest
-	28, // 57: grpc.channelz.v1.Channelz.GetServerSockets:input_type -> grpc.channelz.v1.GetServerSocketsRequest
-	30, // 58: grpc.channelz.v1.Channelz.GetChannel:input_type -> grpc.channelz.v1.GetChannelRequest
-	32, // 59: grpc.channelz.v1.Channelz.GetSubchannel:input_type -> grpc.channelz.v1.GetSubchannelRequest
-	34, // 60: grpc.channelz.v1.Channelz.GetSocket:input_type -> grpc.channelz.v1.GetSocketRequest
-	23, // 61: grpc.channelz.v1.Channelz.GetTopChannels:output_type -> grpc.channelz.v1.GetTopChannelsResponse
-	25, // 62: grpc.channelz.v1.Channelz.GetServers:output_type -> grpc.channelz.v1.GetServersResponse
-	27, // 63: grpc.channelz.v1.Channelz.GetServer:output_type -> grpc.channelz.v1.GetServerResponse
-	29, // 64: grpc.channelz.v1.Channelz.GetServerSockets:output_type -> grpc.channelz.v1.GetServerSocketsResponse
-	31, // 65: grpc.channelz.v1.Channelz.GetChannel:output_type -> grpc.channelz.v1.GetChannelResponse
-	33, // 66: grpc.channelz.v1.Channelz.GetSubchannel:output_type -> grpc.channelz.v1.GetSubchannelResponse
-	35, // 67: grpc.channelz.v1.Channelz.GetSocket:output_type -> grpc.channelz.v1.GetSocketResponse
+	8,  // 0:grpcforunconflict.channelz.v1.Channel.ref:type_name ->grpcforunconflict.channelz.v1.ChannelRef
+	5,  // 1:grpcforunconflict.channelz.v1.Channel.data:type_name ->grpcforunconflict.channelz.v1.ChannelData
+	8,  // 2:grpcforunconflict.channelz.v1.Channel.channel_ref:type_name ->grpcforunconflict.channelz.v1.ChannelRef
+	9,  // 3:grpcforunconflict.channelz.v1.Channel.subchannel_ref:type_name ->grpcforunconflict.channelz.v1.SubchannelRef
+	10, // 4:grpcforunconflict.channelz.v1.Channel.socket_ref:type_name ->grpcforunconflict.channelz.v1.SocketRef
+	9,  // 5:grpcforunconflict.channelz.v1.Subchannel.ref:type_name ->grpcforunconflict.channelz.v1.SubchannelRef
+	5,  // 6:grpcforunconflict.channelz.v1.Subchannel.data:type_name ->grpcforunconflict.channelz.v1.ChannelData
+	8,  // 7:grpcforunconflict.channelz.v1.Subchannel.channel_ref:type_name ->grpcforunconflict.channelz.v1.ChannelRef
+	9,  // 8:grpcforunconflict.channelz.v1.Subchannel.subchannel_ref:type_name ->grpcforunconflict.channelz.v1.SubchannelRef
+	10, // 9:grpcforunconflict.channelz.v1.Subchannel.socket_ref:type_name ->grpcforunconflict.channelz.v1.SocketRef
+	0,  // 10:grpcforunconflict.channelz.v1.ChannelConnectivityState.state:type_name ->grpcforunconflict.channelz.v1.ChannelConnectivityState.State
+	4,  // 11:grpcforunconflict.channelz.v1.ChannelData.state:type_name ->grpcforunconflict.channelz.v1.ChannelConnectivityState
+	7,  // 12:grpcforunconflict.channelz.v1.ChannelData.trace:type_name ->grpcforunconflict.channelz.v1.ChannelTrace
+	41, // 13:grpcforunconflict.channelz.v1.ChannelData.last_call_started_timestamp:type_name -> google.protobuf.Timestamp
+	1,  // 14:grpcforunconflict.channelz.v1.ChannelTraceEvent.severity:type_name ->grpcforunconflict.channelz.v1.ChannelTraceEvent.Severity
+	41, // 15:grpcforunconflict.channelz.v1.ChannelTraceEvent.timestamp:type_name -> google.protobuf.Timestamp
+	8,  // 16:grpcforunconflict.channelz.v1.ChannelTraceEvent.channel_ref:type_name ->grpcforunconflict.channelz.v1.ChannelRef
+	9,  // 17:grpcforunconflict.channelz.v1.ChannelTraceEvent.subchannel_ref:type_name ->grpcforunconflict.channelz.v1.SubchannelRef
+	41, // 18:grpcforunconflict.channelz.v1.ChannelTrace.creation_timestamp:type_name -> google.protobuf.Timestamp
+	6,  // 19:grpcforunconflict.channelz.v1.ChannelTrace.events:type_name ->grpcforunconflict.channelz.v1.ChannelTraceEvent
+	11, // 20:grpcforunconflict.channelz.v1.Server.ref:type_name ->grpcforunconflict.channelz.v1.ServerRef
+	13, // 21:grpcforunconflict.channelz.v1.Server.data:type_name ->grpcforunconflict.channelz.v1.ServerData
+	10, // 22:grpcforunconflict.channelz.v1.Server.listen_socket:type_name ->grpcforunconflict.channelz.v1.SocketRef
+	7,  // 23:grpcforunconflict.channelz.v1.ServerData.trace:type_name ->grpcforunconflict.channelz.v1.ChannelTrace
+	41, // 24:grpcforunconflict.channelz.v1.ServerData.last_call_started_timestamp:type_name -> google.protobuf.Timestamp
+	10, // 25:grpcforunconflict.channelz.v1.Socket.ref:type_name ->grpcforunconflict.channelz.v1.SocketRef
+	15, // 26:grpcforunconflict.channelz.v1.Socket.data:type_name ->grpcforunconflict.channelz.v1.SocketData
+	16, // 27:grpcforunconflict.channelz.v1.Socket.local:type_name ->grpcforunconflict.channelz.v1.Address
+	16, // 28:grpcforunconflict.channelz.v1.Socket.remote:type_name ->grpcforunconflict.channelz.v1.Address
+	17, // 29:grpcforunconflict.channelz.v1.Socket.security:type_name ->grpcforunconflict.channelz.v1.Security
+	41, // 30:grpcforunconflict.channelz.v1.SocketData.last_local_stream_created_timestamp:type_name -> google.protobuf.Timestamp
+	41, // 31:grpcforunconflict.channelz.v1.SocketData.last_remote_stream_created_timestamp:type_name -> google.protobuf.Timestamp
+	41, // 32:grpcforunconflict.channelz.v1.SocketData.last_message_sent_timestamp:type_name -> google.protobuf.Timestamp
+	41, // 33:grpcforunconflict.channelz.v1.SocketData.last_message_received_timestamp:type_name -> google.protobuf.Timestamp
+	42, // 34:grpcforunconflict.channelz.v1.SocketData.local_flow_control_window:type_name -> google.protobuf.Int64Value
+	42, // 35:grpcforunconflict.channelz.v1.SocketData.remote_flow_control_window:type_name -> google.protobuf.Int64Value
+	18, // 36:grpcforunconflict.channelz.v1.SocketData.option:type_name ->grpcforunconflict.channelz.v1.SocketOption
+	36, // 37:grpcforunconflict.channelz.v1.Address.tcpip_address:type_name ->grpcforunconflict.channelz.v1.Address.TcpIpAddress
+	37, // 38:grpcforunconflict.channelz.v1.Address.uds_address:type_name ->grpcforunconflict.channelz.v1.Address.UdsAddress
+	38, // 39:grpcforunconflict.channelz.v1.Address.other_address:type_name ->grpcforunconflict.channelz.v1.Address.OtherAddress
+	39, // 40:grpcforunconflict.channelz.v1.Security.tls:type_name ->grpcforunconflict.channelz.v1.Security.Tls
+	40, // 41:grpcforunconflict.channelz.v1.Security.other:type_name ->grpcforunconflict.channelz.v1.Security.OtherSecurity
+	43, // 42:grpcforunconflict.channelz.v1.SocketOption.additional:type_name -> google.protobuf.Any
+	44, // 43:grpcforunconflict.channelz.v1.SocketOptionTimeout.duration:type_name -> google.protobuf.Duration
+	44, // 44:grpcforunconflict.channelz.v1.SocketOptionLinger.duration:type_name -> google.protobuf.Duration
+	2,  // 45:grpcforunconflict.channelz.v1.GetTopChannelsResponse.channel:type_name ->grpcforunconflict.channelz.v1.Channel
+	12, // 46:grpcforunconflict.channelz.v1.GetServersResponse.server:type_name ->grpcforunconflict.channelz.v1.Server
+	12, // 47:grpcforunconflict.channelz.v1.GetServerResponse.server:type_name ->grpcforunconflict.channelz.v1.Server
+	10, // 48:grpcforunconflict.channelz.v1.GetServerSocketsResponse.socket_ref:type_name ->grpcforunconflict.channelz.v1.SocketRef
+	2,  // 49:grpcforunconflict.channelz.v1.GetChannelResponse.channel:type_name ->grpcforunconflict.channelz.v1.Channel
+	3,  // 50:grpcforunconflict.channelz.v1.GetSubchannelResponse.subchannel:type_name ->grpcforunconflict.channelz.v1.Subchannel
+	14, // 51:grpcforunconflict.channelz.v1.GetSocketResponse.socket:type_name ->grpcforunconflict.channelz.v1.Socket
+	43, // 52:grpcforunconflict.channelz.v1.Address.OtherAddress.value:type_name -> google.protobuf.Any
+	43, // 53:grpcforunconflict.channelz.v1.Security.OtherSecurity.value:type_name -> google.protobuf.Any
+	22, // 54:grpcforunconflict.channelz.v1.Channelz.GetTopChannels:input_type ->grpcforunconflict.channelz.v1.GetTopChannelsRequest
+	24, // 55:grpcforunconflict.channelz.v1.Channelz.GetServers:input_type ->grpcforunconflict.channelz.v1.GetServersRequest
+	26, // 56:grpcforunconflict.channelz.v1.Channelz.GetServer:input_type ->grpcforunconflict.channelz.v1.GetServerRequest
+	28, // 57:grpcforunconflict.channelz.v1.Channelz.GetServerSockets:input_type ->grpcforunconflict.channelz.v1.GetServerSocketsRequest
+	30, // 58:grpcforunconflict.channelz.v1.Channelz.GetChannel:input_type ->grpcforunconflict.channelz.v1.GetChannelRequest
+	32, // 59:grpcforunconflict.channelz.v1.Channelz.GetSubchannel:input_type ->grpcforunconflict.channelz.v1.GetSubchannelRequest
+	34, // 60:grpcforunconflict.channelz.v1.Channelz.GetSocket:input_type ->grpcforunconflict.channelz.v1.GetSocketRequest
+	23, // 61:grpcforunconflict.channelz.v1.Channelz.GetTopChannels:output_type ->grpcforunconflict.channelz.v1.GetTopChannelsResponse
+	25, // 62:grpcforunconflict.channelz.v1.Channelz.GetServers:output_type ->grpcforunconflict.channelz.v1.GetServersResponse
+	27, // 63:grpcforunconflict.channelz.v1.Channelz.GetServer:output_type ->grpcforunconflict.channelz.v1.GetServerResponse
+	29, // 64:grpcforunconflict.channelz.v1.Channelz.GetServerSockets:output_type ->grpcforunconflict.channelz.v1.GetServerSocketsResponse
+	31, // 65:grpcforunconflict.channelz.v1.Channelz.GetChannel:output_type ->grpcforunconflict.channelz.v1.GetChannelResponse
+	33, // 66:grpcforunconflict.channelz.v1.Channelz.GetSubchannel:output_type ->grpcforunconflict.channelz.v1.GetSubchannelResponse
+	35, // 67:grpcforunconflict.channelz.v1.Channelz.GetSocket:output_type ->grpcforunconflict.channelz.v1.GetSocketResponse
 	61, // [61:68] is the sub-list for method output_type
 	54, // [54:61] is the sub-list for method input_type
 	54, // [54:54] is the sub-list for extension type_name

@@ -65,7 +65,7 @@ type Compressor interface {
 var registeredCompressor = make(map[string]Compressor)
 
 // RegisterCompressor registers the compressor with gRPC by its name.  It can
-// be activated when sending an RPC via grpc.UseCompressor().  It will be
+// be activated when sending an RPC viagrpcforunconflict.UseCompressor().  It will be
 // automatically accessed when receiving a message based on the content coding
 // header.  Servers also use it to send a response with the same encoding as
 // the request.

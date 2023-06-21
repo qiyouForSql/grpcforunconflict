@@ -22,13 +22,12 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/internal"
 	ointernal "github.com/qiyouForSql/grpcforunconflict/orca/internal"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
-	v3orcaservicegrpc "github.com/cncf/xds/go/xds/service/orca/v3"
 	v3orcaservicepb "github.com/cncf/xds/go/xds/service/orca/v3"
 )
 
@@ -54,7 +53,7 @@ const minReportingInterval = 30 * time.Second
 //
 // [ORCA]: https://github.com/cncf/xds/blob/main/xds/service/orca/v3/orca.proto
 type Service struct {
-	v3orcaservicegrpc.UnimplementedOpenRcaServiceServer
+	v3orcaservicegrpcforunconflict.UnimplementedOpenRcaServiceServer
 
 	// Minimum reporting interval, as configured by the user, or the default.
 	minReportingInterval time.Duration
@@ -111,14 +110,14 @@ func NewService(opts ServiceOptions) (*Service, error) {
 
 // Register creates a new ORCA service implementation configured using the
 // provided options and registers the same on the provided grpc Server.
-func Register(s *grpc.Server, opts ServiceOptions) error {
-	// TODO(https://github.com/cncf/xds/issues/41): replace *grpc.Server with
-	// grpc.ServiceRegistrar when possible.
+func Register(s *grpcforunconflict.Server, opts ServiceOptions) error {
+	// TODO(https://github.com/cncf/xds/issues/41): replace *grpcforunconflict.Server with
+	// grpcforunconflict.ServiceRegistrar when possible.
 	service, err := NewService(opts)
 	if err != nil {
 		return err
 	}
-	v3orcaservicegrpc.RegisterOpenRcaServiceServer(s, service)
+	v3orcaservicegrpcforunconflict.RegisterOpenRcaServiceServer(s, service)
 	return nil
 }
 
@@ -139,13 +138,13 @@ func (s *Service) determineReportingInterval(req *v3orcaservicepb.OrcaLoadReport
 	return dur
 }
 
-func (s *Service) sendMetricsResponse(stream v3orcaservicegrpc.OpenRcaService_StreamCoreMetricsServer) error {
+func (s *Service) sendMetricsResponse(stream v3orcaservicegrpcforunconflict.OpenRcaService_StreamCoreMetricsServer) error {
 	return stream.Send(s.smProvider.ServerMetrics().toLoadReportProto())
 }
 
 // StreamCoreMetrics streams custom backend metrics injected by the server
 // application.
-func (s *Service) StreamCoreMetrics(req *v3orcaservicepb.OrcaLoadReportRequest, stream v3orcaservicegrpc.OpenRcaService_StreamCoreMetricsServer) error {
+func (s *Service) StreamCoreMetrics(req *v3orcaservicepb.OrcaLoadReportRequest, stream v3orcaservicegrpcforunconflict.OpenRcaService_StreamCoreMetricsServer) error {
 	ticker := time.NewTicker(s.determineReportingInterval(req))
 	defer ticker.Stop()
 

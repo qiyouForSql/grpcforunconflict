@@ -34,6 +34,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/credentials"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/alts"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/google"
@@ -45,13 +46,11 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"github.com/qiyouForSql/grpcforunconflict/testdata"
 	"golang.org/x/oauth2"
-	"google.golang.org/grpc"
 
 	_ "github.com/qiyouForSql/grpcforunconflict/balancer/grpclb"      // Register the grpclb load balancing policy.
 	_ "github.com/qiyouForSql/grpcforunconflict/balancer/rls"         // Register the RLS load balancing policy.
 	_ "github.com/qiyouForSql/grpcforunconflict/xds/googledirectpath" // Register xDS resolver required for c2p directpath.
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 const (
@@ -184,7 +183,7 @@ func main() {
 	if *serverPort != 0 {
 		serverAddr = net.JoinHostPort(*serverHost, strconv.Itoa(*serverPort))
 	}
-	var opts []grpc.DialOption
+	var opts []grpcforunconflict.DialOption
 	switch credsChosen {
 	case credsTLS:
 		var roots *x509.CertPool
@@ -207,62 +206,62 @@ func main() {
 		} else {
 			creds = credentials.NewTLS(&tls.Config{RootCAs: roots})
 		}
-		opts = append(opts, grpc.WithTransportCredentials(creds))
+		opts = append(opts, grpcforunconflict.WithTransportCredentials(creds))
 	case credsALTS:
 		altsOpts := alts.DefaultClientOptions()
 		if *altsHSAddr != "" {
 			altsOpts.HandshakerServiceAddress = *altsHSAddr
 		}
 		altsTC := alts.NewClientCreds(altsOpts)
-		opts = append(opts, grpc.WithTransportCredentials(altsTC))
+		opts = append(opts, grpcforunconflict.WithTransportCredentials(altsTC))
 	case credsGoogleDefaultCreds:
-		opts = append(opts, grpc.WithCredentialsBundle(google.NewDefaultCredentials()))
+		opts = append(opts, grpcforunconflict.WithCredentialsBundle(google.NewDefaultCredentials()))
 	case credsComputeEngineCreds:
-		opts = append(opts, grpc.WithCredentialsBundle(google.NewComputeEngineCredentials()))
+		opts = append(opts, grpcforunconflict.WithCredentialsBundle(google.NewComputeEngineCredentials()))
 	case credsNone:
-		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		opts = append(opts, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	default:
 		logger.Fatal("Invalid creds")
 	}
 	if credsChosen == credsTLS {
 		if *testCase == "compute_engine_creds" {
-			opts = append(opts, grpc.WithPerRPCCredentials(oauth.NewComputeEngine()))
+			opts = append(opts, grpcforunconflict.WithPerRPCCredentials(oauth.NewComputeEngine()))
 		} else if *testCase == "service_account_creds" {
 			jwtCreds, err := oauth.NewServiceAccountFromFile(*serviceAccountKeyFile, *oauthScope)
 			if err != nil {
 				logger.Fatalf("Failed to create JWT credentials: %v", err)
 			}
-			opts = append(opts, grpc.WithPerRPCCredentials(jwtCreds))
+			opts = append(opts, grpcforunconflict.WithPerRPCCredentials(jwtCreds))
 		} else if *testCase == "jwt_token_creds" {
 			jwtCreds, err := oauth.NewJWTAccessFromFile(*serviceAccountKeyFile)
 			if err != nil {
 				logger.Fatalf("Failed to create JWT credentials: %v", err)
 			}
-			opts = append(opts, grpc.WithPerRPCCredentials(jwtCreds))
+			opts = append(opts, grpcforunconflict.WithPerRPCCredentials(jwtCreds))
 		} else if *testCase == "oauth2_auth_token" {
-			opts = append(opts, grpc.WithPerRPCCredentials(oauth.TokenSource{TokenSource: oauth2.StaticTokenSource(interop.GetToken(*serviceAccountKeyFile, *oauthScope))}))
+			opts = append(opts, grpcforunconflict.WithPerRPCCredentials(oauth.TokenSource{TokenSource: oauth2.StaticTokenSource(interop.GetToken(*serviceAccountKeyFile, *oauthScope))}))
 		}
 	}
 	if len(*serviceConfigJSON) > 0 {
-		opts = append(opts, grpc.WithDisableServiceConfig(), grpc.WithDefaultServiceConfig(*serviceConfigJSON))
+		opts = append(opts, grpcforunconflict.WithDisableServiceConfig(), grpcforunconflict.WithDefaultServiceConfig(*serviceConfigJSON))
 	}
 	if addMd := parseAdditionalMetadataFlag(); addMd != nil {
-		unaryAddMd := func(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+		unaryAddMd := func(ctx context.Context, method string, req, reply interface{}, cc *grpcforunconflict.ClientConn, invokergrpcforunconflict.UnaryInvoker, opts ...grpcforunconflict.CallOption) error {
 			ctx = metadata.AppendToOutgoingContext(ctx, addMd...)
 			return invoker(ctx, method, req, reply, cc, opts...)
 		}
-		streamingAddMd := func(ctx context.Context, desc *grpc.StreamDesc, cc *grpc.ClientConn, method string, streamer grpc.Streamer, opts ...grpc.CallOption) (grpc.ClientStream, error) {
+		streamingAddMd := func(ctx context.Context, desc *grpcforunconflict.StreamDesc, cc *grpcforunconflict.ClientConn, method string, streamergrpcforunconflict.Streamer, opts ...grpcforunconflict.CallOption) (grpcforunconflict.ClientStream, error) {
 			ctx = metadata.AppendToOutgoingContext(ctx, addMd...)
 			return streamer(ctx, desc, cc, method, opts...)
 		}
-		opts = append(opts, grpc.WithUnaryInterceptor(unaryAddMd), grpc.WithStreamInterceptor(streamingAddMd))
+		opts = append(opts, grpcforunconflict.WithUnaryInterceptor(unaryAddMd), grpcforunconflict.WithStreamInterceptor(streamingAddMd))
 	}
-	conn, err := grpc.Dial(serverAddr, opts...)
+	conn, err := grpcforunconflict.Dial(serverAddr, opts...)
 	if err != nil {
 		logger.Fatalf("Fail to dial: %v", err)
 	}
 	defer conn.Close()
-	tc := testgrpc.NewTestServiceClient(conn)
+	tc := testgrpcforunconflict.NewTestServiceClient(conn)
 	switch *testCase {
 	case "empty_unary":
 		interop.DoEmptyUnaryCall(tc)
@@ -346,7 +345,7 @@ func main() {
 		interop.DoUnimplementedMethod(conn)
 		logger.Infoln("UnimplementedMethod done")
 	case "unimplemented_service":
-		interop.DoUnimplementedService(testgrpc.NewUnimplementedServiceClient(conn))
+		interop.DoUnimplementedService(testgrpcforunconflict.NewUnimplementedServiceClient(conn))
 		logger.Infoln("UnimplementedService done")
 	case "pick_first_unary":
 		interop.DoPickFirstUnary(tc)

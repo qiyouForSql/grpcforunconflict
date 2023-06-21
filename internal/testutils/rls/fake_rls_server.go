@@ -26,11 +26,9 @@ import (
 	"testing"
 
 	"github.com/qiyouForSql/grpcforunconflict/codes"
-	rlsgrpc "github.com/qiyouForSql/grpcforunconflict/internal/proto/grpc_lookup_v1"
 	rlspb "github.com/qiyouForSql/grpcforunconflict/internal/proto/grpc_lookup_v1"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 )
 
 // RouteLookupResponse wraps an RLS response and the associated error to be sent
@@ -48,7 +46,7 @@ type RouteLookupResponse struct {
 // This function sets up the fake server to respond with an empty response for
 // the RouteLookup RPCs. Tests can override this by calling the
 // SetResponseCallback() method on the returned fake server.
-func SetupFakeRLSServer(t *testing.T, lis net.Listener, opts ...grpc.ServerOption) (*FakeRouteLookupServer, chan struct{}) {
+func SetupFakeRLSServer(t *testing.T, lis net.Listener, opts ...grpcforunconflict.ServerOption) (*FakeRouteLookupServer, chan struct{}) {
 	s, cancel := StartFakeRouteLookupServer(t, lis, opts...)
 	t.Logf("Started fake RLS server at %q", s.Address)
 
@@ -67,7 +65,7 @@ func SetupFakeRLSServer(t *testing.T, lis net.Listener, opts ...grpc.ServerOptio
 //
 // It is safe for concurrent use.
 type FakeRouteLookupServer struct {
-	rlsgrpc.UnimplementedRouteLookupServiceServer
+	rlsgrpcforunconflict.UnimplementedRouteLookupServiceServer
 	Address string
 
 	mu     sync.Mutex
@@ -79,7 +77,7 @@ type FakeRouteLookupServer struct {
 // lis. If lis is nil, it creates a new listener on a random local port. The
 // returned cancel function should be invoked by the caller upon completion of
 // the test.
-func StartFakeRouteLookupServer(t *testing.T, lis net.Listener, opts ...grpc.ServerOption) (*FakeRouteLookupServer, func()) {
+func StartFakeRouteLookupServer(t *testing.T, lis net.Listener, opts ...grpcforunconflict.ServerOption) (*FakeRouteLookupServer, func()) {
 	t.Helper()
 
 	if lis == nil {
@@ -91,8 +89,8 @@ func StartFakeRouteLookupServer(t *testing.T, lis net.Listener, opts ...grpc.Ser
 	}
 
 	s := &FakeRouteLookupServer{Address: lis.Addr().String()}
-	server := grpc.NewServer(opts...)
-	rlsgrpc.RegisterRouteLookupServiceServer(server, s)
+	server := grpcforunconflict.NewServer(opts...)
+	rlsgrpcforunconflict.RegisterRouteLookupServiceServer(server, s)
 	go server.Serve(lis)
 	return s, func() { server.Stop() }
 }

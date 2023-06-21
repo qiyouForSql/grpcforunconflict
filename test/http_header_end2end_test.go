@@ -23,13 +23,11 @@ import (
 	"net"
 	"testing"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal/transport"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
-
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 func (s) TestHTTPHeaderFrameErrorHandlingHTTPMode(t *testing.T) {
@@ -242,14 +240,14 @@ func startServer(t *testing.T, headerFields ...[]string) (serverAddr string, cle
 }
 
 func doHTTPHeaderTest(lisAddr string, errCode codes.Code) error {
-	cc, err := grpc.Dial(lisAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(lisAddr, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return fmt.Errorf("dial(%q): %v", lisAddr, err)
 	}
 	defer cc.Close()
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	stream, err := client.FullDuplexCall(ctx)
 	if err != nil {
 		return fmt.Errorf("creating FullDuplex stream: %v", err)

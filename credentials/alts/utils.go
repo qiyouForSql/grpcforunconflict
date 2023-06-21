@@ -30,7 +30,7 @@ import (
 
 // AuthInfoFromContext extracts the alts.AuthInfo object from the given context,
 // if it exists. This API should be used by gRPC server RPC handlers to get
-// information about the communicating peer. For client-side, use grpc.Peer()
+// information about the communicating peer. For client-side, usegrpcforunconflict.Peer()
 // CallOption.
 func AuthInfoFromContext(ctx context.Context) (AuthInfo, error) {
 	p, ok := peer.FromContext(ctx)
@@ -42,7 +42,7 @@ func AuthInfoFromContext(ctx context.Context) (AuthInfo, error) {
 
 // AuthInfoFromPeer extracts the alts.AuthInfo object from the given peer, if it
 // exists. This API should be used by gRPC clients after obtaining a peer object
-// using the grpc.Peer() CallOption.
+// using thegrpcforunconflict.Peer() CallOption.
 func AuthInfoFromPeer(p *peer.Peer) (AuthInfo, error) {
 	altsAuthInfo, ok := p.AuthInfo.(AuthInfo)
 	if !ok {

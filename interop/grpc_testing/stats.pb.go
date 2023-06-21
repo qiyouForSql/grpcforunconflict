@@ -522,18 +522,18 @@ func file_grpc_testing_stats_proto_rawDescGZIP() []byte {
 
 var file_grpc_testing_stats_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_grpc_testing_stats_proto_goTypes = []interface{}{
-	(*ServerStats)(nil),        // 0: grpc.testing.ServerStats
-	(*HistogramParams)(nil),    // 1: grpc.testing.HistogramParams
-	(*HistogramData)(nil),      // 2: grpc.testing.HistogramData
-	(*RequestResultCount)(nil), // 3: grpc.testing.RequestResultCount
-	(*ClientStats)(nil),        // 4: grpc.testing.ClientStats
-	(*core.Stats)(nil),         // 5: grpc.core.Stats
+	(*ServerStats)(nil),        // 0:grpcforunconflict.testing.ServerStats
+	(*HistogramParams)(nil),    // 1:grpcforunconflict.testing.HistogramParams
+	(*HistogramData)(nil),      // 2:grpcforunconflict.testing.HistogramData
+	(*RequestResultCount)(nil), // 3:grpcforunconflict.testing.RequestResultCount
+	(*ClientStats)(nil),        // 4:grpcforunconflict.testing.ClientStats
+	(*core.Stats)(nil),         // 5:grpcforunconflict.core.Stats
 }
 var file_grpc_testing_stats_proto_depIdxs = []int32{
-	5, // 0: grpc.testing.ServerStats.core_stats:type_name -> grpc.core.Stats
-	2, // 1: grpc.testing.ClientStats.latencies:type_name -> grpc.testing.HistogramData
-	3, // 2: grpc.testing.ClientStats.request_results:type_name -> grpc.testing.RequestResultCount
-	5, // 3: grpc.testing.ClientStats.core_stats:type_name -> grpc.core.Stats
+	5, // 0:grpcforunconflict.testing.ServerStats.core_stats:type_name ->grpcforunconflict.core.Stats
+	2, // 1:grpcforunconflict.testing.ClientStats.latencies:type_name ->grpcforunconflict.testing.HistogramData
+	3, // 2:grpcforunconflict.testing.ClientStats.request_results:type_name ->grpcforunconflict.testing.RequestResultCount
+	5, // 3:grpcforunconflict.testing.ClientStats.core_stats:type_name ->grpcforunconflict.core.Stats
 	4, // [4:4] is the sub-list for method output_type
 	4, // [4:4] is the sub-list for method input_type
 	4, // [4:4] is the sub-list for extension type_name

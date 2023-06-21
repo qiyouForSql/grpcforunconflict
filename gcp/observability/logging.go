@@ -265,7 +265,7 @@ func (bml *binaryMethodLogger) buildGCPLoggingEntry(ctx context.Context, c iblog
 		grpcLogEntry.Type = eventTypeClientHeader
 		if binLogEntry.GetClientHeader() != nil {
 			methodName := binLogEntry.GetClientHeader().MethodName
-			// Example method name: /grpc.testing.TestService/UnaryCall
+			// Example method name: /grpcforunconflict.testing.TestService/UnaryCall
 			if strings.Contains(methodName, "/") {
 				tokens := strings.Split(methodName, "/")
 				if len(tokens) == 3 {
@@ -436,7 +436,7 @@ func registerClientRPCEvents(config *config, exporter loggingExporter) {
 		projectID:    config.ProjectID,
 		clientSide:   true,
 	}
-	internal.AddGlobalDialOptions.(func(opt ...grpc.DialOption))(internal.WithBinaryLogger.(func(bl iblog.Logger) grpc.DialOption)(clientSideLogger))
+	internal.AddGlobalDialOptions.(func(opt ...grpcforunconflict.DialOption))(internal.WithBinaryLogger.(func(bl iblog.Logger) grpcforunconflict.DialOption)(clientSideLogger))
 }
 
 func registerServerRPCEvents(config *config, exporter loggingExporter) {
@@ -476,7 +476,7 @@ func registerServerRPCEvents(config *config, exporter loggingExporter) {
 		projectID:    config.ProjectID,
 		clientSide:   false,
 	}
-	internal.AddGlobalServerOptions.(func(opt ...grpc.ServerOption))(internal.BinaryLogger.(func(bl iblog.Logger) grpc.ServerOption)(serverSideLogger))
+	internal.AddGlobalServerOptions.(func(opt ...grpcforunconflict.ServerOption))(internal.BinaryLogger.(func(bl iblog.Logger) grpcforunconflict.ServerOption)(serverSideLogger))
 }
 
 func startLogging(ctx context.Context, config *config) error {

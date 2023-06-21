@@ -28,12 +28,9 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/qiyouForSql/grpcforunconflict/grpclog"
+	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	"github.com/qiyouForSql/grpcforunconflict/peer"
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
-	"google.golang.org/grpc"
-
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
-	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 var logger = grpclog.Component("testutils-roundrobin")
@@ -41,7 +38,7 @@ var logger = grpclog.Component("testutils-roundrobin")
 // waitForTrafficToReachBackends repeatedly makes RPCs using the provided
 // TestServiceClient until RPCs reach all backends specified in addrs, or the
 // context expires, in which case a non-nil error is returned.
-func waitForTrafficToReachBackends(ctx context.Context, client testgrpc.TestServiceClient, addrs []resolver.Address) error {
+func waitForTrafficToReachBackends(ctx context.Context, client testgrpcforunconflict.TestServiceClient, addrs []resolver.Address) error {
 	// Make sure connections to all backends are up. We need to do this two
 	// times (to be sure that round_robin has kicked in) because the channel
 	// could have been configured with a different LB policy before the switch
@@ -56,7 +53,7 @@ func waitForTrafficToReachBackends(ctx context.Context, client testgrpc.TestServ
 					return fmt.Errorf("timeout waiting for connection to %q to be up", addrs[i].Addr)
 				}
 				var peer peer.Peer
-				if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.Peer(&peer)); err != nil {
+				if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Peer(&peer)); err != nil {
 					// Some tests remove backends and check if round robin is
 					// happening across the remaining backends. In such cases,
 					// RPCs can initially fail on the connection using the
@@ -80,7 +77,7 @@ func waitForTrafficToReachBackends(ctx context.Context, client testgrpc.TestServ
 //
 // Returns a non-nil error if context deadline expires before RPCs start to get
 // roundrobined across the given backends.
-func CheckRoundRobinRPCs(ctx context.Context, client testgrpc.TestServiceClient, addrs []resolver.Address) error {
+func CheckRoundRobinRPCs(ctx context.Context, client testgrpcforunconflict.TestServiceClient, addrs []resolver.Address) error {
 	if err := waitForTrafficToReachBackends(ctx, client, addrs); err != nil {
 		return err
 	}
@@ -104,7 +101,7 @@ func CheckRoundRobinRPCs(ctx context.Context, client testgrpc.TestServiceClient,
 			iteration := make([]string, len(addrs))
 			for c := 0; c < len(addrs); c++ {
 				var peer peer.Peer
-				if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.Peer(&peer)); err != nil {
+				if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Peer(&peer)); err != nil {
 					return fmt.Errorf("EmptyCall() = %v, want <nil>", err)
 				}
 				iteration[c] = peer.Addr.String()
@@ -137,7 +134,7 @@ func CheckRoundRobinRPCs(ctx context.Context, client testgrpc.TestServiceClient,
 //
 // Returns a non-nil error if context deadline expires before RPCs start to get
 // roundrobined across the given backends.
-func CheckWeightedRoundRobinRPCs(ctx context.Context, client testgrpc.TestServiceClient, addrs []resolver.Address) error {
+func CheckWeightedRoundRobinRPCs(ctx context.Context, client testgrpcforunconflict.TestServiceClient, addrs []resolver.Address) error {
 	if err := waitForTrafficToReachBackends(ctx, client, addrs); err != nil {
 		return err
 	}
@@ -182,7 +179,7 @@ func CheckWeightedRoundRobinRPCs(ctx context.Context, client testgrpc.TestServic
 			}
 			for i := 0; i < len(addrs); i++ {
 				var peer peer.Peer
-				if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.Peer(&peer)); err != nil {
+				if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Peer(&peer)); err != nil {
 					return fmt.Errorf("EmptyCall() = %v, want <nil>", err)
 				}
 				if addr := peer.Addr.String(); wantAddrCount[addr] == 0 {

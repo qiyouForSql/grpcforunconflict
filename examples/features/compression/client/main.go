@@ -37,7 +37,7 @@ func main() {
 	flag.Parse()
 
 	// Set up a connection to the server.
-	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpcforunconflict.Dial(*addr, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
@@ -47,11 +47,11 @@ func main() {
 
 	// Send the RPC compressed.  If all RPCs on a client should be sent this
 	// way, use the DialOption:
-	// grpc.WithDefaultCallOptions(grpc.UseCompressor(gzip.Name))
+	//grpcforunconflict.WithDefaultCallOptions(grpcforunconflict.UseCompressor(gzip.Name))
 	const msg = "compress"
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	res, err := c.UnaryEcho(ctx, &pb.EchoRequest{Message: msg}, grpc.UseCompressor(gzip.Name))
+	res, err := c.UnaryEcho(ctx, &pb.EchoRequest{Message: msg}, grpcforunconflict.UseCompressor(gzip.Name))
 	fmt.Printf("UnaryEcho call returned %q, %v\n", res.GetMessage(), err)
 	if err != nil || res.GetMessage() != msg {
 		log.Fatalf("Message=%q, err=%v; want Message=%q, err=<nil>", res.GetMessage(), err, msg)

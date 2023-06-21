@@ -99,7 +99,7 @@ type HashPolicy struct {
 type RouteActionType int
 
 const (
-	// RouteActionUnsupported are routing types currently unsupported by grpc.
+	// RouteActionUnsupported are routing types currently unsupported bygrpcforunconflict.
 	// According to A36, "A Route with an inappropriate action causes RPCs
 	// matching that route to fail."
 	RouteActionUnsupported RouteActionType = iota

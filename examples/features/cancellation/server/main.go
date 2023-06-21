@@ -58,7 +58,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	fmt.Printf("server listening at port %v\n", lis.Addr())
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 	pb.RegisterEchoServer(s, &server{})
 	s.Serve(lis)
 }

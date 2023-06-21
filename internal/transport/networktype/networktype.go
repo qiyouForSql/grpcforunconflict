@@ -27,7 +27,7 @@ import (
 // keyType is the key to use for storing State in Attributes.
 type keyType string
 
-const key = keyType("grpc.internal.transport.networktype")
+const key = keyType("grpcforunconflict.internal.transport.networktype")
 
 // Set returns a copy of the provided address with attributes containing networkType.
 func Set(address resolver.Address, networkType string) resolver.Address {

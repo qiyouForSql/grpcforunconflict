@@ -28,6 +28,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/connectivity"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/tls/certprovider"
@@ -41,7 +42,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient"
 	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/bootstrap"
 	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/xdsresource"
-	"google.golang.org/grpc"
 
 	v3corepb "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
 	v3listenerpb "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
@@ -135,7 +135,7 @@ type fakeGRPCServer struct {
 	gracefulStopCh    *testutils.Channel
 }
 
-func (f *fakeGRPCServer) RegisterService(*grpc.ServiceDesc, interface{}) {
+func (f *fakeGRPCServer) RegisterService(*grpcforunconflict.ServiceDesc, interface{}) {
 	f.registerServiceCh.Send(nil)
 }
 
@@ -155,7 +155,7 @@ func (f *fakeGRPCServer) GracefulStop() {
 	f.gracefulStopCh.Send(nil)
 }
 
-func (f *fakeGRPCServer) GetServiceInfo() map[string]grpc.ServiceInfo {
+func (f *fakeGRPCServer) GetServiceInfo() map[string]grpcforunconflict.ServiceInfo {
 	panic("implement me")
 }
 
@@ -185,16 +185,16 @@ func (s) TestNewServer(t *testing.T) {
 
 	tests := []struct {
 		desc              string
-		serverOpts        []grpc.ServerOption
+		serverOpts        []grpcforunconflict.ServerOption
 		wantXDSCredsInUse bool
 	}{
 		{
 			desc:       "without_xds_creds",
-			serverOpts: []grpc.ServerOption{grpc.Creds(insecure.NewCredentials())},
+			serverOpts: []grpcforunconflict.ServerOption{grpcforunconflict.Creds(insecure.NewCredentials())},
 		},
 		{
 			desc:              "with_xds_creds",
-			serverOpts:        []grpc.ServerOption{grpc.Creds(xdsCreds)},
+			serverOpts:        []grpcforunconflict.ServerOption{grpcforunconflict.Creds(xdsCreds)},
 			wantXDSCredsInUse: true,
 		},
 	}
@@ -206,15 +206,15 @@ func (s) TestNewServer(t *testing.T) {
 			wantServerOpts := len(test.serverOpts) + 2
 
 			origNewGRPCServer := newGRPCServer
-			newGRPCServer = func(opts ...grpc.ServerOption) grpcServer {
+			newGRPCServer = func(opts ...grpcforunconflict.ServerOption) grpcServer {
 				if got := len(opts); got != wantServerOpts {
-					t.Fatalf("%d ServerOptions passed to grpc.Server, want %d", got, wantServerOpts)
+					t.Fatalf("%d ServerOptions passed to grpcforunconflict.Server, want %d", got, wantServerOpts)
 				}
 				// Verify that the user passed ServerOptions are forwarded as is.
 				if !reflect.DeepEqual(opts[2:], test.serverOpts) {
 					t.Fatalf("got ServerOptions %v, want %v", opts[2:], test.serverOpts)
 				}
-				return grpc.NewServer(opts...)
+				return grpcforunconflict.NewServer(opts...)
 			}
 			defer func() {
 				newGRPCServer = origNewGRPCServer
@@ -234,17 +234,17 @@ func (s) TestRegisterService(t *testing.T) {
 	fs := newFakeGRPCServer()
 
 	origNewGRPCServer := newGRPCServer
-	newGRPCServer = func(opts ...grpc.ServerOption) grpcServer { return fs }
+	newGRPCServer = func(opts ...grpcforunconflict.ServerOption) grpcServer { return fs }
 	defer func() { newGRPCServer = origNewGRPCServer }()
 
 	s := NewGRPCServer()
 	defer s.Stop()
 
-	s.RegisterService(&grpc.ServiceDesc{}, nil)
+	s.RegisterService(&grpcforunconflict.ServiceDesc{}, nil)
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
 	if _, err := fs.registerServiceCh.Receive(ctx); err != nil {
-		t.Fatalf("timeout when expecting RegisterService() to called on grpc.Server: %v", err)
+		t.Fatalf("timeout when expecting RegisterService() to called on grpcforunconflict.Server: %v", err)
 	}
 }
 
@@ -334,7 +334,7 @@ func setupOverrides(t *testing.T) (*fakeGRPCServer, *testutils.Channel, func()) 
 
 	fs := newFakeGRPCServer()
 	origNewGRPCServer := newGRPCServer
-	newGRPCServer = func(opts ...grpc.ServerOption) grpcServer { return fs }
+	newGRPCServer = func(opts ...grpcforunconflict.ServerOption) grpcServer { return fs }
 
 	return fs, clientCh, func() {
 		newXDSClient = origNewXDSClient
@@ -343,9 +343,9 @@ func setupOverrides(t *testing.T) (*fakeGRPCServer, *testutils.Channel, func()) 
 }
 
 // setupOverridesForXDSCreds overrides only the xdsClient creation with a fake
-// one. Tests that use xdsCredentials need a real grpc.Server instead of a fake
+// one. Tests that use xdsCredentials need a real grpcforunconflict.Server instead of a fake
 // one, because the xDS-enabled server needs to read configured creds from the
-// underlying grpc.Server to confirm whether xdsCreds were configured.
+// underlying grpcforunconflict.Server to confirm whether xdsCreds were configured.
 func setupOverridesForXDSCreds(t *testing.T, includeCertProviderCfg bool) (*testutils.Channel, func()) {
 	clientCh := testutils.NewChannel()
 	origNewXDSClient := newXDSClient
@@ -374,7 +374,7 @@ func setupOverridesForXDSCreds(t *testing.T, includeCertProviderCfg bool) (*test
 //  3. Push an error response from the xdsClient, and make sure that Serve() does
 //     not exit.
 //  4. Push a good response from the xdsClient, and make sure that Serve() on the
-//     underlying grpc.Server is called.
+//     underlying grpcforunconflict.Server is called.
 func (s) TestServeSuccess(t *testing.T) {
 	fs, clientCh, cleanup := setupOverrides(t)
 	defer cleanup()
@@ -441,7 +441,7 @@ func (s) TestServeSuccess(t *testing.T) {
 	}
 
 	// Push a good LDS response, and wait for Serve() to be invoked on the
-	// underlying grpc.Server.
+	// underlying grpcforunconflict.Server.
 	fcm, err := xdsresource.NewFilterChainManager(listenerWithFilterChains)
 	if err != nil {
 		t.Fatalf("xdsclient.NewFilterChainManager() failed with error: %v", err)
@@ -456,7 +456,7 @@ func (s) TestServeSuccess(t *testing.T) {
 		},
 	}, nil)
 	if _, err := fs.serveCh.Receive(ctx); err != nil {
-		t.Fatalf("error when waiting for Serve() to be invoked on the grpc.Server")
+		t.Fatalf("error when waiting for Serve() to be invoked on the grpcforunconflict.Server")
 	}
 
 	// Make sure the serving mode changes appropriately.
@@ -497,7 +497,7 @@ func (s) TestServeSuccess(t *testing.T) {
 
 // TestServeWithStop tests the case where Stop() is called before an LDS update
 // is received. This should cause Serve() to exit before calling Serve() on the
-// underlying grpc.Server.
+// underlying grpcforunconflict.Server.
 func (s) TestServeWithStop(t *testing.T) {
 	fs, clientCh, cleanup := setupOverrides(t)
 	defer cleanup()
@@ -550,11 +550,11 @@ func (s) TestServeWithStop(t *testing.T) {
 		t.Fatalf("error when waiting for Serve() to exit")
 	}
 
-	// Make sure that Serve() on the underlying grpc.Server is not called.
+	// Make sure that Serve() on the underlying grpcforunconflict.Server is not called.
 	sCtx, sCancel := context.WithTimeout(context.Background(), defaultTestShortTimeout)
 	defer sCancel()
 	if _, err := fs.serveCh.Receive(sCtx); err != context.DeadlineExceeded {
-		t.Fatal("Serve() called on underlying grpc.Server")
+		t.Fatal("Serve() called on underlying grpcforunconflict.Server")
 	}
 }
 
@@ -633,7 +633,7 @@ func (s) TestServeBootstrapConfigInvalid(t *testing.T) {
 			if err != nil {
 				t.Fatalf("failed to create xds server credentials: %v", err)
 			}
-			server := NewGRPCServer(grpc.Creds(xdsCreds))
+			server := NewGRPCServer(grpcforunconflict.Creds(xdsCreds))
 			defer server.Stop()
 
 			lis, err := testutils.LocalTCPListener()
@@ -749,7 +749,7 @@ func (s) TestHandleListenerUpdate_NoXDSCreds(t *testing.T) {
 	}
 
 	// Push a good LDS response with security config, and wait for Serve() to be
-	// invoked on the underlying grpc.Server. Also make sure that certificate
+	// invoked on the underlying grpcforunconflict.Server. Also make sure that certificate
 	// providers are not created.
 	fcm, err := xdsresource.NewFilterChainManager(&v3listenerpb.Listener{
 		FilterChains: []*v3listenerpb.FilterChain{
@@ -805,7 +805,7 @@ func (s) TestHandleListenerUpdate_NoXDSCreds(t *testing.T) {
 		},
 	}, nil)
 	if _, err := fs.serveCh.Receive(ctx); err != nil {
-		t.Fatalf("error when waiting for Serve() to be invoked on the grpc.Server")
+		t.Fatalf("error when waiting for Serve() to be invoked on the grpcforunconflict.Server")
 	}
 
 	// Make sure the security configuration is not acted upon.
@@ -826,7 +826,7 @@ func (s) TestHandleListenerUpdate_ErrorUpdate(t *testing.T) {
 		t.Fatalf("failed to create xds server credentials: %v", err)
 	}
 
-	server := NewGRPCServer(grpc.Creds(xdsCreds))
+	server := NewGRPCServer(grpcforunconflict.Creds(xdsCreds))
 	defer server.Stop()
 
 	lis, err := testutils.LocalTCPListener()

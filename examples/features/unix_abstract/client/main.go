@@ -52,7 +52,7 @@ func callUnaryEcho(c ecpb.EchoClient, message string) {
 	fmt.Println(r.Message)
 }
 
-func makeRPCs(cc *grpc.ClientConn, n int) {
+func makeRPCs(cc *grpcforunconflict.ClientConn, n int) {
 	hwc := ecpb.NewEchoClient(cc)
 	for i := 0; i < n; i++ {
 		callUnaryEcho(hwc, "this is examples/unix_abstract")
@@ -62,9 +62,9 @@ func makeRPCs(cc *grpc.ClientConn, n int) {
 func main() {
 	flag.Parse()
 	sockAddr := fmt.Sprintf("unix-abstract:%v", *addr)
-	cc, err := grpc.Dial(sockAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(sockAddr, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatalf("grpc.Dial(%q) failed: %v", sockAddr, err)
+		log.Fatalf("grpcforunconflict.Dial(%q) failed: %v", sockAddr, err)
 	}
 	defer cc.Close()
 

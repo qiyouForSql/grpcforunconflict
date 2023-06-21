@@ -26,16 +26,15 @@ import (
 	"io"
 	"net"
 
+	grpcforunconflict "github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/credentials"
 	core "github.com/qiyouForSql/grpcforunconflict/credentials/alts/internal"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/alts/internal/authinfo"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/alts/internal/conn"
-	altsgrpc "github.com/qiyouForSql/grpcforunconflict/credentials/alts/internal/proto/grpc_gcp"
 	altspb "github.com/qiyouForSql/grpcforunconflict/credentials/alts/internal/proto/grpc_gcp"
 	"github.com/qiyouForSql/grpcforunconflict/internal/envconfig"
 	"golang.org/x/sync/semaphore"
-	grpc "google.golang.org/grpc"
 )
 
 const (
@@ -113,11 +112,11 @@ func DefaultServerHandshakerOptions() *ServerHandshakerOptions {
 // server.
 type altsHandshaker struct {
 	// RPC stream used to access the ALTS Handshaker service.
-	stream altsgrpc.HandshakerService_DoHandshakeClient
+	stream altsgrpcforunconflict.HandshakerService_DoHandshakeClient
 	// the connection to the peer.
 	conn net.Conn
 	// a virtual connection to the ALTS handshaker service.
-	clientConn *grpc.ClientConn
+	clientConn *grpcforunconflict.ClientConn
 	// client handshake options.
 	clientOpts *ClientHandshakerOptions
 	// server handshake options.
@@ -129,7 +128,7 @@ type altsHandshaker struct {
 // NewClientHandshaker creates a core.Handshaker that performs a client-side
 // ALTS handshake by acting as a proxy between the peer and the ALTS handshaker
 // service in the metadata server.
-func NewClientHandshaker(ctx context.Context, conn *grpc.ClientConn, c net.Conn, opts *ClientHandshakerOptions) (core.Handshaker, error) {
+func NewClientHandshaker(ctx context.Context, conn *grpcforunconflict.ClientConn, c net.Conn, opts *ClientHandshakerOptions) (core.Handshaker, error) {
 	return &altsHandshaker{
 		stream:     nil,
 		conn:       c,
@@ -142,7 +141,7 @@ func NewClientHandshaker(ctx context.Context, conn *grpc.ClientConn, c net.Conn,
 // NewServerHandshaker creates a core.Handshaker that performs a server-side
 // ALTS handshake by acting as a proxy between the peer and the ALTS handshaker
 // service in the metadata server.
-func NewServerHandshaker(ctx context.Context, conn *grpc.ClientConn, c net.Conn, opts *ServerHandshakerOptions) (core.Handshaker, error) {
+func NewServerHandshaker(ctx context.Context, conn *grpcforunconflict.ClientConn, c net.Conn, opts *ServerHandshakerOptions) (core.Handshaker, error) {
 	return &altsHandshaker{
 		stream:     nil,
 		conn:       c,
@@ -167,7 +166,7 @@ func (h *altsHandshaker) ClientHandshake(ctx context.Context) (net.Conn, credent
 	// TODO(matthewstevenson88): Change unit tests to use public APIs so
 	// that h.stream can unconditionally be set based on h.clientConn.
 	if h.stream == nil {
-		stream, err := altsgrpc.NewHandshakerServiceClient(h.clientConn).DoHandshake(ctx)
+		stream, err := altsgrpcforunconflict.NewHandshakerServiceClient(h.clientConn).DoHandshake(ctx)
 		if err != nil {
 			return nil, nil, fmt.Errorf("failed to establish stream to ALTS handshaker service: %v", err)
 		}
@@ -220,7 +219,7 @@ func (h *altsHandshaker) ServerHandshake(ctx context.Context) (net.Conn, credent
 	// TODO(matthewstevenson88): Change unit tests to use public APIs so
 	// that h.stream can unconditionally be set based on h.clientConn.
 	if h.stream == nil {
-		stream, err := altsgrpc.NewHandshakerServiceClient(h.clientConn).DoHandshake(ctx)
+		stream, err := altsgrpcforunconflict.NewHandshakerServiceClient(h.clientConn).DoHandshake(ctx)
 		if err != nil {
 			return nil, nil, fmt.Errorf("failed to establish stream to ALTS handshaker service: %v", err)
 		}

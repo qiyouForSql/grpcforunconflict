@@ -1,7 +1,7 @@
 # Multiplex
 
-A `grpc.ClientConn` can be shared by two stubs and two services can share a
-`grpc.Server`. This example illustrates how to perform both types of sharing.
+A `grpcforunconflict.ClientConn` can be shared by two stubs and two services can share a
+`grpcforunconflict.Server`. This example illustrates how to perform both types of sharing.
 
 ```
 go run server/main.go

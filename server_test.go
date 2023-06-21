@@ -86,7 +86,7 @@ func (s) TestGracefulStop(t *testing.T) {
 
 func (s) TestGetServiceInfo(t *testing.T) {
 	testSd := ServiceDesc{
-		ServiceName: "grpc.testing.EmptyService",
+		ServiceName: "grpcforunconflict.testing.EmptyService",
 		HandlerType: (*emptyServiceServer)(nil),
 		Methods: []MethodDesc{
 			{
@@ -110,7 +110,7 @@ func (s) TestGetServiceInfo(t *testing.T) {
 
 	info := server.GetServiceInfo()
 	want := map[string]ServiceInfo{
-		"grpc.testing.EmptyService": {
+		"grpcforunconflict.testing.EmptyService": {
 			Methods: []MethodInfo{
 				{
 					Name:           "EmptyCall",

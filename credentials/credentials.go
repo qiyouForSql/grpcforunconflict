@@ -163,7 +163,7 @@ type TransportCredentials interface {
 	// - as SNI in the client's handshake to support virtual hosting
 	// - as the value for `:authority` header at stream creation time
 	//
-	// Deprecated: use grpc.WithAuthority instead. Will be supported
+	// Deprecated: usegrpcforunconflict.WithAuthority instead. Will be supported
 	// throughout 1.x.
 	OverrideServerName(string) error
 }

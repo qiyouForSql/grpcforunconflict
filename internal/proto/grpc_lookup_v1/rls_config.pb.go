@@ -794,31 +794,31 @@ func file_grpc_lookup_v1_rls_config_proto_rawDescGZIP() []byte {
 
 var file_grpc_lookup_v1_rls_config_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_grpc_lookup_v1_rls_config_proto_goTypes = []interface{}{
-	(*NameMatcher)(nil),                 // 0: grpc.lookup.v1.NameMatcher
-	(*GrpcKeyBuilder)(nil),              // 1: grpc.lookup.v1.GrpcKeyBuilder
-	(*HttpKeyBuilder)(nil),              // 2: grpc.lookup.v1.HttpKeyBuilder
-	(*RouteLookupConfig)(nil),           // 3: grpc.lookup.v1.RouteLookupConfig
-	(*RouteLookupClusterSpecifier)(nil), // 4: grpc.lookup.v1.RouteLookupClusterSpecifier
-	(*GrpcKeyBuilder_Name)(nil),         // 5: grpc.lookup.v1.GrpcKeyBuilder.Name
-	(*GrpcKeyBuilder_ExtraKeys)(nil),    // 6: grpc.lookup.v1.GrpcKeyBuilder.ExtraKeys
-	nil,                                 // 7: grpc.lookup.v1.GrpcKeyBuilder.ConstantKeysEntry
-	nil,                                 // 8: grpc.lookup.v1.HttpKeyBuilder.ConstantKeysEntry
+	(*NameMatcher)(nil),                 // 0:grpcforunconflict.lookup.v1.NameMatcher
+	(*GrpcKeyBuilder)(nil),              // 1:grpcforunconflict.lookup.v1.GrpcKeyBuilder
+	(*HttpKeyBuilder)(nil),              // 2:grpcforunconflict.lookup.v1.HttpKeyBuilder
+	(*RouteLookupConfig)(nil),           // 3:grpcforunconflict.lookup.v1.RouteLookupConfig
+	(*RouteLookupClusterSpecifier)(nil), // 4:grpcforunconflict.lookup.v1.RouteLookupClusterSpecifier
+	(*GrpcKeyBuilder_Name)(nil),         // 5:grpcforunconflict.lookup.v1.GrpcKeyBuilder.Name
+	(*GrpcKeyBuilder_ExtraKeys)(nil),    // 6:grpcforunconflict.lookup.v1.GrpcKeyBuilder.ExtraKeys
+	nil,                                 // 7:grpcforunconflict.lookup.v1.GrpcKeyBuilder.ConstantKeysEntry
+	nil,                                 // 8:grpcforunconflict.lookup.v1.HttpKeyBuilder.ConstantKeysEntry
 	(*durationpb.Duration)(nil),         // 9: google.protobuf.Duration
 }
 var file_grpc_lookup_v1_rls_config_proto_depIdxs = []int32{
-	5,  // 0: grpc.lookup.v1.GrpcKeyBuilder.names:type_name -> grpc.lookup.v1.GrpcKeyBuilder.Name
-	6,  // 1: grpc.lookup.v1.GrpcKeyBuilder.extra_keys:type_name -> grpc.lookup.v1.GrpcKeyBuilder.ExtraKeys
-	0,  // 2: grpc.lookup.v1.GrpcKeyBuilder.headers:type_name -> grpc.lookup.v1.NameMatcher
-	7,  // 3: grpc.lookup.v1.GrpcKeyBuilder.constant_keys:type_name -> grpc.lookup.v1.GrpcKeyBuilder.ConstantKeysEntry
-	0,  // 4: grpc.lookup.v1.HttpKeyBuilder.query_parameters:type_name -> grpc.lookup.v1.NameMatcher
-	0,  // 5: grpc.lookup.v1.HttpKeyBuilder.headers:type_name -> grpc.lookup.v1.NameMatcher
-	8,  // 6: grpc.lookup.v1.HttpKeyBuilder.constant_keys:type_name -> grpc.lookup.v1.HttpKeyBuilder.ConstantKeysEntry
-	2,  // 7: grpc.lookup.v1.RouteLookupConfig.http_keybuilders:type_name -> grpc.lookup.v1.HttpKeyBuilder
-	1,  // 8: grpc.lookup.v1.RouteLookupConfig.grpc_keybuilders:type_name -> grpc.lookup.v1.GrpcKeyBuilder
-	9,  // 9: grpc.lookup.v1.RouteLookupConfig.lookup_service_timeout:type_name -> google.protobuf.Duration
-	9,  // 10: grpc.lookup.v1.RouteLookupConfig.max_age:type_name -> google.protobuf.Duration
-	9,  // 11: grpc.lookup.v1.RouteLookupConfig.stale_age:type_name -> google.protobuf.Duration
-	3,  // 12: grpc.lookup.v1.RouteLookupClusterSpecifier.route_lookup_config:type_name -> grpc.lookup.v1.RouteLookupConfig
+	5,  // 0:grpcforunconflict.lookup.v1.GrpcKeyBuilder.names:type_name ->grpcforunconflict.lookup.v1.GrpcKeyBuilder.Name
+	6,  // 1:grpcforunconflict.lookup.v1.GrpcKeyBuilder.extra_keys:type_name ->grpcforunconflict.lookup.v1.GrpcKeyBuilder.ExtraKeys
+	0,  // 2:grpcforunconflict.lookup.v1.GrpcKeyBuilder.headers:type_name ->grpcforunconflict.lookup.v1.NameMatcher
+	7,  // 3:grpcforunconflict.lookup.v1.GrpcKeyBuilder.constant_keys:type_name ->grpcforunconflict.lookup.v1.GrpcKeyBuilder.ConstantKeysEntry
+	0,  // 4:grpcforunconflict.lookup.v1.HttpKeyBuilder.query_parameters:type_name ->grpcforunconflict.lookup.v1.NameMatcher
+	0,  // 5:grpcforunconflict.lookup.v1.HttpKeyBuilder.headers:type_name ->grpcforunconflict.lookup.v1.NameMatcher
+	8,  // 6:grpcforunconflict.lookup.v1.HttpKeyBuilder.constant_keys:type_name ->grpcforunconflict.lookup.v1.HttpKeyBuilder.ConstantKeysEntry
+	2,  // 7:grpcforunconflict.lookup.v1.RouteLookupConfig.http_keybuilders:type_name ->grpcforunconflict.lookup.v1.HttpKeyBuilder
+	1,  // 8:grpcforunconflict.lookup.v1.RouteLookupConfig.grpc_keybuilders:type_name ->grpcforunconflict.lookup.v1.GrpcKeyBuilder
+	9,  // 9:grpcforunconflict.lookup.v1.RouteLookupConfig.lookup_service_timeout:type_name -> google.protobuf.Duration
+	9,  // 10:grpcforunconflict.lookup.v1.RouteLookupConfig.max_age:type_name -> google.protobuf.Duration
+	9,  // 11:grpcforunconflict.lookup.v1.RouteLookupConfig.stale_age:type_name -> google.protobuf.Duration
+	3,  // 12:grpcforunconflict.lookup.v1.RouteLookupClusterSpecifier.route_lookup_config:type_name ->grpcforunconflict.lookup.v1.RouteLookupConfig
 	13, // [13:13] is the sub-list for method output_type
 	13, // [13:13] is the sub-list for method input_type
 	13, // [13:13] is the sub-list for extension type_name

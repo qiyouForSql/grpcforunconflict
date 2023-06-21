@@ -24,11 +24,10 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -49,7 +48,7 @@ const (
 // RPC call.
 func (s) TestUnaryClientInterceptor_ContextValuePropagation(t *testing.T) {
 	errCh := testutils.NewChannel()
-	unaryInt := func(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+	unaryInt := func(ctx context.Context, method string, req, reply interface{}, cc *grpcforunconflict.ClientConn, invokergrpcforunconflict.UnaryInvoker, opts ...grpcforunconflict.CallOption) error {
 		if got, ok := ctx.Value(parentCtxkey{}).(string); !ok || got != parentCtxVal {
 			errCh.Send(fmt.Errorf("unaryInt got %q in context.Val, want %q", got, parentCtxVal))
 		}
@@ -62,7 +61,7 @@ func (s) TestUnaryClientInterceptor_ContextValuePropagation(t *testing.T) {
 	ss := &stubserver.StubServer{
 		EmptyCallF: func(context.Context, *testpb.Empty) (*testpb.Empty, error) { return &testpb.Empty{}, nil },
 	}
-	if err := ss.Start(nil, grpc.WithUnaryInterceptor(unaryInt)); err != nil {
+	if err := ss.Start(nil, grpcforunconflict.WithUnaryInterceptor(unaryInt)); err != nil {
 		t.Fatalf("Failed to start stub server: %v", err)
 	}
 	defer ss.Stop()
@@ -86,7 +85,7 @@ func (s) TestUnaryClientInterceptor_ContextValuePropagation(t *testing.T) {
 // as well as the ones specified by prior interceptors in the chain.
 func (s) TestChainUnaryClientInterceptor_ContextValuePropagation(t *testing.T) {
 	errCh := testutils.NewChannel()
-	firstInt := func(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+	firstInt := func(ctx context.Context, method string, req, reply interface{}, cc *grpcforunconflict.ClientConn, invokergrpcforunconflict.UnaryInvoker, opts ...grpcforunconflict.CallOption) error {
 		if got, ok := ctx.Value(parentCtxkey{}).(string); !ok || got != parentCtxVal {
 			errCh.SendContext(ctx, fmt.Errorf("first interceptor got %q in context.Val, want %q", got, parentCtxVal))
 		}
@@ -100,7 +99,7 @@ func (s) TestChainUnaryClientInterceptor_ContextValuePropagation(t *testing.T) {
 		return invoker(firstCtx, method, req, reply, cc, opts...)
 	}
 
-	secondInt := func(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+	secondInt := func(ctx context.Context, method string, req, reply interface{}, cc *grpcforunconflict.ClientConn, invokergrpcforunconflict.UnaryInvoker, opts ...grpcforunconflict.CallOption) error {
 		if got, ok := ctx.Value(parentCtxkey{}).(string); !ok || got != parentCtxVal {
 			errCh.SendContext(ctx, fmt.Errorf("second interceptor got %q in context.Val, want %q", got, parentCtxVal))
 		}
@@ -114,7 +113,7 @@ func (s) TestChainUnaryClientInterceptor_ContextValuePropagation(t *testing.T) {
 		return invoker(secondCtx, method, req, reply, cc, opts...)
 	}
 
-	lastInt := func(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+	lastInt := func(ctx context.Context, method string, req, reply interface{}, cc *grpcforunconflict.ClientConn, invokergrpcforunconflict.UnaryInvoker, opts ...grpcforunconflict.CallOption) error {
 		if got, ok := ctx.Value(parentCtxkey{}).(string); !ok || got != parentCtxVal {
 			errCh.SendContext(ctx, fmt.Errorf("last interceptor got %q in context.Val, want %q", got, parentCtxVal))
 		}
@@ -133,7 +132,7 @@ func (s) TestChainUnaryClientInterceptor_ContextValuePropagation(t *testing.T) {
 	ss := &stubserver.StubServer{
 		EmptyCallF: func(context.Context, *testpb.Empty) (*testpb.Empty, error) { return &testpb.Empty{}, nil },
 	}
-	if err := ss.Start(nil, grpc.WithChainUnaryInterceptor(firstInt, secondInt, lastInt)); err != nil {
+	if err := ss.Start(nil, grpcforunconflict.WithChainUnaryInterceptor(firstInt, secondInt, lastInt)); err != nil {
 		t.Fatalf("Failed to start stub server: %v", err)
 	}
 	defer ss.Stop()
@@ -158,7 +157,7 @@ func (s) TestChainUnaryClientInterceptor_ContextValuePropagation(t *testing.T) {
 // specified by interceptors in the chain.
 func (s) TestChainOnBaseUnaryClientInterceptor_ContextValuePropagation(t *testing.T) {
 	errCh := testutils.NewChannel()
-	baseInt := func(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+	baseInt := func(ctx context.Context, method string, req, reply interface{}, cc *grpcforunconflict.ClientConn, invokergrpcforunconflict.UnaryInvoker, opts ...grpcforunconflict.CallOption) error {
 		if got, ok := ctx.Value(parentCtxkey{}).(string); !ok || got != parentCtxVal {
 			errCh.SendContext(ctx, fmt.Errorf("base interceptor got %q in context.Val, want %q", got, parentCtxVal))
 		}
@@ -169,7 +168,7 @@ func (s) TestChainOnBaseUnaryClientInterceptor_ContextValuePropagation(t *testin
 		return invoker(baseCtx, method, req, reply, cc, opts...)
 	}
 
-	chainInt := func(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+	chainInt := func(ctx context.Context, method string, req, reply interface{}, cc *grpcforunconflict.ClientConn, invokergrpcforunconflict.UnaryInvoker, opts ...grpcforunconflict.CallOption) error {
 		if got, ok := ctx.Value(parentCtxkey{}).(string); !ok || got != parentCtxVal {
 			errCh.SendContext(ctx, fmt.Errorf("chain interceptor got %q in context.Val, want %q", got, parentCtxVal))
 		}
@@ -185,7 +184,7 @@ func (s) TestChainOnBaseUnaryClientInterceptor_ContextValuePropagation(t *testin
 	ss := &stubserver.StubServer{
 		EmptyCallF: func(context.Context, *testpb.Empty) (*testpb.Empty, error) { return &testpb.Empty{}, nil },
 	}
-	if err := ss.Start(nil, grpc.WithUnaryInterceptor(baseInt), grpc.WithChainUnaryInterceptor(chainInt)); err != nil {
+	if err := ss.Start(nil, grpcforunconflict.WithUnaryInterceptor(baseInt), grpcforunconflict.WithChainUnaryInterceptor(chainInt)); err != nil {
 		t.Fatalf("Failed to start stub server: %v", err)
 	}
 	defer ss.Stop()
@@ -209,7 +208,7 @@ func (s) TestChainOnBaseUnaryClientInterceptor_ContextValuePropagation(t *testin
 // call as well as the ones specified by the prior interceptors in the chain.
 func (s) TestChainStreamClientInterceptor_ContextValuePropagation(t *testing.T) {
 	errCh := testutils.NewChannel()
-	firstInt := func(ctx context.Context, desc *grpc.StreamDesc, cc *grpc.ClientConn, method string, streamer grpc.Streamer, opts ...grpc.CallOption) (grpc.ClientStream, error) {
+	firstInt := func(ctx context.Context, desc *grpcforunconflict.StreamDesc, cc *grpcforunconflict.ClientConn, method string, streamergrpcforunconflict.Streamer, opts ...grpcforunconflict.CallOption) (grpcforunconflict.ClientStream, error) {
 		if got, ok := ctx.Value(parentCtxkey{}).(string); !ok || got != parentCtxVal {
 			errCh.SendContext(ctx, fmt.Errorf("first interceptor got %q in context.Val, want %q", got, parentCtxVal))
 		}
@@ -223,7 +222,7 @@ func (s) TestChainStreamClientInterceptor_ContextValuePropagation(t *testing.T) 
 		return streamer(firstCtx, desc, cc, method, opts...)
 	}
 
-	secondInt := func(ctx context.Context, desc *grpc.StreamDesc, cc *grpc.ClientConn, method string, streamer grpc.Streamer, opts ...grpc.CallOption) (grpc.ClientStream, error) {
+	secondInt := func(ctx context.Context, desc *grpcforunconflict.StreamDesc, cc *grpcforunconflict.ClientConn, method string, streamergrpcforunconflict.Streamer, opts ...grpcforunconflict.CallOption) (grpcforunconflict.ClientStream, error) {
 		if got, ok := ctx.Value(parentCtxkey{}).(string); !ok || got != parentCtxVal {
 			errCh.SendContext(ctx, fmt.Errorf("second interceptor got %q in context.Val, want %q", got, parentCtxVal))
 		}
@@ -237,7 +236,7 @@ func (s) TestChainStreamClientInterceptor_ContextValuePropagation(t *testing.T) 
 		return streamer(secondCtx, desc, cc, method, opts...)
 	}
 
-	lastInt := func(ctx context.Context, desc *grpc.StreamDesc, cc *grpc.ClientConn, method string, streamer grpc.Streamer, opts ...grpc.CallOption) (grpc.ClientStream, error) {
+	lastInt := func(ctx context.Context, desc *grpcforunconflict.StreamDesc, cc *grpcforunconflict.ClientConn, method string, streamergrpcforunconflict.Streamer, opts ...grpcforunconflict.CallOption) (grpcforunconflict.ClientStream, error) {
 		if got, ok := ctx.Value(parentCtxkey{}).(string); !ok || got != parentCtxVal {
 			errCh.SendContext(ctx, fmt.Errorf("last interceptor got %q in context.Val, want %q", got, parentCtxVal))
 		}
@@ -254,14 +253,14 @@ func (s) TestChainStreamClientInterceptor_ContextValuePropagation(t *testing.T) 
 	// Start a stub server and use the above chain of interceptors while creating
 	// a ClientConn to it.
 	ss := &stubserver.StubServer{
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			if _, err := stream.Recv(); err != nil {
 				return err
 			}
 			return stream.Send(&testpb.StreamingOutputCallResponse{})
 		},
 	}
-	if err := ss.Start(nil, grpc.WithChainStreamInterceptor(firstInt, secondInt, lastInt)); err != nil {
+	if err := ss.Start(nil, grpcforunconflict.WithChainStreamInterceptor(firstInt, secondInt, lastInt)); err != nil {
 		t.Fatalf("Failed to start stub server: %v", err)
 	}
 	defer ss.Stop()

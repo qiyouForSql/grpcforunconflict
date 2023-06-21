@@ -16,7 +16,7 @@
  *
  */
 
-// Package glogger defines glog-based logging for grpc.
+// Package glogger defines glog-based logging forgrpcforunconflict.
 // Importing this package will install glog as the logger used by grpclog.
 package glogger
 

@@ -24,11 +24,11 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 )
 
 // TestInvoke verifies a straightforward invocation of ClientConn.Invoke().
@@ -43,8 +43,8 @@ func (s) TestInvoke(t *testing.T) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	if err := ss.CC.Invoke(ctx, "/grpc.testing.TestService/EmptyCall", &testpb.Empty{}, &testpb.Empty{}); err != nil {
-		t.Fatalf("grpc.Invoke(\"/grpc.testing.TestService/EmptyCall\") failed: %v", err)
+	if err := ss.CC.Invoke(ctx, "/grpcforunconflict.testing.TestService/EmptyCall", &testpb.Empty{}, &testpb.Empty{}); err != nil {
+		t.Fatalf("grpcforunconflict.Invoke(\"/grpcforunconflict.testing.TestService/EmptyCall\") failed: %v", err)
 	}
 }
 
@@ -64,16 +64,16 @@ func (s) TestInvokeLargeErr(t *testing.T) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	err := ss.CC.Invoke(ctx, "/grpc.testing.TestService/EmptyCall", &testpb.Empty{}, &testpb.Empty{})
+	err := ss.CC.Invoke(ctx, "/grpcforunconflict.testing.TestService/EmptyCall", &testpb.Empty{}, &testpb.Empty{})
 	if err == nil {
-		t.Fatal("grpc.Invoke(\"/grpc.testing.TestService/EmptyCall\") succeeded when expected to fail")
+		t.Fatal("grpcforunconflict.Invoke(\"/grpcforunconflict.testing.TestService/EmptyCall\") succeeded when expected to fail")
 	}
 	st, ok := status.FromError(err)
 	if !ok {
-		t.Fatal("grpc.Invoke(\"/grpc.testing.TestService/EmptyCall\") received non-status error")
+		t.Fatal("grpcforunconflict.Invoke(\"/grpcforunconflict.testing.TestService/EmptyCall\") received non-status error")
 	}
 	if status.Code(err) != codes.Internal || st.Message() != largeErrorStr {
-		t.Fatalf("grpc.Invoke(\"/grpc.testing.TestService/EmptyCall\") failed with error: %v, want an error of code %d and desc size %d", err, codes.Internal, len(largeErrorStr))
+		t.Fatalf("grpcforunconflict.Invoke(\"/grpcforunconflict.testing.TestService/EmptyCall\") failed with error: %v, want an error of code %d and desc size %d", err, codes.Internal, len(largeErrorStr))
 	}
 }
 
@@ -93,16 +93,16 @@ func (s) TestInvokeErrorSpecialChars(t *testing.T) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	err := ss.CC.Invoke(ctx, "/grpc.testing.TestService/EmptyCall", &testpb.Empty{}, &testpb.Empty{})
+	err := ss.CC.Invoke(ctx, "/grpcforunconflict.testing.TestService/EmptyCall", &testpb.Empty{}, &testpb.Empty{})
 	if err == nil {
-		t.Fatal("grpc.Invoke(\"/grpc.testing.TestService/EmptyCall\") succeeded when expected to fail")
+		t.Fatal("grpcforunconflict.Invoke(\"/grpcforunconflict.testing.TestService/EmptyCall\") succeeded when expected to fail")
 	}
 	st, ok := status.FromError(err)
 	if !ok {
-		t.Fatal("grpc.Invoke(\"/grpc.testing.TestService/EmptyCall\") received non-status error")
+		t.Fatal("grpcforunconflict.Invoke(\"/grpcforunconflict.testing.TestService/EmptyCall\") received non-status error")
 	}
 	if status.Code(err) != codes.Internal || st.Message() != weirdError {
-		t.Fatalf("grpc.Invoke(\"/grpc.testing.TestService/EmptyCall\") failed with error: %v, want %v", err, weirdError)
+		t.Fatalf("grpcforunconflict.Invoke(\"/grpcforunconflict.testing.TestService/EmptyCall\") failed with error: %v, want %v", err, weirdError)
 	}
 }
 
@@ -124,7 +124,7 @@ func (s) TestInvokeCancel(t *testing.T) {
 	for i := 0; i < 100; i++ {
 		ctx, cancel := context.WithCancel(context.Background())
 		cancel()
-		ss.CC.Invoke(ctx, "/grpc.testing.TestService/EmptyCall", &testpb.Empty{}, &testpb.Empty{})
+		ss.CC.Invoke(ctx, "/grpcforunconflict.testing.TestService/EmptyCall", &testpb.Empty{}, &testpb.Empty{})
 	}
 	if cancelled != 0 {
 		t.Fatalf("server received %d of 100 cancelled requests", cancelled)
@@ -146,7 +146,7 @@ func (s) TestInvokeCancelClosedNonFailFast(t *testing.T) {
 	ss.CC.Close()
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
-	if err := ss.CC.Invoke(ctx, "/grpc.testing.TestService/EmptyCall", &testpb.Empty{}, &testpb.Empty{}, grpc.WaitForReady(true)); err == nil {
+	if err := ss.CC.Invoke(ctx, "/grpcforunconflict.testing.TestService/EmptyCall", &testpb.Empty{}, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); err == nil {
 		t.Fatal("ClientConn.Invoke() on closed connection succeeded when expected to fail")
 	}
 }

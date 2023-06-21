@@ -25,6 +25,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal"
@@ -35,13 +36,11 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/xds/e2e"
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
 	v3clusterpb "github.com/envoyproxy/go-control-plane/envoy/config/cluster/v3"
 	v3endpointpb "github.com/envoyproxy/go-control-plane/envoy/config/endpoint/v3"
 	v3listenerpb "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
 	v3routepb "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -133,14 +132,14 @@ func (s) TestClientSideFederation(t *testing.T) {
 	}
 
 	// Create a ClientConn and make a successful RPC.
-	cc, err := grpc.Dial(fmt.Sprintf("xds:///%s", serviceName), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(resolver))
+	cc, err := grpcforunconflict.Dial(fmt.Sprintf("xds:///%s", serviceName), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(resolver))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
 	defer cc.Close()
 
-	client := testgrpc.NewTestServiceClient(cc)
-	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); err != nil {
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
+	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); err != nil {
 		t.Fatalf("rpc EmptyCall() failed: %v", err)
 	}
 }
@@ -182,14 +181,14 @@ func (s) TestFederation_UnknownAuthorityInDialTarget(t *testing.T) {
 
 	// Create a ClientConn and make a successful RPC.
 	target := fmt.Sprintf("xds:///%s", serviceName)
-	cc, err := grpc.Dial(target, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(resolver))
+	cc, err := grpcforunconflict.Dial(target, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(resolver))
 	if err != nil {
 		t.Fatalf("Dialing target %q: %v", target, err)
 	}
 	defer cc.Close()
 	t.Log("Created ClientConn to test service")
 
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	if _, err := client.EmptyCall(ctx, &testpb.Empty{}); err != nil {
 		t.Fatalf("EmptyCall() RPC: %v", err)
 	}
@@ -198,9 +197,9 @@ func (s) TestFederation_UnknownAuthorityInDialTarget(t *testing.T) {
 	target = fmt.Sprintf("xds://unknown-authority/%s", serviceName)
 	t.Logf("Dialing target %q with unknown authority which is expected to fail", target)
 	const wantErr = `authority "unknown-authority" is not found in the bootstrap file`
-	_, err = grpc.Dial(target, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(resolver))
+	_, err = grpcforunconflict.Dial(target, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(resolver))
 	if err == nil || !strings.Contains(err.Error(), wantErr) {
-		t.Fatalf("grpc.Dial(%q) returned %v, want: %s", target, err, wantErr)
+		t.Fatalf("grpcforunconflict.Dial(%q) returned %v, want: %s", target, err, wantErr)
 	}
 }
 
@@ -255,14 +254,14 @@ func (s) TestFederation_UnknownAuthorityInReceivedResponse(t *testing.T) {
 	}
 
 	target := fmt.Sprintf("xds:///%s", serviceName)
-	cc, err := grpc.Dial(target, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(resolver))
+	cc, err := grpcforunconflict.Dial(target, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(resolver))
 	if err != nil {
 		t.Fatalf("Dialing target %q: %v", target, err)
 	}
 	defer cc.Close()
 	t.Log("Created ClientConn to test service")
 
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	_, err = client.EmptyCall(ctx, &testpb.Empty{})
 	if err == nil {
 		t.Fatal("EmptyCall RPC succeeded for target with unknown authority when expected to fail")

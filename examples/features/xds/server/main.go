@@ -34,7 +34,6 @@ import (
 	xdscreds "github.com/qiyouForSql/grpcforunconflict/credentials/xds"
 	pb "github.com/qiyouForSql/grpcforunconflict/examples/helloworld/helloworld"
 	"github.com/qiyouForSql/grpcforunconflict/health"
-	healthgrpc "github.com/qiyouForSql/grpcforunconflict/health/grpc_health_v1"
 	healthpb "github.com/qiyouForSql/grpcforunconflict/health/grpc_health_v1"
 	"github.com/qiyouForSql/grpcforunconflict/xds"
 )
@@ -84,7 +83,7 @@ func main() {
 		}
 	}
 
-	greeterServer := xds.NewGRPCServer(grpc.Creds(creds))
+	greeterServer := xds.NewGRPCServer(grpcforunconflict.Creds(creds))
 	pb.RegisterGreeterServer(greeterServer, &server{serverName: determineHostname()})
 
 	healthPort := fmt.Sprintf(":%d", *port+1)
@@ -92,10 +91,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("net.Listen(tcp4, %q) failed: %v", healthPort, err)
 	}
-	grpcServer := grpc.NewServer()
+	grpcServer := grpcforunconflict.NewServer()
 	healthServer := health.NewServer()
 	healthServer.SetServingStatus("", healthpb.HealthCheckResponse_SERVING)
-	healthgrpc.RegisterHealthServer(grpcServer, healthServer)
+	healthgrpcforunconflict.RegisterHealthServer(grpcServer, healthServer)
 
 	log.Printf("Serving GreeterService on %s and HealthService on %s", greeterLis.Addr().String(), healthLis.Addr().String())
 	go func() {

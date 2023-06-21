@@ -58,7 +58,7 @@ func callUnaryEcho(client ecpb.EchoClient, message string) {
 func main() {
 	flag.Parse()
 	// Set up a connection to the server.
-	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpcforunconflict.Dial(*addr, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}

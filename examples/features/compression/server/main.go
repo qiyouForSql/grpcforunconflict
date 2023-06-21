@@ -50,7 +50,7 @@ func main() {
 	}
 	fmt.Printf("server listening at %v\n", lis.Addr())
 
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 	pb.RegisterEchoServer(s, &server{})
 	s.Serve(lis)
 }

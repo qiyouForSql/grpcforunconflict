@@ -29,15 +29,14 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	_ "github.com/qiyouForSql/grpcforunconflict/balancer/grpclb"
 	"github.com/qiyouForSql/grpcforunconflict/credentials"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/alts"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/google"
 	_ "github.com/qiyouForSql/grpcforunconflict/xds/googledirectpath"
 	"golang.org/x/sys/unix"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -54,7 +53,7 @@ var (
 	errorLog = log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
 )
 
-func doRPCAndGetPath(client testgrpc.TestServiceClient, timeout time.Duration) testpb.GrpclbRouteType {
+func doRPCAndGetPath(client testgrpcforunconflict.TestServiceClient, timeout time.Duration) testpb.GrpclbRouteType {
 	infoLog.Printf("doRPCAndGetPath timeout:%v\n", timeout)
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
@@ -94,25 +93,25 @@ func dialTCPUserTimeout(ctx context.Context, addr string) (net.Conn, error) {
 	return d.DialContext(ctx, "tcp", addr)
 }
 
-func createTestConn() *grpc.ClientConn {
-	opts := []grpc.DialOption{
-		grpc.WithContextDialer(dialTCPUserTimeout),
+func createTestConn() *grpcforunconflict.ClientConn {
+	opts := []grpcforunconflict.DialOption{
+		grpcforunconflict.WithContextDialer(dialTCPUserTimeout),
 	}
 	switch *customCredentialsType {
 	case "tls":
 		creds := credentials.NewClientTLSFromCert(nil, "")
-		opts = append(opts, grpc.WithTransportCredentials(creds))
+		opts = append(opts, grpcforunconflict.WithTransportCredentials(creds))
 	case "alts":
 		creds := alts.NewClientCreds(alts.DefaultClientOptions())
-		opts = append(opts, grpc.WithTransportCredentials(creds))
+		opts = append(opts, grpcforunconflict.WithTransportCredentials(creds))
 	case "google_default_credentials":
-		opts = append(opts, grpc.WithCredentialsBundle(google.NewDefaultCredentials()))
+		opts = append(opts, grpcforunconflict.WithCredentialsBundle(google.NewDefaultCredentials()))
 	case "compute_engine_channel_creds":
-		opts = append(opts, grpc.WithCredentialsBundle(google.NewComputeEngineCredentials()))
+		opts = append(opts, grpcforunconflict.WithCredentialsBundle(google.NewComputeEngineCredentials()))
 	default:
 		errorLog.Fatalf("Invalid --custom_credentials_type:%v", *customCredentialsType)
 	}
-	conn, err := grpc.Dial(*serverURI, opts...)
+	conn, err := grpcforunconflict.Dial(*serverURI, opts...)
 	if err != nil {
 		errorLog.Fatalf("Fail to dial: %v", err)
 	}
@@ -126,7 +125,7 @@ func runCmd(command string) {
 	}
 }
 
-func waitForFallbackAndDoRPCs(client testgrpc.TestServiceClient, fallbackDeadline time.Time) {
+func waitForFallbackAndDoRPCs(client testgrpcforunconflict.TestServiceClient, fallbackDeadline time.Time) {
 	fallbackRetryCount := 0
 	fellBack := false
 	for time.Now().Before(fallbackDeadline) {
@@ -158,14 +157,14 @@ func doFallbackBeforeStartup() {
 	fallbackDeadline := time.Now().Add(time.Duration(*fallbackDeadlineSeconds) * time.Second)
 	conn := createTestConn()
 	defer conn.Close()
-	client := testgrpc.NewTestServiceClient(conn)
+	client := testgrpcforunconflict.NewTestServiceClient(conn)
 	waitForFallbackAndDoRPCs(client, fallbackDeadline)
 }
 
 func doFallbackAfterStartup() {
 	conn := createTestConn()
 	defer conn.Close()
-	client := testgrpc.NewTestServiceClient(conn)
+	client := testgrpcforunconflict.NewTestServiceClient(conn)
 	if g := doRPCAndGetPath(client, 20*time.Second); g != testpb.GrpclbRouteType_GRPCLB_ROUTE_TYPE_BACKEND {
 		errorLog.Fatalf("Expected RPC to take grpclb route type BACKEND. Got: %v", g)
 	}

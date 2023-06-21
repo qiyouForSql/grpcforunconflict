@@ -34,16 +34,13 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/xds"
 	"github.com/qiyouForSql/grpcforunconflict/grpclog"
+	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
+	_ "github.com/qiyouForSql/grpcforunconflict/interop/xds" // to register Custom LB.
 	"github.com/qiyouForSql/grpcforunconflict/metadata"
 	"github.com/qiyouForSql/grpcforunconflict/peer"
 	"github.com/qiyouForSql/grpcforunconflict/reflection"
 	"github.com/qiyouForSql/grpcforunconflict/status"
 	_ "github.com/qiyouForSql/grpcforunconflict/xds"
-	"google.golang.org/grpc"
-
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
-	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
-	_ "github.com/qiyouForSql/grpcforunconflict/interop/xds" // to register Custom LB.
 )
 
 func init() {
@@ -201,7 +198,7 @@ var (
 )
 
 type statsService struct {
-	testgrpc.UnimplementedLoadBalancerStatsServiceServer
+	testgrpcforunconflict.UnimplementedLoadBalancerStatsServiceServer
 }
 
 func hasRPCSucceeded() bool {
@@ -273,7 +270,7 @@ func (s *statsService) GetClientAccumulatedStats(ctx context.Context, in *testpb
 }
 
 type configureService struct {
-	testgrpc.UnimplementedXdsUpdateClientConfigureServiceServer
+	testgrpcforunconflict.UnimplementedXdsUpdateClientConfigureServiceServer
 }
 
 func (s *configureService) Configure(ctx context.Context, in *testpb.ClientConfigureRequest) (*testpb.ClientConfigureResponse, error) {
@@ -374,10 +371,10 @@ func main() {
 	if err != nil {
 		logger.Fatalf("failed to listen: %v", err)
 	}
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 	defer s.Stop()
-	testgrpc.RegisterLoadBalancerStatsServiceServer(s, &statsService{})
-	testgrpc.RegisterXdsUpdateClientConfigureServiceServer(s, &configureService{})
+	testgrpcforunconflict.RegisterLoadBalancerStatsServiceServer(s, &statsService{})
+	testgrpcforunconflict.RegisterXdsUpdateClientConfigureServiceServer(s, &configureService{})
 	reflection.Register(s)
 	cleanup, err := admin.Register(s)
 	if err != nil {
@@ -395,21 +392,21 @@ func main() {
 		}
 	}
 
-	clients := make([]testgrpc.TestServiceClient, *numChannels)
+	clients := make([]testgrpcforunconflict.TestServiceClient, *numChannels)
 	for i := 0; i < *numChannels; i++ {
-		conn, err := grpc.Dial(*server, grpc.WithTransportCredentials(creds))
+		conn, err := grpcforunconflict.Dial(*server, grpcforunconflict.WithTransportCredentials(creds))
 		if err != nil {
 			logger.Fatalf("Fail to dial: %v", err)
 		}
 		defer conn.Close()
-		clients[i] = testgrpc.NewTestServiceClient(conn)
+		clients[i] = testgrpcforunconflict.NewTestServiceClient(conn)
 	}
 	ticker := time.NewTicker(time.Second / time.Duration(*qps**numChannels))
 	defer ticker.Stop()
 	sendRPCs(clients, ticker)
 }
 
-func makeOneRPC(c testgrpc.TestServiceClient, cfg *rpcConfig) (*peer.Peer, *rpcInfo, error) {
+func makeOneRPC(c testgrpcforunconflict.TestServiceClient, cfg *rpcConfig) (*peer.Peer, *rpcInfo, error) {
 	timeout := *rpcTimeout
 	if cfg.timeout != 0 {
 		timeout = time.Duration(cfg.timeout) * time.Second
@@ -431,14 +428,14 @@ func makeOneRPC(c testgrpc.TestServiceClient, cfg *rpcConfig) (*peer.Peer, *rpcI
 	switch cfg.typ {
 	case unaryCall:
 		var resp *testpb.SimpleResponse
-		resp, err = c.UnaryCall(ctx, &testpb.SimpleRequest{FillServerId: true}, grpc.Peer(&p), grpc.Header(&header))
+		resp, err = c.UnaryCall(ctx, &testpb.SimpleRequest{FillServerId: true}, grpcforunconflict.Peer(&p), grpcforunconflict.Header(&header))
 		// For UnaryCall, also read hostname from response, in case the server
 		// isn't updated to send headers.
 		if resp != nil {
 			info.hostname = resp.Hostname
 		}
 	case emptyCall:
-		_, err = c.EmptyCall(ctx, &testpb.Empty{}, grpc.Peer(&p), grpc.Header(&header))
+		_, err = c.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Peer(&p), grpcforunconflict.Header(&header))
 	}
 	accStats.finishRPC(cfg.typ, err)
 	if err != nil {
@@ -452,7 +449,7 @@ func makeOneRPC(c testgrpc.TestServiceClient, cfg *rpcConfig) (*peer.Peer, *rpcI
 	return &p, &info, err
 }
 
-func sendRPCs(clients []testgrpc.TestServiceClient, ticker *time.Ticker) {
+func sendRPCs(clients []testgrpcforunconflict.TestServiceClient, ticker *time.Ticker) {
 	var i int
 	for range ticker.C {
 		// Get and increment request ID, and save a list of watchers that are

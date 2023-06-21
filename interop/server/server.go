@@ -29,6 +29,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/credentials"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/alts"
 	"github.com/qiyouForSql/grpcforunconflict/grpclog"
@@ -36,9 +37,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/interop"
 	"github.com/qiyouForSql/grpcforunconflict/orca"
 	"github.com/qiyouForSql/grpcforunconflict/testdata"
-	"google.golang.org/grpc"
-
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 var (
@@ -63,7 +61,7 @@ func main() {
 		logger.Fatalf("failed to listen: %v", err)
 	}
 	logger.Infof("interop server listening on %v", lis.Addr())
-	opts := []grpc.ServerOption{orca.CallMetricsServerOption(nil)}
+	opts := []grpcforunconflict.ServerOption{orca.CallMetricsServerOption(nil)}
 	if *useTLS {
 		if *certFile == "" {
 			*certFile = testdata.Path("server1.pem")
@@ -75,16 +73,16 @@ func main() {
 		if err != nil {
 			logger.Fatalf("Failed to generate credentials: %v", err)
 		}
-		opts = append(opts, grpc.Creds(creds))
+		opts = append(opts, grpcforunconflict.Creds(creds))
 	} else if *useALTS {
 		altsOpts := alts.DefaultServerOptions()
 		if *altsHSAddr != "" {
 			altsOpts.HandshakerServiceAddress = *altsHSAddr
 		}
 		altsTC := alts.NewServerCreds(altsOpts)
-		opts = append(opts, grpc.Creds(altsTC))
+		opts = append(opts, grpcforunconflict.Creds(altsTC))
 	}
-	server := grpc.NewServer(opts...)
+	server := grpcforunconflict.NewServer(opts...)
 	metricsRecorder := orca.NewServerMetricsRecorder()
 	sopts := orca.ServiceOptions{
 		MinReportingInterval:  time.Second,
@@ -92,6 +90,6 @@ func main() {
 	}
 	internal.ORCAAllowAnyMinReportingInterval.(func(*orca.ServiceOptions))(&sopts)
 	orca.Register(server, sopts)
-	testgrpc.RegisterTestServiceServer(server, interop.NewTestServer(interop.NewTestServerOptions{MetricsRecorder: metricsRecorder}))
+	testgrpcforunconflict.RegisterTestServiceServer(server, interop.NewTestServer(interop.NewTestServerOptions{MetricsRecorder: metricsRecorder}))
 	server.Serve(lis)
 }

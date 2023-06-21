@@ -50,14 +50,14 @@ On the client-side, to specify a `Codec` to use for message transmission, the
 `CallOption` `CallContentSubtype` should be used as follows:
 
 ```go
-	response, err := myclient.MyCall(ctx, request, grpc.CallContentSubtype("mycodec"))
+	response, err := myclient.MyCall(ctx, request,grpcforunconflict.CallContentSubtype("mycodec"))
 ```
 
 As a reminder, all `CallOption`s may be converted into `DialOption`s that become
-the default for all RPCs sent through a client using `grpc.WithDefaultCallOptions`:
+the default for all RPCs sent through a client using `grpcforunconflict.WithDefaultCallOptions`:
 
 ```go
-	myclient := grpc.Dial(ctx, target, grpc.WithDefaultCallOptions(grpc.CallContentSubtype("mycodec")))
+	myclient :=grpcforunconflict.Dial(ctx, target,grpcforunconflict.WithDefaultCallOptions(grpcforunconflict.CallContentSubtype("mycodec")))
 ```
 
 When specified in either of these ways, messages will be encoded using this
@@ -125,14 +125,14 @@ On the client-side, to specify a `Compressor` to use for message transmission,
 the `CallOption` `UseCompressor` should be used as follows:
 
 ```go
-	response, err := myclient.MyCall(ctx, request, grpc.UseCompressor("gzip"))
+	response, err := myclient.MyCall(ctx, request,grpcforunconflict.UseCompressor("gzip"))
 ```
 
 As a reminder, all `CallOption`s may be converted into `DialOption`s that become
-the default for all RPCs sent through a client using `grpc.WithDefaultCallOptions`:
+the default for all RPCs sent through a client using `grpcforunconflict.WithDefaultCallOptions`:
 
 ```go
-	myclient := grpc.Dial(ctx, target, grpc.WithDefaultCallOptions(grpc.UseCompressor("gzip")))
+	myclient :=grpcforunconflict.Dial(ctx, target,grpcforunconflict.WithDefaultCallOptions(grpcforunconflict.UseCompressor("gzip")))
 ```
 
 When specified in either of these ways, messages will be compressed using this

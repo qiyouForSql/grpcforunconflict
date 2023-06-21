@@ -32,7 +32,6 @@ import (
 
 	pb "github.com/qiyouForSql/grpcforunconflict/examples/helloworld/helloworld"
 	"github.com/qiyouForSql/grpcforunconflict/gcp/observability"
-	"google.golang.org/grpc"
 )
 
 var (
@@ -67,7 +66,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 	pb.RegisterGreeterServer(s, &server{})
 	log.Printf("server listening at %v", lis.Addr())
 

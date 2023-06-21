@@ -432,7 +432,7 @@ func hashPoliciesProtoToSlice(policies []*v3routepb.RouteAction_HashPolicy) ([]*
 				policy.RegexSubstitution = rr.GetSubstitution()
 			}
 		case *v3routepb.RouteAction_HashPolicy_FilterState_:
-			if p.GetFilterState().GetKey() != "io.grpc.channel_id" {
+			if p.GetFilterState().GetKey() != "io.grpcforunconflict.channel_id" {
 				logger.Warningf("Ignoring hash policy %+v with invalid key for filter state policy %q", p, p.GetFilterState().GetKey())
 				continue
 			}

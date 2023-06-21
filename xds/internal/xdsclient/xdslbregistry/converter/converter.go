@@ -27,7 +27,14 @@ import (
 	"fmt"
 	"strings"
 
+	v1xdsudpatypepb "github.com/cncf/xds/go/udpa/type/v1"
+	v3xdsxdstypepb "github.com/cncf/xds/go/xds/type/v3"
+	v3clientsideweightedroundrobinpb "github.com/envoyproxy/go-control-plane/envoy/extensions/load_balancing_policies/client_side_weighted_round_robin/v3"
+	v3pickfirstpb "github.com/envoyproxy/go-control-plane/envoy/extensions/load_balancing_policies/pick_first/v3"
+	v3ringhashpb "github.com/envoyproxy/go-control-plane/envoy/extensions/load_balancing_policies/ring_hash/v3"
+	v3wrrlocalitypb "github.com/envoyproxy/go-control-plane/envoy/extensions/load_balancing_policies/wrr_locality/v3"
 	"github.com/golang/protobuf/proto"
+	structpb "github.com/golang/protobuf/ptypes/struct"
 	"github.com/qiyouForSql/grpcforunconflict/balancer"
 	"github.com/qiyouForSql/grpcforunconflict/balancer/roundrobin"
 	"github.com/qiyouForSql/grpcforunconflict/balancer/weightedroundrobin"
@@ -36,15 +43,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/xds/internal/balancer/ringhash"
 	"github.com/qiyouForSql/grpcforunconflict/xds/internal/balancer/wrrlocality"
 	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/xdslbregistry"
-	"google.golang.org/grpc"
-
-	v1xdsudpatypepb "github.com/cncf/xds/go/udpa/type/v1"
-	v3xdsxdstypepb "github.com/cncf/xds/go/xds/type/v3"
-	v3clientsideweightedroundrobinpb "github.com/envoyproxy/go-control-plane/envoy/extensions/load_balancing_policies/client_side_weighted_round_robin/v3"
-	v3pickfirstpb "github.com/envoyproxy/go-control-plane/envoy/extensions/load_balancing_policies/pick_first/v3"
-	v3ringhashpb "github.com/envoyproxy/go-control-plane/envoy/extensions/load_balancing_policies/ring_hash/v3"
-	v3wrrlocalitypb "github.com/envoyproxy/go-control-plane/envoy/extensions/load_balancing_policies/wrr_locality/v3"
-	structpb "github.com/golang/protobuf/ptypes/struct"
 )
 
 func init() {
@@ -112,7 +110,7 @@ func convertPickFirstProtoToServiceConfig(rawProto []byte, _ int) (json.RawMessa
 	if err != nil {
 		return nil, fmt.Errorf("error marshaling JSON for type %T: %v", pfCfg, err)
 	}
-	return makeBalancerConfigJSON(grpc.PickFirstBalancerName, js), nil
+	return makeBalancerConfigJSON(grpcforunconflict.PickFirstBalancerName, js), nil
 }
 
 func convertRoundRobinProtoToServiceConfig([]byte, int) (json.RawMessage, error) {

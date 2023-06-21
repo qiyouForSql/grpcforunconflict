@@ -30,6 +30,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/balancer"
 	grpclbstate "github.com/qiyouForSql/grpcforunconflict/balancer/grpclb/state"
 	"github.com/qiyouForSql/grpcforunconflict/connectivity"
@@ -39,7 +40,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/internal/backoff"
 	"github.com/qiyouForSql/grpcforunconflict/internal/resolver/dns"
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
-	"google.golang.org/grpc"
 
 	durationpb "github.com/golang/protobuf/ptypes/duration"
 	lbpb "github.com/qiyouForSql/grpcforunconflict/balancer/grpclb/grpc_lb_v1"
@@ -65,16 +65,16 @@ func convertDuration(d *durationpb.Duration) time.Duration {
 // Mostly copied from generated pb.go file.
 // To avoid circular dependency.
 type loadBalancerClient struct {
-	cc *grpc.ClientConn
+	cc *grpcforunconflict.ClientConn
 }
 
-func (c *loadBalancerClient) BalanceLoad(ctx context.Context, opts ...grpc.CallOption) (*balanceLoadClientStream, error) {
-	desc := &grpc.StreamDesc{
+func (c *loadBalancerClient) BalanceLoad(ctx context.Context, opts ...grpcforunconflict.CallOption) (*balanceLoadClientStream, error) {
+	desc := &grpcforunconflict.StreamDesc{
 		StreamName:    "BalanceLoad",
 		ServerStreams: true,
 		ClientStreams: true,
 	}
-	stream, err := c.cc.NewStream(ctx, desc, "/grpc.lb.v1.LoadBalancer/BalanceLoad", opts...)
+	stream, err := c.cc.NewStream(ctx, desc, "/grpcforunconflict.lb.v1.LoadBalancer/BalanceLoad", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +83,7 @@ func (c *loadBalancerClient) BalanceLoad(ctx context.Context, opts ...grpc.CallO
 }
 
 type balanceLoadClientStream struct {
-	grpc.ClientStream
+	grpcforunconflict.ClientStream
 }
 
 func (x *balanceLoadClientStream) Send(m *lbpb.LoadBalanceRequest) error {

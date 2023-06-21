@@ -149,8 +149,8 @@ func startOpenCensus(config *config) error {
 		logger.Infof("Start collecting and exporting metrics")
 	}
 
-	internal.AddGlobalServerOptions.(func(opt ...grpc.ServerOption))(opencensus.ServerOption(to))
-	internal.AddGlobalDialOptions.(func(opt ...grpc.DialOption))(opencensus.DialOption(to))
+	internal.AddGlobalServerOptions.(func(opt ...grpcforunconflict.ServerOption))(opencensus.ServerOption(to))
+	internal.AddGlobalDialOptions.(func(opt ...grpcforunconflict.DialOption))(opencensus.DialOption(to))
 	logger.Infof("Enabled OpenCensus StatsHandlers for clients and servers")
 
 	return nil

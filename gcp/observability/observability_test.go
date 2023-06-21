@@ -41,7 +41,6 @@ import (
 	"go.opencensus.io/stats/view"
 	"go.opencensus.io/trace"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -386,7 +385,7 @@ func (s) TestOpenCensusIntegration(t *testing.T) {
 		UnaryCallF: func(ctx context.Context, in *testpb.SimpleRequest) (*testpb.SimpleResponse, error) {
 			return &testpb.SimpleResponse{}, nil
 		},
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			for {
 				_, err := stream.Recv()
 				if err == io.EOF {
@@ -424,39 +423,39 @@ func (s) TestOpenCensusIntegration(t *testing.T) {
 	for ctx.Err() == nil {
 		errs = nil
 		fe.mu.RLock()
-		if value := fe.SeenViews["grpc.io/client/api_latency"]; value != TypeOpenCensusViewDistribution {
-			errs = append(errs, fmt.Errorf("unexpected type for grpc.io/client/api_latency: %s != %s", value, TypeOpenCensusViewDistribution))
+		if value := fe.SeenViews["grpcforunconflict.io/client/api_latency"]; value != TypeOpenCensusViewDistribution {
+			errs = append(errs, fmt.Errorf("unexpected type forgrpcforunconflict.io/client/api_latency: %s != %s", value, TypeOpenCensusViewDistribution))
 		}
-		if value := fe.SeenViews["grpc.io/client/started_rpcs"]; value != TypeOpenCensusViewCount {
-			errs = append(errs, fmt.Errorf("unexpected type for grpc.io/client/started_rpcs: %s != %s", value, TypeOpenCensusViewCount))
+		if value := fe.SeenViews["grpcforunconflict.io/client/started_rpcs"]; value != TypeOpenCensusViewCount {
+			errs = append(errs, fmt.Errorf("unexpected type forgrpcforunconflict.io/client/started_rpcs: %s != %s", value, TypeOpenCensusViewCount))
 		}
-		if value := fe.SeenViews["grpc.io/server/started_rpcs"]; value != TypeOpenCensusViewCount {
-			errs = append(errs, fmt.Errorf("unexpected type for grpc.io/server/started_rpcs: %s != %s", value, TypeOpenCensusViewCount))
+		if value := fe.SeenViews["grpcforunconflict.io/server/started_rpcs"]; value != TypeOpenCensusViewCount {
+			errs = append(errs, fmt.Errorf("unexpected type forgrpcforunconflict.io/server/started_rpcs: %s != %s", value, TypeOpenCensusViewCount))
 		}
 
-		if value := fe.SeenViews["grpc.io/client/completed_rpcs"]; value != TypeOpenCensusViewCount {
-			errs = append(errs, fmt.Errorf("unexpected type for grpc.io/client/completed_rpcs: %s != %s", value, TypeOpenCensusViewCount))
+		if value := fe.SeenViews["grpcforunconflict.io/client/completed_rpcs"]; value != TypeOpenCensusViewCount {
+			errs = append(errs, fmt.Errorf("unexpected type forgrpcforunconflict.io/client/completed_rpcs: %s != %s", value, TypeOpenCensusViewCount))
 		}
-		if value := fe.SeenViews["grpc.io/server/completed_rpcs"]; value != TypeOpenCensusViewCount {
-			errs = append(errs, fmt.Errorf("unexpected type for grpc.io/server/completed_rpcs: %s != %s", value, TypeOpenCensusViewCount))
+		if value := fe.SeenViews["grpcforunconflict.io/server/completed_rpcs"]; value != TypeOpenCensusViewCount {
+			errs = append(errs, fmt.Errorf("unexpected type forgrpcforunconflict.io/server/completed_rpcs: %s != %s", value, TypeOpenCensusViewCount))
 		}
-		if value := fe.SeenViews["grpc.io/client/roundtrip_latency"]; value != TypeOpenCensusViewDistribution {
-			errs = append(errs, fmt.Errorf("unexpected type for grpc.io/client/completed_rpcs: %s != %s", value, TypeOpenCensusViewDistribution))
+		if value := fe.SeenViews["grpcforunconflict.io/client/roundtrip_latency"]; value != TypeOpenCensusViewDistribution {
+			errs = append(errs, fmt.Errorf("unexpected type forgrpcforunconflict.io/client/completed_rpcs: %s != %s", value, TypeOpenCensusViewDistribution))
 		}
-		if value := fe.SeenViews["grpc.io/server/server_latency"]; value != TypeOpenCensusViewDistribution {
-			errs = append(errs, fmt.Errorf("grpc.io/server/server_latency: %s != %s", value, TypeOpenCensusViewDistribution))
+		if value := fe.SeenViews["grpcforunconflict.io/server/server_latency"]; value != TypeOpenCensusViewDistribution {
+			errs = append(errs, fmt.Errorf("grpcforunconflict.io/server/server_latency: %s != %s", value, TypeOpenCensusViewDistribution))
 		}
-		if value := fe.SeenViews["grpc.io/client/sent_compressed_message_bytes_per_rpc"]; value != TypeOpenCensusViewDistribution {
-			errs = append(errs, fmt.Errorf("unexpected type for grpc.io/client/sent_compressed_message_bytes_per_rpc: %s != %s", value, TypeOpenCensusViewDistribution))
+		if value := fe.SeenViews["grpcforunconflict.io/client/sent_compressed_message_bytes_per_rpc"]; value != TypeOpenCensusViewDistribution {
+			errs = append(errs, fmt.Errorf("unexpected type forgrpcforunconflict.io/client/sent_compressed_message_bytes_per_rpc: %s != %s", value, TypeOpenCensusViewDistribution))
 		}
-		if value := fe.SeenViews["grpc.io/client/received_compressed_message_bytes_per_rpc"]; value != TypeOpenCensusViewDistribution {
-			errs = append(errs, fmt.Errorf("unexpected type for grpc.io/client/received_compressed_message_bytes_per_rpc: %s != %s", value, TypeOpenCensusViewDistribution))
+		if value := fe.SeenViews["grpcforunconflict.io/client/received_compressed_message_bytes_per_rpc"]; value != TypeOpenCensusViewDistribution {
+			errs = append(errs, fmt.Errorf("unexpected type forgrpcforunconflict.io/client/received_compressed_message_bytes_per_rpc: %s != %s", value, TypeOpenCensusViewDistribution))
 		}
-		if value := fe.SeenViews["grpc.io/server/sent_compressed_message_bytes_per_rpc"]; value != TypeOpenCensusViewDistribution {
-			errs = append(errs, fmt.Errorf("unexpected type for grpc.io/server/sent_compressed_message_bytes_per_rpc: %s != %s", value, TypeOpenCensusViewDistribution))
+		if value := fe.SeenViews["grpcforunconflict.io/server/sent_compressed_message_bytes_per_rpc"]; value != TypeOpenCensusViewDistribution {
+			errs = append(errs, fmt.Errorf("unexpected type forgrpcforunconflict.io/server/sent_compressed_message_bytes_per_rpc: %s != %s", value, TypeOpenCensusViewDistribution))
 		}
-		if value := fe.SeenViews["grpc.io/server/received_compressed_message_bytes_per_rpc"]; value != TypeOpenCensusViewDistribution {
-			errs = append(errs, fmt.Errorf("unexpected type for grpc.io/server/received_compressed_message_bytes_per_rpc: %s != %s", value, TypeOpenCensusViewDistribution))
+		if value := fe.SeenViews["grpcforunconflict.io/server/received_compressed_message_bytes_per_rpc"]; value != TypeOpenCensusViewDistribution {
+			errs = append(errs, fmt.Errorf("unexpected type forgrpcforunconflict.io/server/received_compressed_message_bytes_per_rpc: %s != %s", value, TypeOpenCensusViewDistribution))
 		}
 		if fe.SeenSpans <= 0 {
 			errs = append(errs, fmt.Errorf("unexpected number of seen spans: %v <= 0", fe.SeenSpans))
@@ -604,7 +603,7 @@ func (s) TestLoggingLinkedWithTraceClientSide(t *testing.T) {
 		UnaryCallF: func(ctx context.Context, in *testpb.SimpleRequest) (*testpb.SimpleResponse, error) {
 			return &testpb.SimpleResponse{}, nil
 		},
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			_, err := stream.Recv()
 			if err != io.EOF {
 				return err
@@ -660,7 +659,7 @@ func (s) TestLoggingLinkedWithTraceClientSide(t *testing.T) {
 		<-unaryDone.Done()
 		var tasiSent traceAndSpanIDString
 		for _, tasi := range traceAndSpanIDs {
-			if strings.HasPrefix(tasi.spanName, "grpc.") && tasi.spanKind == trace.SpanKindClient {
+			if strings.HasPrefix(tasi.spanName, "grpcforunconflict.") && tasi.spanKind == trace.SpanKindClient {
 				tasiSent = tasi.idsToString(projectID)
 				continue
 			}
@@ -746,7 +745,7 @@ func (s) TestLoggingLinkedWithTraceServerSide(t *testing.T) {
 		UnaryCallF: func(ctx context.Context, in *testpb.SimpleRequest) (*testpb.SimpleResponse, error) {
 			return &testpb.SimpleResponse{}, nil
 		},
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			_, err := stream.Recv()
 			if err != io.EOF {
 				return err
@@ -802,7 +801,7 @@ func (s) TestLoggingLinkedWithTraceServerSide(t *testing.T) {
 		<-unaryDone.Done()
 		var tasiServer traceAndSpanIDString
 		for _, tasi := range traceAndSpanIDs {
-			if strings.HasPrefix(tasi.spanName, "grpc.") && tasi.spanKind == trace.SpanKindServer {
+			if strings.HasPrefix(tasi.spanName, "grpcforunconflict.") && tasi.spanKind == trace.SpanKindServer {
 				tasiServer = tasi.idsToString(projectID)
 				continue
 			}
@@ -897,7 +896,7 @@ func (s) TestLoggingLinkedWithTrace(t *testing.T) {
 		UnaryCallF: func(ctx context.Context, in *testpb.SimpleRequest) (*testpb.SimpleResponse, error) {
 			return &testpb.SimpleResponse{}, nil
 		},
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			_, err := stream.Recv()
 			if err != io.EOF {
 				return err
@@ -954,11 +953,11 @@ func (s) TestLoggingLinkedWithTrace(t *testing.T) {
 		var tasiSent traceAndSpanIDString
 		var tasiServer traceAndSpanIDString
 		for _, tasi := range traceAndSpanIDs {
-			if strings.HasPrefix(tasi.spanName, "grpc.") && tasi.spanKind == trace.SpanKindClient {
+			if strings.HasPrefix(tasi.spanName, "grpcforunconflict.") && tasi.spanKind == trace.SpanKindClient {
 				tasiSent = tasi.idsToString(projectID)
 				continue
 			}
-			if strings.HasPrefix(tasi.spanName, "grpc.") && tasi.spanKind == trace.SpanKindServer {
+			if strings.HasPrefix(tasi.spanName, "grpcforunconflict.") && tasi.spanKind == trace.SpanKindServer {
 				tasiServer = tasi.idsToString(projectID)
 			}
 		}
@@ -1034,11 +1033,11 @@ func (s) TestLoggingLinkedWithTrace(t *testing.T) {
 		var tasiSent traceAndSpanIDString
 		var tasiServer traceAndSpanIDString
 		for _, tasi := range traceAndSpanIDs {
-			if strings.HasPrefix(tasi.spanName, "grpc.") && tasi.spanKind == trace.SpanKindClient {
+			if strings.HasPrefix(tasi.spanName, "grpcforunconflict.") && tasi.spanKind == trace.SpanKindClient {
 				tasiSent = tasi.idsToString(projectID)
 				continue
 			}
-			if strings.HasPrefix(tasi.spanName, "grpc.") && tasi.spanKind == trace.SpanKindServer {
+			if strings.HasPrefix(tasi.spanName, "grpcforunconflict.") && tasi.spanKind == trace.SpanKindServer {
 				tasiServer = tasi.idsToString(projectID)
 			}
 		}

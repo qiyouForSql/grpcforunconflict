@@ -29,7 +29,6 @@ import (
 
 	pb "github.com/qiyouForSql/grpcforunconflict/examples/features/proto/echo"
 	"github.com/qiyouForSql/grpcforunconflict/health"
-	healthgrpc "github.com/qiyouForSql/grpcforunconflict/health/grpc_health_v1"
 	healthpb "github.com/qiyouForSql/grpcforunconflict/health/grpc_health_v1"
 )
 
@@ -60,9 +59,9 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 	healthcheck := health.NewServer()
-	healthgrpc.RegisterHealthServer(s, healthcheck)
+	healthgrpcforunconflict.RegisterHealthServer(s, healthcheck)
 	pb.RegisterEchoServer(s, &echoServer{})
 
 	go func() {

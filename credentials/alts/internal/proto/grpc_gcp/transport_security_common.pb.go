@@ -254,13 +254,13 @@ func file_grpc_gcp_transport_security_common_proto_rawDescGZIP() []byte {
 var file_grpc_gcp_transport_security_common_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_grpc_gcp_transport_security_common_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_grpc_gcp_transport_security_common_proto_goTypes = []interface{}{
-	(SecurityLevel)(0),                  // 0: grpc.gcp.SecurityLevel
-	(*RpcProtocolVersions)(nil),         // 1: grpc.gcp.RpcProtocolVersions
-	(*RpcProtocolVersions_Version)(nil), // 2: grpc.gcp.RpcProtocolVersions.Version
+	(SecurityLevel)(0),                  // 0:grpcforunconflict.gcp.SecurityLevel
+	(*RpcProtocolVersions)(nil),         // 1:grpcforunconflict.gcp.RpcProtocolVersions
+	(*RpcProtocolVersions_Version)(nil), // 2:grpcforunconflict.gcp.RpcProtocolVersions.Version
 }
 var file_grpc_gcp_transport_security_common_proto_depIdxs = []int32{
-	2, // 0: grpc.gcp.RpcProtocolVersions.max_rpc_version:type_name -> grpc.gcp.RpcProtocolVersions.Version
-	2, // 1: grpc.gcp.RpcProtocolVersions.min_rpc_version:type_name -> grpc.gcp.RpcProtocolVersions.Version
+	2, // 0:grpcforunconflict.gcp.RpcProtocolVersions.max_rpc_version:type_name ->grpcforunconflict.gcp.RpcProtocolVersions.Version
+	2, // 1:grpcforunconflict.gcp.RpcProtocolVersions.min_rpc_version:type_name ->grpcforunconflict.gcp.RpcProtocolVersions.Version
 	2, // [2:2] is the sub-list for method output_type
 	2, // [2:2] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name

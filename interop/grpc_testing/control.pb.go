@@ -530,7 +530,7 @@ type ClientConfig struct {
 
 	// List of targets to connect to. At least one target needs to be specified.
 	ServerTargets  []string        `protobuf:"bytes,1,rep,name=server_targets,json=serverTargets,proto3" json:"server_targets,omitempty"`
-	ClientType     ClientType      `protobuf:"varint,2,opt,name=client_type,json=clientType,proto3,enum=grpc.testing.ClientType" json:"client_type,omitempty"`
+	ClientType     ClientType      `protobuf:"varint,2,opt,name=client_type,json=clientType,proto3,enum=grpcforunconflict.testing.ClientType" json:"client_type,omitempty"`
 	SecurityParams *SecurityParams `protobuf:"bytes,3,opt,name=security_params,json=securityParams,proto3" json:"security_params,omitempty"`
 	// How many concurrent RPCs to start for each channel.
 	// For synchronous client, use a separate thread for each outstanding RPC.
@@ -540,7 +540,7 @@ type ClientConfig struct {
 	ClientChannels int32 `protobuf:"varint,5,opt,name=client_channels,json=clientChannels,proto3" json:"client_channels,omitempty"`
 	// Only for async client. Number of threads to use to start/manage RPCs.
 	AsyncClientThreads int32   `protobuf:"varint,7,opt,name=async_client_threads,json=asyncClientThreads,proto3" json:"async_client_threads,omitempty"`
-	RpcType            RpcType `protobuf:"varint,8,opt,name=rpc_type,json=rpcType,proto3,enum=grpc.testing.RpcType" json:"rpc_type,omitempty"`
+	RpcType            RpcType `protobuf:"varint,8,opt,name=rpc_type,json=rpcType,proto3,enum=grpcforunconflict.testing.RpcType" json:"rpc_type,omitempty"`
 	// The requested load for the entire client (aggregated over all the threads).
 	LoadParams      *LoadParams      `protobuf:"bytes,10,opt,name=load_params,json=loadParams,proto3" json:"load_params,omitempty"`
 	PayloadConfig   *PayloadConfig   `protobuf:"bytes,11,opt,name=payload_config,json=payloadConfig,proto3" json:"payload_config,omitempty"`
@@ -911,7 +911,7 @@ type ServerConfig struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ServerType     ServerType      `protobuf:"varint,1,opt,name=server_type,json=serverType,proto3,enum=grpc.testing.ServerType" json:"server_type,omitempty"`
+	ServerType     ServerType      `protobuf:"varint,1,opt,name=server_type,json=serverType,proto3,enum=grpcforunconflict.testing.ServerType" json:"server_type,omitempty"`
 	SecurityParams *SecurityParams `protobuf:"bytes,2,opt,name=security_params,json=securityParams,proto3" json:"security_params,omitempty"`
 	// Port on which to listen. Zero means pick unused port.
 	Port int32 `protobuf:"varint,4,opt,name=port,proto3" json:"port,omitempty"`
@@ -2149,67 +2149,67 @@ func file_grpc_testing_control_proto_rawDescGZIP() []byte {
 var file_grpc_testing_control_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
 var file_grpc_testing_control_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_grpc_testing_control_proto_goTypes = []interface{}{
-	(ClientType)(0),               // 0: grpc.testing.ClientType
-	(ServerType)(0),               // 1: grpc.testing.ServerType
-	(RpcType)(0),                  // 2: grpc.testing.RpcType
-	(*PoissonParams)(nil),         // 3: grpc.testing.PoissonParams
-	(*ClosedLoopParams)(nil),      // 4: grpc.testing.ClosedLoopParams
-	(*LoadParams)(nil),            // 5: grpc.testing.LoadParams
-	(*SecurityParams)(nil),        // 6: grpc.testing.SecurityParams
-	(*ChannelArg)(nil),            // 7: grpc.testing.ChannelArg
-	(*ClientConfig)(nil),          // 8: grpc.testing.ClientConfig
-	(*ClientStatus)(nil),          // 9: grpc.testing.ClientStatus
-	(*Mark)(nil),                  // 10: grpc.testing.Mark
-	(*ClientArgs)(nil),            // 11: grpc.testing.ClientArgs
-	(*ServerConfig)(nil),          // 12: grpc.testing.ServerConfig
-	(*ServerArgs)(nil),            // 13: grpc.testing.ServerArgs
-	(*ServerStatus)(nil),          // 14: grpc.testing.ServerStatus
-	(*CoreRequest)(nil),           // 15: grpc.testing.CoreRequest
-	(*CoreResponse)(nil),          // 16: grpc.testing.CoreResponse
-	(*Void)(nil),                  // 17: grpc.testing.Void
-	(*Scenario)(nil),              // 18: grpc.testing.Scenario
-	(*Scenarios)(nil),             // 19: grpc.testing.Scenarios
-	(*ScenarioResultSummary)(nil), // 20: grpc.testing.ScenarioResultSummary
-	(*ScenarioResult)(nil),        // 21: grpc.testing.ScenarioResult
-	(*PayloadConfig)(nil),         // 22: grpc.testing.PayloadConfig
-	(*HistogramParams)(nil),       // 23: grpc.testing.HistogramParams
-	(*ClientStats)(nil),           // 24: grpc.testing.ClientStats
-	(*ServerStats)(nil),           // 25: grpc.testing.ServerStats
+	(ClientType)(0),               // 0:grpcforunconflict.testing.ClientType
+	(ServerType)(0),               // 1:grpcforunconflict.testing.ServerType
+	(RpcType)(0),                  // 2:grpcforunconflict.testing.RpcType
+	(*PoissonParams)(nil),         // 3:grpcforunconflict.testing.PoissonParams
+	(*ClosedLoopParams)(nil),      // 4:grpcforunconflict.testing.ClosedLoopParams
+	(*LoadParams)(nil),            // 5:grpcforunconflict.testing.LoadParams
+	(*SecurityParams)(nil),        // 6:grpcforunconflict.testing.SecurityParams
+	(*ChannelArg)(nil),            // 7:grpcforunconflict.testing.ChannelArg
+	(*ClientConfig)(nil),          // 8:grpcforunconflict.testing.ClientConfig
+	(*ClientStatus)(nil),          // 9:grpcforunconflict.testing.ClientStatus
+	(*Mark)(nil),                  // 10:grpcforunconflict.testing.Mark
+	(*ClientArgs)(nil),            // 11:grpcforunconflict.testing.ClientArgs
+	(*ServerConfig)(nil),          // 12:grpcforunconflict.testing.ServerConfig
+	(*ServerArgs)(nil),            // 13:grpcforunconflict.testing.ServerArgs
+	(*ServerStatus)(nil),          // 14:grpcforunconflict.testing.ServerStatus
+	(*CoreRequest)(nil),           // 15:grpcforunconflict.testing.CoreRequest
+	(*CoreResponse)(nil),          // 16:grpcforunconflict.testing.CoreResponse
+	(*Void)(nil),                  // 17:grpcforunconflict.testing.Void
+	(*Scenario)(nil),              // 18:grpcforunconflict.testing.Scenario
+	(*Scenarios)(nil),             // 19:grpcforunconflict.testing.Scenarios
+	(*ScenarioResultSummary)(nil), // 20:grpcforunconflict.testing.ScenarioResultSummary
+	(*ScenarioResult)(nil),        // 21:grpcforunconflict.testing.ScenarioResult
+	(*PayloadConfig)(nil),         // 22:grpcforunconflict.testing.PayloadConfig
+	(*HistogramParams)(nil),       // 23:grpcforunconflict.testing.HistogramParams
+	(*ClientStats)(nil),           // 24:grpcforunconflict.testing.ClientStats
+	(*ServerStats)(nil),           // 25:grpcforunconflict.testing.ServerStats
 	(*timestamppb.Timestamp)(nil), // 26: google.protobuf.Timestamp
-	(*HistogramData)(nil),         // 27: grpc.testing.HistogramData
-	(*RequestResultCount)(nil),    // 28: grpc.testing.RequestResultCount
+	(*HistogramData)(nil),         // 27:grpcforunconflict.testing.HistogramData
+	(*RequestResultCount)(nil),    // 28:grpcforunconflict.testing.RequestResultCount
 }
 var file_grpc_testing_control_proto_depIdxs = []int32{
-	4,  // 0: grpc.testing.LoadParams.closed_loop:type_name -> grpc.testing.ClosedLoopParams
-	3,  // 1: grpc.testing.LoadParams.poisson:type_name -> grpc.testing.PoissonParams
-	0,  // 2: grpc.testing.ClientConfig.client_type:type_name -> grpc.testing.ClientType
-	6,  // 3: grpc.testing.ClientConfig.security_params:type_name -> grpc.testing.SecurityParams
-	2,  // 4: grpc.testing.ClientConfig.rpc_type:type_name -> grpc.testing.RpcType
-	5,  // 5: grpc.testing.ClientConfig.load_params:type_name -> grpc.testing.LoadParams
-	22, // 6: grpc.testing.ClientConfig.payload_config:type_name -> grpc.testing.PayloadConfig
-	23, // 7: grpc.testing.ClientConfig.histogram_params:type_name -> grpc.testing.HistogramParams
-	7,  // 8: grpc.testing.ClientConfig.channel_args:type_name -> grpc.testing.ChannelArg
-	24, // 9: grpc.testing.ClientStatus.stats:type_name -> grpc.testing.ClientStats
-	8,  // 10: grpc.testing.ClientArgs.setup:type_name -> grpc.testing.ClientConfig
-	10, // 11: grpc.testing.ClientArgs.mark:type_name -> grpc.testing.Mark
-	1,  // 12: grpc.testing.ServerConfig.server_type:type_name -> grpc.testing.ServerType
-	6,  // 13: grpc.testing.ServerConfig.security_params:type_name -> grpc.testing.SecurityParams
-	22, // 14: grpc.testing.ServerConfig.payload_config:type_name -> grpc.testing.PayloadConfig
-	7,  // 15: grpc.testing.ServerConfig.channel_args:type_name -> grpc.testing.ChannelArg
-	12, // 16: grpc.testing.ServerArgs.setup:type_name -> grpc.testing.ServerConfig
-	10, // 17: grpc.testing.ServerArgs.mark:type_name -> grpc.testing.Mark
-	25, // 18: grpc.testing.ServerStatus.stats:type_name -> grpc.testing.ServerStats
-	8,  // 19: grpc.testing.Scenario.client_config:type_name -> grpc.testing.ClientConfig
-	12, // 20: grpc.testing.Scenario.server_config:type_name -> grpc.testing.ServerConfig
-	18, // 21: grpc.testing.Scenarios.scenarios:type_name -> grpc.testing.Scenario
-	26, // 22: grpc.testing.ScenarioResultSummary.start_time:type_name -> google.protobuf.Timestamp
-	26, // 23: grpc.testing.ScenarioResultSummary.end_time:type_name -> google.protobuf.Timestamp
-	18, // 24: grpc.testing.ScenarioResult.scenario:type_name -> grpc.testing.Scenario
-	27, // 25: grpc.testing.ScenarioResult.latencies:type_name -> grpc.testing.HistogramData
-	24, // 26: grpc.testing.ScenarioResult.client_stats:type_name -> grpc.testing.ClientStats
-	25, // 27: grpc.testing.ScenarioResult.server_stats:type_name -> grpc.testing.ServerStats
-	20, // 28: grpc.testing.ScenarioResult.summary:type_name -> grpc.testing.ScenarioResultSummary
-	28, // 29: grpc.testing.ScenarioResult.request_results:type_name -> grpc.testing.RequestResultCount
+	4,  // 0:grpcforunconflict.testing.LoadParams.closed_loop:type_name ->grpcforunconflict.testing.ClosedLoopParams
+	3,  // 1:grpcforunconflict.testing.LoadParams.poisson:type_name ->grpcforunconflict.testing.PoissonParams
+	0,  // 2:grpcforunconflict.testing.ClientConfig.client_type:type_name ->grpcforunconflict.testing.ClientType
+	6,  // 3:grpcforunconflict.testing.ClientConfig.security_params:type_name ->grpcforunconflict.testing.SecurityParams
+	2,  // 4:grpcforunconflict.testing.ClientConfig.rpc_type:type_name ->grpcforunconflict.testing.RpcType
+	5,  // 5:grpcforunconflict.testing.ClientConfig.load_params:type_name ->grpcforunconflict.testing.LoadParams
+	22, // 6:grpcforunconflict.testing.ClientConfig.payload_config:type_name ->grpcforunconflict.testing.PayloadConfig
+	23, // 7:grpcforunconflict.testing.ClientConfig.histogram_params:type_name ->grpcforunconflict.testing.HistogramParams
+	7,  // 8:grpcforunconflict.testing.ClientConfig.channel_args:type_name ->grpcforunconflict.testing.ChannelArg
+	24, // 9:grpcforunconflict.testing.ClientStatus.stats:type_name ->grpcforunconflict.testing.ClientStats
+	8,  // 10:grpcforunconflict.testing.ClientArgs.setup:type_name ->grpcforunconflict.testing.ClientConfig
+	10, // 11:grpcforunconflict.testing.ClientArgs.mark:type_name ->grpcforunconflict.testing.Mark
+	1,  // 12:grpcforunconflict.testing.ServerConfig.server_type:type_name ->grpcforunconflict.testing.ServerType
+	6,  // 13:grpcforunconflict.testing.ServerConfig.security_params:type_name ->grpcforunconflict.testing.SecurityParams
+	22, // 14:grpcforunconflict.testing.ServerConfig.payload_config:type_name ->grpcforunconflict.testing.PayloadConfig
+	7,  // 15:grpcforunconflict.testing.ServerConfig.channel_args:type_name ->grpcforunconflict.testing.ChannelArg
+	12, // 16:grpcforunconflict.testing.ServerArgs.setup:type_name ->grpcforunconflict.testing.ServerConfig
+	10, // 17:grpcforunconflict.testing.ServerArgs.mark:type_name ->grpcforunconflict.testing.Mark
+	25, // 18:grpcforunconflict.testing.ServerStatus.stats:type_name ->grpcforunconflict.testing.ServerStats
+	8,  // 19:grpcforunconflict.testing.Scenario.client_config:type_name ->grpcforunconflict.testing.ClientConfig
+	12, // 20:grpcforunconflict.testing.Scenario.server_config:type_name ->grpcforunconflict.testing.ServerConfig
+	18, // 21:grpcforunconflict.testing.Scenarios.scenarios:type_name ->grpcforunconflict.testing.Scenario
+	26, // 22:grpcforunconflict.testing.ScenarioResultSummary.start_time:type_name -> google.protobuf.Timestamp
+	26, // 23:grpcforunconflict.testing.ScenarioResultSummary.end_time:type_name -> google.protobuf.Timestamp
+	18, // 24:grpcforunconflict.testing.ScenarioResult.scenario:type_name ->grpcforunconflict.testing.Scenario
+	27, // 25:grpcforunconflict.testing.ScenarioResult.latencies:type_name ->grpcforunconflict.testing.HistogramData
+	24, // 26:grpcforunconflict.testing.ScenarioResult.client_stats:type_name ->grpcforunconflict.testing.ClientStats
+	25, // 27:grpcforunconflict.testing.ScenarioResult.server_stats:type_name ->grpcforunconflict.testing.ServerStats
+	20, // 28:grpcforunconflict.testing.ScenarioResult.summary:type_name ->grpcforunconflict.testing.ScenarioResultSummary
+	28, // 29:grpcforunconflict.testing.ScenarioResult.request_results:type_name ->grpcforunconflict.testing.RequestResultCount
 	30, // [30:30] is the sub-list for method output_type
 	30, // [30:30] is the sub-list for method input_type
 	30, // [30:30] is the sub-list for extension type_name

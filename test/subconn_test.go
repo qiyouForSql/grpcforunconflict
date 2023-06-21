@@ -25,6 +25,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/balancer"
 	"github.com/qiyouForSql/grpcforunconflict/balancer/base"
 	"github.com/qiyouForSql/grpcforunconflict/connectivity"
@@ -32,7 +33,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
-	"google.golang.org/grpc"
 )
 
 type tsccPicker struct {
@@ -105,7 +105,7 @@ func (s) TestSubConnEmpty(t *testing.T) {
 			return &testpb.Empty{}, nil
 		},
 	}
-	if err := ss.Start(nil, grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"tscc":{}}]}`)); err != nil {
+	if err := ss.Start(nil, grpcforunconflict.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"tscc":{}}]}`)); err != nil {
 		t.Fatalf("Error starting server: %v", err)
 	}
 	defer ss.Stop()

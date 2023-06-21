@@ -19,7 +19,7 @@
 // This file is the implementation of a gRPC server using HTTP/2 which
 // uses the standard Go http2 Server implementation (via the
 // http.Handler interface), rather than speaking low-level HTTP/2
-// frames itself. It is the implementation of *grpc.Server.ServeHTTP.
+// frames itself. It is the implementation of *grpcforunconflict.Server.ServeHTTP.
 
 package transport
 
@@ -424,7 +424,7 @@ func (ht *serverHandlerTransport) HandleStreams(startStream func(*Stream), trace
 		}
 	}()
 
-	// startStream is provided by the *grpc.Server's serveStreams.
+	// startStream is provided by the *grpcforunconflict.Server's serveStreams.
 	// It starts a goroutine serving s and exits immediately.
 	// The goroutine that is started is the one that then calls
 	// into ht, calling WriteHeader, Write, WriteStatus, Close, etc.
@@ -458,7 +458,7 @@ func (ht *serverHandlerTransport) Drain(debugData string) {
 }
 
 // mapRecvMsgError returns the non-nil err into the appropriate
-// error value as expected by callers of *grpc.parser.recvMsg.
+// error value as expected by callers of *grpcforunconflict.parser.recvMsg.
 // In particular, in can only be:
 //   - io.EOF
 //   - io.ErrUnexpectedEOF

@@ -58,7 +58,7 @@ func main() {
 	}
 	fmt.Printf("server listening at %v\n", lis.Addr())
 
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 
 	// Register Greeter on the server.
 	hwpb.RegisterGreeterServer(s, &hwServer{})

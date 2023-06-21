@@ -24,15 +24,14 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/credentials"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
 	"github.com/qiyouForSql/grpcforunconflict/peer"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -105,14 +104,14 @@ func (s) TestInsecureCreds(t *testing.T) {
 				},
 			}
 
-			sOpts := []grpc.ServerOption{}
+			sOpts := []grpcforunconflict.ServerOption{}
 			if test.serverInsecureCreds {
-				sOpts = append(sOpts, grpc.Creds(insecure.NewCredentials()))
+				sOpts = append(sOpts, grpcforunconflict.Creds(insecure.NewCredentials()))
 			}
-			s := grpc.NewServer(sOpts...)
+			s := grpcforunconflict.NewServer(sOpts...)
 			defer s.Stop()
 
-			testgrpc.RegisterTestServiceServer(s, ss)
+			testgrpcforunconflict.RegisterTestServiceServer(s, ss)
 
 			lis, err := net.Listen("tcp", "localhost:0")
 			if err != nil {
@@ -122,17 +121,17 @@ func (s) TestInsecureCreds(t *testing.T) {
 			go s.Serve(lis)
 
 			addr := lis.Addr().String()
-			opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+			opts := []grpcforunconflict.DialOption{grpcforunconflict.WithTransportCredentials(insecure.NewCredentials())}
 			if test.clientInsecureCreds {
-				opts = []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+				opts = []grpcforunconflict.DialOption{grpcforunconflict.WithTransportCredentials(insecure.NewCredentials())}
 			}
-			cc, err := grpc.Dial(addr, opts...)
+			cc, err := grpcforunconflict.Dial(addr, opts...)
 			if err != nil {
-				t.Fatalf("grpc.Dial(%q) failed: %v", addr, err)
+				t.Fatalf("grpcforunconflict.Dial(%q) failed: %v", addr, err)
 			}
 			defer cc.Close()
 
-			c := testgrpc.NewTestServiceClient(cc)
+			c := testgrpcforunconflict.NewTestServiceClient(cc)
 			ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 			defer cancel()
 			if _, err = c.EmptyCall(ctx, &testpb.Empty{}); err != nil {
@@ -149,9 +148,9 @@ func (s) TestInsecureCreds_WithPerRPCCredentials_AsCallOption(t *testing.T) {
 		},
 	}
 
-	s := grpc.NewServer(grpc.Creds(insecure.NewCredentials()))
+	s := grpcforunconflict.NewServer(grpcforunconflict.Creds(insecure.NewCredentials()))
 	defer s.Stop()
-	testgrpc.RegisterTestServiceServer(s, ss)
+	testgrpcforunconflict.RegisterTestServiceServer(s, ss)
 
 	lis, err := net.Listen("tcp", "localhost:0")
 	if err != nil {
@@ -163,16 +162,16 @@ func (s) TestInsecureCreds_WithPerRPCCredentials_AsCallOption(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
 
-	dopts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
-	copts := []grpc.CallOption{grpc.PerRPCCredentials(testLegacyPerRPCCredentials{})}
-	cc, err := grpc.Dial(addr, dopts...)
+	dopts := []grpcforunconflict.DialOption{grpcforunconflict.WithTransportCredentials(insecure.NewCredentials())}
+	copts := []grpcforunconflict.CallOption{grpcforunconflict.PerRPCCredentials(testLegacyPerRPCCredentials{})}
+	cc, err := grpcforunconflict.Dial(addr, dopts...)
 	if err != nil {
-		t.Fatalf("grpc.Dial(%q) failed: %v", addr, err)
+		t.Fatalf("grpcforunconflict.Dial(%q) failed: %v", addr, err)
 	}
 	defer cc.Close()
 
 	const wantErr = "transport: cannot send secure credentials on an insecure connection"
-	c := testgrpc.NewTestServiceClient(cc)
+	c := testgrpcforunconflict.NewTestServiceClient(cc)
 	if _, err = c.EmptyCall(ctx, &testpb.Empty{}, copts...); err == nil || !strings.Contains(err.Error(), wantErr) {
 		t.Fatalf("insecure credentials with per-RPC credentials requiring transport security returned error: %v; want %s", err, wantErr)
 	}
@@ -185,9 +184,9 @@ func (s) TestInsecureCreds_WithPerRPCCredentials_AsDialOption(t *testing.T) {
 		},
 	}
 
-	s := grpc.NewServer(grpc.Creds(insecure.NewCredentials()))
+	s := grpcforunconflict.NewServer(grpcforunconflict.Creds(insecure.NewCredentials()))
 	defer s.Stop()
-	testgrpc.RegisterTestServiceServer(s, ss)
+	testgrpcforunconflict.RegisterTestServiceServer(s, ss)
 
 	lis, err := net.Listen("tcp", "localhost:0")
 	if err != nil {
@@ -196,12 +195,12 @@ func (s) TestInsecureCreds_WithPerRPCCredentials_AsDialOption(t *testing.T) {
 	go s.Serve(lis)
 
 	addr := lis.Addr().String()
-	dopts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithPerRPCCredentials(testLegacyPerRPCCredentials{}),
+	dopts := []grpcforunconflict.DialOption{
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithPerRPCCredentials(testLegacyPerRPCCredentials{}),
 	}
 	const wantErr = "the credentials require transport level security"
-	if _, err := grpc.Dial(addr, dopts...); err == nil || !strings.Contains(err.Error(), wantErr) {
-		t.Fatalf("grpc.Dial(%q) returned err %v, want: %v", addr, err, wantErr)
+	if _, err := grpcforunconflict.Dial(addr, dopts...); err == nil || !strings.Contains(err.Error(), wantErr) {
+		t.Fatalf("grpcforunconflict.Dial(%q) returned err %v, want: %v", addr, err, wantErr)
 	}
 }

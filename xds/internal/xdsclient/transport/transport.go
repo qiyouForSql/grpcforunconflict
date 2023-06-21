@@ -36,11 +36,9 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/bootstrap"
 	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/load"
 	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/xdsresource"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/anypb"
 
 	v3corepb "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
-	v3adsgrpc "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
 	v3discoverypb "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
 	statuspb "google.golang.org/genproto/googleapis/rpc/status"
 )
@@ -51,7 +49,7 @@ import (
 // the `Debugf` method on the logger.
 const perRPCVerbosityLevel = 9
 
-type adsStream = v3adsgrpc.AggregatedDiscoveryService_StreamAggregatedResourcesClient
+type adsStream = v3adsgrpcforunconflict.AggregatedDiscoveryService_StreamAggregatedResourcesClient
 
 // Transport provides a resource-type agnostic implementation of the xDS
 // transport protocol. At this layer, resource contents are supposed to be
@@ -63,18 +61,18 @@ type adsStream = v3adsgrpc.AggregatedDiscoveryService_StreamAggregatedResourcesC
 // protocol version.
 type Transport struct {
 	// These fields are initialized at creation time and are read-only afterwards.
-	cc              *grpc.ClientConn        // ClientConn to the mangement server.
-	serverURI       string                  // URI of the management server.
-	onRecvHandler   OnRecvHandlerFunc       // Resource update handler. xDS data model layer.
-	onErrorHandler  func(error)             // To report underlying stream errors.
-	onSendHandler   OnSendHandlerFunc       // To report resources requested on ADS stream.
-	lrsStore        *load.Store             // Store returned to user for pushing loads.
-	backoff         func(int) time.Duration // Backoff after stream failures.
-	nodeProto       *v3corepb.Node          // Identifies the gRPC application.
-	logger          *grpclog.PrefixLogger   // Prefix logger for transport logs.
-	adsRunnerCancel context.CancelFunc      // CancelFunc for the ADS goroutine.
-	adsRunnerDoneCh chan struct{}           // To notify exit of ADS goroutine.
-	lrsRunnerDoneCh chan struct{}           // To notify exit of LRS goroutine.
+	cc              *grpcforunconflict.ClientConn // ClientConn to the mangement server.
+	serverURI       string                        // URI of the management server.
+	onRecvHandler   OnRecvHandlerFunc             // Resource update handler. xDS data model layer.
+	onErrorHandler  func(error)                   // To report underlying stream errors.
+	onSendHandler   OnSendHandlerFunc             // To report resources requested on ADS stream.
+	lrsStore        *load.Store                   // Store returned to user for pushing loads.
+	backoff         func(int) time.Duration       // Backoff after stream failures.
+	nodeProto       *v3corepb.Node                // Identifies the gRPC application.
+	logger          *grpclog.PrefixLogger         // Prefix logger for transport logs.
+	adsRunnerCancel context.CancelFunc            // CancelFunc for the ADS goroutine.
+	adsRunnerDoneCh chan struct{}                 // To notify exit of ADS goroutine.
+	lrsRunnerDoneCh chan struct{}                 // To notify exit of LRS goroutine.
 
 	// These channels enable synchronization amongst the different goroutines
 	// spawned by the transport, and between asynchorous events resulting from
@@ -170,7 +168,7 @@ type Options struct {
 }
 
 // For overriding in unit tests.
-var grpcDial = grpc.Dial
+var grpcDial = grpcforunconflict.Dial
 
 // New creates a new Transport.
 func New(opts Options) (*Transport, error) {
@@ -188,9 +186,9 @@ func New(opts Options) (*Transport, error) {
 	}
 
 	// Dial the xDS management with the passed in credentials.
-	dopts := []grpc.DialOption{
+	dopts := []grpcforunconflict.DialOption{
 		opts.ServerCfg.CredsDialOption(),
-		grpc.WithKeepaliveParams(keepalive.ClientParameters{
+		grpcforunconflict.WithKeepaliveParams(keepalive.ClientParameters{
 			// We decided to use these sane defaults in all languages, and
 			// kicked the can down the road as far making these configurable.
 			Time:    5 * time.Minute,
@@ -263,10 +261,10 @@ func (t *Transport) SendRequest(url string, resources []string) {
 	})
 }
 
-func (t *Transport) newAggregatedDiscoveryServiceStream(ctx context.Context, cc *grpc.ClientConn) (adsStream, error) {
+func (t *Transport) newAggregatedDiscoveryServiceStream(ctx context.Context, cc *grpcforunconflict.ClientConn) (adsStream, error) {
 	// The transport retries the stream with an exponential backoff whenever the
 	// stream breaks without ever having seen a response.
-	return v3adsgrpc.NewAggregatedDiscoveryServiceClient(cc).StreamAggregatedResources(ctx)
+	return v3adsgrpcforunconflict.NewAggregatedDiscoveryServiceClient(cc).StreamAggregatedResources(ctx)
 }
 
 // ResourceSendInfo wraps the names and url of resources sent to the management
@@ -576,7 +574,7 @@ type ackRequest struct {
 	// ACK/NACK are tagged with the stream it's for. When the stream is down,
 	// all the ACK/NACK for this stream will be dropped, and the version/nonce
 	// won't be updated.
-	stream grpc.ClientStream
+	streamgrpcforunconflict.ClientStream
 }
 
 // processAckRequest pulls the fields needed to send out an ADS ACK. The nonces
@@ -584,7 +582,7 @@ type ackRequest struct {
 //
 // Returns the list of resources, resource type url, version, nonce, and an
 // indication of whether an ACK should be sent on the wire or not.
-func (t *Transport) processAckRequest(ack *ackRequest, stream grpc.ClientStream) ([]string, string, string, string, bool) {
+func (t *Transport) processAckRequest(ack *ackRequest, streamgrpcforunconflict.ClientStream) ([]string, string, string, string, bool) {
 	if ack.stream != stream {
 		// If ACK's stream isn't the current sending stream, this means the ACK
 		// was pushed to queue before the old stream broke, and a new stream has

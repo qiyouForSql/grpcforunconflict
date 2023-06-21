@@ -24,6 +24,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/backoff"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/connectivity"
@@ -37,9 +38,7 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"github.com/qiyouForSql/grpcforunconflict/resolver/manual"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -48,7 +47,7 @@ const pickFirstServiceConfig = `{"loadBalancingConfig": [{"pick_first":{}}]}`
 // setupPickFirst performs steps required for pick_first tests. It starts a
 // bunch of backends exporting the TestService, creates a ClientConn to them
 // with service config specifying the use of the pick_first LB policy.
-func setupPickFirst(t *testing.T, backendCount int, opts ...grpc.DialOption) (*grpc.ClientConn, *manual.Resolver, []*stubserver.StubServer) {
+func setupPickFirst(t *testing.T, backendCount int, opts ...grpcforunconflict.DialOption) (*grpcforunconflict.ClientConn, *manual.Resolver, []*stubserver.StubServer) {
 	t.Helper()
 
 	// Initialize channelz. Used to determine pending RPC count.
@@ -75,15 +74,15 @@ func setupPickFirst(t *testing.T, backendCount int, opts ...grpc.DialOption) (*g
 		addrs[i] = resolver.Address{Addr: backend.Address}
 	}
 
-	dopts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithResolvers(r),
-		grpc.WithDefaultServiceConfig(pickFirstServiceConfig),
+	dopts := []grpcforunconflict.DialOption{
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithResolvers(r),
+		grpcforunconflict.WithDefaultServiceConfig(pickFirstServiceConfig),
 	}
 	dopts = append(dopts, opts...)
-	cc, err := grpc.Dial(r.Scheme()+":///test.server", dopts...)
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.server", dopts...)
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	t.Cleanup(func() { cc.Close() })
 
@@ -91,7 +90,7 @@ func setupPickFirst(t *testing.T, backendCount int, opts ...grpc.DialOption) (*g
 	// This RPC must block until the context expires.
 	sCtx, sCancel := context.WithTimeout(context.Background(), defaultTestShortTimeout)
 	defer sCancel()
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	if _, err := client.EmptyCall(sCtx, &testpb.Empty{}); status.Code(err) != codes.DeadlineExceeded {
 		t.Fatalf("EmptyCall() = %s, want %s", status.Code(err), codes.DeadlineExceeded)
 	}
@@ -180,7 +179,7 @@ func (s) TestPickFirst_AllServersDown(t *testing.T) {
 		b.Stop()
 	}
 
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	for {
 		if ctx.Err() != nil {
 			t.Fatalf("channel failed to move to Unavailable after all backends were stopped: %v", ctx.Err())
@@ -258,12 +257,12 @@ func (s) TestPickFirst_NewAddressWhileBlocking(t *testing.T) {
 	awaitState(ctx, t, cc, connectivity.TransientFailure)
 
 	doneCh := make(chan struct{})
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	go func() {
 		// The channel is currently in TransientFailure and this RPC will block
 		// until the channel becomes Ready, which will only happen when we push a
 		// resolver update with a valid backend address.
-		if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); err != nil {
+		if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); err != nil {
 			t.Errorf("EmptyCall() = %v, want <nil>", err)
 		}
 		close(doneCh)
@@ -328,10 +327,10 @@ func (s) TestPickFirst_StickyTransientFailure(t *testing.T) {
 
 	// Dial the above server with a ConnectParams that does a constant backoff
 	// of defaultTestShortTimeout duration.
-	dopts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithDefaultServiceConfig(pickFirstServiceConfig),
-		grpc.WithConnectParams(grpc.ConnectParams{
+	dopts := []grpcforunconflict.DialOption{
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithDefaultServiceConfig(pickFirstServiceConfig),
+		grpcforunconflict.WithConnectParams(grpcforunconflict.ConnectParams{
 			Backoff: backoff.Config{
 				BaseDelay:  defaultTestShortTimeout,
 				Multiplier: float64(0),
@@ -340,7 +339,7 @@ func (s) TestPickFirst_StickyTransientFailure(t *testing.T) {
 			},
 		}),
 	}
-	cc, err := grpc.Dial(lis.Addr().String(), dopts...)
+	cc, err := grpcforunconflict.Dial(lis.Addr().String(), dopts...)
 	if err != nil {
 		t.Fatalf("Failed to dial server at %q: %v", lis.Addr(), err)
 	}

@@ -26,7 +26,7 @@ To register server reflection on a gRPC server:
 
 	import "github.com/qiyouForSql/grpcforunconflict/reflection"
 
-	s := grpc.NewServer()
+	s :=grpcforunconflict.NewServer()
 	pb.RegisterYourOwnServer(s, &server{})
 
 	// Register reflection service on gRPC server.
@@ -42,33 +42,30 @@ import (
 
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protodesc"
 	"google.golang.org/protobuf/reflect/protoreflect"
 	"google.golang.org/protobuf/reflect/protoregistry"
 
-	v1grpc "github.com/qiyouForSql/grpcforunconflict/reflection/grpc_reflection_v1"
 	v1pb "github.com/qiyouForSql/grpcforunconflict/reflection/grpc_reflection_v1"
-	v1alphagrpc "github.com/qiyouForSql/grpcforunconflict/reflection/grpc_reflection_v1alpha"
 )
 
 // GRPCServer is the interface provided by a gRPC server. It is implemented by
-// *grpc.Server, but could also be implemented by other concrete types. It acts
+// *grpcforunconflict.Server, but could also be implemented by other concrete types. It acts
 // as a registry, for accumulating the services exposed by the server.
 type GRPCServer interface {
-	grpc.ServiceRegistrar
+	grpcforunconflict.ServiceRegistrar
 	ServiceInfoProvider
 }
 
-var _ GRPCServer = (*grpc.Server)(nil)
+var _ GRPCServer = (*grpcforunconflict.Server)(nil)
 
 // Register registers the server reflection service on the given gRPC server.
 // Both the v1 and v1alpha versions are registered.
 func Register(s GRPCServer) {
 	svr := NewServerV1(ServerOptions{Services: s})
-	v1alphagrpc.RegisterServerReflectionServer(s, asV1Alpha(svr))
-	v1grpc.RegisterServerReflectionServer(s, svr)
+	v1alphagrpcforunconflict.RegisterServerReflectionServer(s, asV1Alpha(svr))
+	v1grpcforunconflict.RegisterServerReflectionServer(s, svr)
 }
 
 // RegisterV1 registers only the v1 version of the server reflection service
@@ -76,23 +73,23 @@ func Register(s GRPCServer) {
 // users should use Register instead, at least until clients have upgraded.
 func RegisterV1(s GRPCServer) {
 	svr := NewServerV1(ServerOptions{Services: s})
-	v1grpc.RegisterServerReflectionServer(s, svr)
+	v1grpcforunconflict.RegisterServerReflectionServer(s, svr)
 }
 
 // ServiceInfoProvider is an interface used to retrieve metadata about the
 // services to expose.
 //
 // The reflection service is only interested in the service names, but the
-// signature is this way so that *grpc.Server implements it. So it is okay
+// signature is this way so that *grpcforunconflict.Server implements it. So it is okay
 // for a custom implementation to return zero values for the
-// grpc.ServiceInfo values in the map.
+// grpcforunconflict.ServiceInfo values in the map.
 //
 // # Experimental
 //
 // Notice: This type is EXPERIMENTAL and may be changed or removed in a
 // later release.
 type ServiceInfoProvider interface {
-	GetServiceInfo() map[string]grpc.ServiceInfo
+	GetServiceInfo() map[string]grpcforunconflict.ServiceInfo
 }
 
 // ExtensionResolver is the interface used to query details about extensions.
@@ -117,8 +114,8 @@ type ServerOptions struct {
 	// The source of advertised RPC services. If not specified, the reflection
 	// server will report an empty list when asked to list services.
 	//
-	// This value will typically be a *grpc.Server. But the set of advertised
-	// services can be customized by wrapping a *grpc.Server or using an
+	// This value will typically be a *grpcforunconflict.Server. But the set of advertised
+	// services can be customized by wrapping a *grpcforunconflict.Server or using an
 	// alternate implementation that returns a custom set of service names.
 	Services ServiceInfoProvider
 	// Optional resolver used to load descriptors. If not specified,
@@ -139,7 +136,7 @@ type ServerOptions struct {
 //
 // Notice: This function is EXPERIMENTAL and may be changed or removed in a
 // later release.
-func NewServer(opts ServerOptions) v1alphagrpc.ServerReflectionServer {
+func NewServer(opts ServerOptions) v1alphagrpcforunconflict.ServerReflectionServer {
 	return asV1Alpha(NewServerV1(opts))
 }
 
@@ -151,7 +148,7 @@ func NewServer(opts ServerOptions) v1alphagrpc.ServerReflectionServer {
 //
 // Notice: This function is EXPERIMENTAL and may be changed or removed in a
 // later release.
-func NewServerV1(opts ServerOptions) v1grpc.ServerReflectionServer {
+func NewServerV1(opts ServerOptions) v1grpcforunconflict.ServerReflectionServer {
 	if opts.DescriptorResolver == nil {
 		opts.DescriptorResolver = protoregistry.GlobalFiles
 	}
@@ -166,7 +163,7 @@ func NewServerV1(opts ServerOptions) v1grpc.ServerReflectionServer {
 }
 
 type serverReflectionServer struct {
-	v1alphagrpc.UnimplementedServerReflectionServer
+	v1alphagrpcforunconflict.UnimplementedServerReflectionServer
 	s            ServiceInfoProvider
 	descResolver protodesc.Resolver
 	extResolver  ExtensionResolver
@@ -253,7 +250,7 @@ func (s *serverReflectionServer) listServices() []*v1pb.ServiceResponse {
 }
 
 // ServerReflectionInfo is the reflection service handler.
-func (s *serverReflectionServer) ServerReflectionInfo(stream v1grpc.ServerReflection_ServerReflectionInfoServer) error {
+func (s *serverReflectionServer) ServerReflectionInfo(stream v1grpcforunconflict.ServerReflection_ServerReflectionInfoServer) error {
 	sentFileDescriptors := make(map[string]bool)
 	for {
 		in, err := stream.Recv()

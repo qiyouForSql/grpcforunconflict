@@ -328,15 +328,15 @@ func file_grpc_testing_payloads_proto_rawDescGZIP() []byte {
 
 var file_grpc_testing_payloads_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_grpc_testing_payloads_proto_goTypes = []interface{}{
-	(*ByteBufferParams)(nil),   // 0: grpc.testing.ByteBufferParams
-	(*SimpleProtoParams)(nil),  // 1: grpc.testing.SimpleProtoParams
-	(*ComplexProtoParams)(nil), // 2: grpc.testing.ComplexProtoParams
-	(*PayloadConfig)(nil),      // 3: grpc.testing.PayloadConfig
+	(*ByteBufferParams)(nil),   // 0:grpcforunconflict.testing.ByteBufferParams
+	(*SimpleProtoParams)(nil),  // 1:grpcforunconflict.testing.SimpleProtoParams
+	(*ComplexProtoParams)(nil), // 2:grpcforunconflict.testing.ComplexProtoParams
+	(*PayloadConfig)(nil),      // 3:grpcforunconflict.testing.PayloadConfig
 }
 var file_grpc_testing_payloads_proto_depIdxs = []int32{
-	0, // 0: grpc.testing.PayloadConfig.bytebuf_params:type_name -> grpc.testing.ByteBufferParams
-	1, // 1: grpc.testing.PayloadConfig.simple_params:type_name -> grpc.testing.SimpleProtoParams
-	2, // 2: grpc.testing.PayloadConfig.complex_params:type_name -> grpc.testing.ComplexProtoParams
+	0, // 0:grpcforunconflict.testing.PayloadConfig.bytebuf_params:type_name ->grpcforunconflict.testing.ByteBufferParams
+	1, // 1:grpcforunconflict.testing.PayloadConfig.simple_params:type_name ->grpcforunconflict.testing.SimpleProtoParams
+	2, // 2:grpcforunconflict.testing.PayloadConfig.complex_params:type_name ->grpcforunconflict.testing.ComplexProtoParams
 	3, // [3:3] is the sub-list for method output_type
 	3, // [3:3] is the sub-list for method input_type
 	3, // [3:3] is the sub-list for extension type_name

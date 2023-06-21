@@ -25,10 +25,10 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/grpclog"
 	metricspb "github.com/qiyouForSql/grpcforunconflict/stress/grpc_testing"
-	"google.golang.org/grpc"
 )
 
 var (
@@ -75,7 +75,7 @@ func main() {
 		logger.Fatal("-metrics_server_address is unset")
 	}
 
-	conn, err := grpc.Dial(*metricsServerAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpcforunconflict.Dial(*metricsServerAddress, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		logger.Fatalf("cannot connect to metrics server: %v", err)
 	}

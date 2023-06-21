@@ -30,15 +30,14 @@ import (
 	v3listenerpb "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
 	v3routepb "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
 	"github.com/google/go-cmp/cmp"
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/xds/e2e"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	"github.com/qiyouForSql/grpcforunconflict/peer"
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/durationpb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
@@ -75,14 +74,14 @@ func (s) TestOutlierDetection_NoopConfig(t *testing.T) {
 	}
 
 	// Create a ClientConn and make a successful RPC.
-	cc, err := grpc.Dial(fmt.Sprintf("xds:///%s", serviceName), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(resolver))
+	cc, err := grpcforunconflict.Dial(fmt.Sprintf("xds:///%s", serviceName), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(resolver))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
 	defer cc.Close()
 
-	client := testgrpc.NewTestServiceClient(cc)
-	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); err != nil {
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
+	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); err != nil {
 		t.Fatalf("rpc EmptyCall() failed: %v", err)
 	}
 }
@@ -117,7 +116,7 @@ func clusterWithOutlierDetection(clusterName, edsServiceName string, secLevel e2
 //
 // Returns a non-nil error if context deadline expires before RPCs start to get
 // roundrobined across the given backends.
-func checkRoundRobinRPCs(ctx context.Context, client testgrpc.TestServiceClient, addrs []resolver.Address) error {
+func checkRoundRobinRPCs(ctx context.Context, client testgrpcforunconflict.TestServiceClient, addrs []resolver.Address) error {
 	wantAddrCount := make(map[string]int)
 	for _, addr := range addrs {
 		wantAddrCount[addr.Addr]++
@@ -129,7 +128,7 @@ func checkRoundRobinRPCs(ctx context.Context, client testgrpc.TestServiceClient,
 			iteration := make([]string, len(addrs))
 			for c := 0; c < len(addrs); c++ {
 				var peer peer.Peer
-				client.EmptyCall(ctx, &testpb.Empty{}, grpc.Peer(&peer))
+				client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Peer(&peer))
 				if peer.Addr != nil {
 					iteration[c] = peer.Addr.String()
 				}
@@ -204,13 +203,13 @@ func (s) TestOutlierDetectionWithOutlier(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	cc, err := grpc.Dial(fmt.Sprintf("xds:///%s", serviceName), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(r))
+	cc, err := grpcforunconflict.Dial(fmt.Sprintf("xds:///%s", serviceName), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(r))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
 	defer cc.Close()
 
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 
 	fullAddresses := []resolver.Address{
 		{Addr: backend1.Address},
@@ -291,13 +290,13 @@ func (s) TestOutlierDetectionXDSDefaultOn(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	cc, err := grpc.Dial(fmt.Sprintf("xds:///%s", serviceName), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(r))
+	cc, err := grpcforunconflict.Dial(fmt.Sprintf("xds:///%s", serviceName), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(r))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
 	defer cc.Close()
 
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 
 	fullAddresses := []resolver.Address{
 		{Addr: backend1.Address},

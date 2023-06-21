@@ -24,6 +24,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/connectivity"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
@@ -35,15 +36,13 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"github.com/qiyouForSql/grpcforunconflict/resolver/manual"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 const rrServiceConfig = `{"loadBalancingConfig": [{"round_robin":{}}]}`
 
-func testRoundRobinBasic(ctx context.Context, t *testing.T, opts ...grpc.DialOption) (*grpc.ClientConn, *manual.Resolver, []*stubserver.StubServer) {
+func testRoundRobinBasic(ctx context.Context, t *testing.T, opts ...grpcforunconflict.DialOption) (*grpcforunconflict.ClientConn, *manual.Resolver, []*stubserver.StubServer) {
 	t.Helper()
 
 	// Initialize channelz. Used to determine pending RPC count.
@@ -69,18 +68,18 @@ func testRoundRobinBasic(ctx context.Context, t *testing.T, opts ...grpc.DialOpt
 		addrs[i] = resolver.Address{Addr: backend.Address}
 	}
 
-	dopts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithResolvers(r),
-		grpc.WithDefaultServiceConfig(rrServiceConfig),
+	dopts := []grpcforunconflict.DialOption{
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithResolvers(r),
+		grpcforunconflict.WithDefaultServiceConfig(rrServiceConfig),
 	}
 	dopts = append(dopts, opts...)
-	cc, err := grpc.Dial(r.Scheme()+":///test.server", dopts...)
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.server", dopts...)
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	t.Cleanup(func() { cc.Close() })
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 
 	// At this point, the resolver has not returned any addresses to the channel.
 	// This RPC must block until the context expires.
@@ -122,7 +121,7 @@ func (s) TestRoundRobin_AddressesRemoved(t *testing.T) {
 	awaitState(ctx, t, cc, connectivity.TransientFailure)
 
 	const msgWant = "produced zero addresses"
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	if _, err := client.EmptyCall(ctx, &testpb.Empty{}); !strings.Contains(status.Convert(err).Message(), msgWant) {
 		t.Fatalf("EmptyCall() = %v, want Contains(Message(), %q)", err, msgWant)
 	}
@@ -143,13 +142,13 @@ func (s) TestRoundRobin_NewAddressWhileBlocking(t *testing.T) {
 	r.UpdateState(resolver.State{Addresses: []resolver.Address{}})
 	awaitState(ctx, t, cc, connectivity.TransientFailure)
 
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	doneCh := make(chan struct{})
 	go func() {
 		// The channel is currently in TransientFailure and this RPC will block
 		// until the channel becomes Ready, which will only happen when we push a
 		// resolver update with a valid backend address.
-		if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); err != nil {
+		if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); err != nil {
 			t.Errorf("EmptyCall() = %v, want <nil>", err)
 		}
 		close(doneCh)
@@ -201,7 +200,7 @@ func (s) TestRoundRobin_OneServerDown(t *testing.T) {
 	for i := 0; i < len(backends)-1; i++ {
 		addrs[i] = resolver.Address{Addr: backends[i].Address}
 	}
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	if err := rrutil.CheckRoundRobinRPCs(ctx, client, addrs); err != nil {
 		t.Fatalf("RPCs are not being round robined across remaining servers: %v", err)
 	}
@@ -224,7 +223,7 @@ func (s) TestRoundRobin_AllServersDown(t *testing.T) {
 	awaitState(ctx, t, cc, connectivity.TransientFailure)
 
 	// Failfast RPCs should fail with Unavailable.
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	if _, err := client.EmptyCall(context.Background(), &testpb.Empty{}); status.Code(err) == codes.Unavailable {
 		return
 	}
@@ -263,14 +262,14 @@ func (s) TestRoundRobin_UpdateAddressAttributes(t *testing.T) {
 	t.Cleanup(func() { backend.Stop() })
 
 	// Dial the backend with round_robin as the LB policy.
-	dopts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithResolvers(r),
-		grpc.WithDefaultServiceConfig(rrServiceConfig),
+	dopts := []grpcforunconflict.DialOption{
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithResolvers(r),
+		grpcforunconflict.WithDefaultServiceConfig(rrServiceConfig),
 	}
-	cc, err := grpc.Dial(r.Scheme()+":///test.server", dopts...)
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.server", dopts...)
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	t.Cleanup(func() { cc.Close() })
 
@@ -279,7 +278,7 @@ func (s) TestRoundRobin_UpdateAddressAttributes(t *testing.T) {
 	r.UpdateState(resolver.State{Addresses: []resolver.Address{addr}})
 
 	// Make an RPC and ensure it does not contain the metadata we are looking for.
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
 	if _, err := client.EmptyCall(ctx, &testpb.Empty{}); err != nil {

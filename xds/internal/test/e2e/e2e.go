@@ -25,12 +25,9 @@ import (
 	"os"
 	"os/exec"
 
-	channelzgrpc "github.com/qiyouForSql/grpcforunconflict/channelz/grpc_channelz_v1"
 	channelzpb "github.com/qiyouForSql/grpcforunconflict/channelz/grpc_channelz_v1"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
-	"google.golang.org/grpc"
 )
 
 func cmd(path string, logger io.Writer, args []string, env []string) *exec.Cmd {
@@ -49,7 +46,7 @@ type client struct {
 	cmd *exec.Cmd
 
 	target  string
-	statsCC *grpc.ClientConn
+	statsCC *grpcforunconflict.ClientConn
 }
 
 // newClient create a client with the given target and bootstrap content.
@@ -71,7 +68,7 @@ func newClient(target, binaryPath, bootstrap string, logger io.Writer, flags ...
 	)
 	cmd.Start()
 
-	cc, err := grpc.Dial(fmt.Sprintf("localhost:%d", clientStatsPort), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithDefaultCallOptions(grpc.WaitForReady(true)))
+	cc, err := grpcforunconflict.Dial(fmt.Sprintf("localhost:%d", clientStatsPort), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithDefaultCallOptions(grpcforunconflict.WaitForReady(true)))
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +80,7 @@ func newClient(target, binaryPath, bootstrap string, logger io.Writer, flags ...
 }
 
 func (c *client) clientStats(ctx context.Context) (*testpb.LoadBalancerStatsResponse, error) {
-	ccc := testgrpc.NewLoadBalancerStatsServiceClient(c.statsCC)
+	ccc := testgrpcforunconflict.NewLoadBalancerStatsServiceClient(c.statsCC)
 	return ccc.GetClientStats(ctx, &testpb.LoadBalancerStatsRequest{
 		NumRpcs:    100,
 		TimeoutSec: 10,
@@ -91,13 +88,13 @@ func (c *client) clientStats(ctx context.Context) (*testpb.LoadBalancerStatsResp
 }
 
 func (c *client) configRPCs(ctx context.Context, req *testpb.ClientConfigureRequest) error {
-	ccc := testgrpc.NewXdsUpdateClientConfigureServiceClient(c.statsCC)
+	ccc := testgrpcforunconflict.NewXdsUpdateClientConfigureServiceClient(c.statsCC)
 	_, err := ccc.Configure(ctx, req)
 	return err
 }
 
 func (c *client) channelzSubChannels(ctx context.Context) ([]*channelzpb.Subchannel, error) {
-	ccc := channelzgrpc.NewChannelzClient(c.statsCC)
+	ccc := channelzgrpcforunconflict.NewChannelzClient(c.statsCC)
 	r, err := ccc.GetTopChannels(ctx, &channelzpb.GetTopChannelsRequest{})
 	if err != nil {
 		return nil, err

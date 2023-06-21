@@ -21,8 +21,8 @@ package xds
 import (
 	"net"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/connectivity"
-	"google.golang.org/grpc"
 )
 
 type serverOptions struct {
@@ -31,13 +31,13 @@ type serverOptions struct {
 }
 
 type serverOption struct {
-	grpc.EmptyServerOption
+	grpcforunconflict.EmptyServerOption
 	apply func(*serverOptions)
 }
 
-// ServingModeCallback returns a grpc.ServerOption which allows users to
+// ServingModeCallback returns a grpcforunconflict.ServerOption which allows users to
 // register a callback to get notified about serving mode changes.
-func ServingModeCallback(cb ServingModeCallbackFunc) grpc.ServerOption {
+func ServingModeCallback(cb ServingModeCallbackFunc) grpcforunconflict.ServerOption {
 	return &serverOption{apply: func(o *serverOptions) { o.modeCallback = cb }}
 }
 
@@ -58,7 +58,7 @@ type ServingModeChangeArgs struct {
 	Err error
 }
 
-// BootstrapContentsForTesting returns a grpc.ServerOption which allows users
+// BootstrapContentsForTesting returns a grpcforunconflict.ServerOption which allows users
 // to inject a bootstrap configuration used by only this server, instead of the
 // global configuration from the environment variables.
 //
@@ -71,6 +71,6 @@ type ServingModeChangeArgs struct {
 //
 // Notice: This API is EXPERIMENTAL and may be changed or removed in a
 // later release.
-func BootstrapContentsForTesting(contents []byte) grpc.ServerOption {
+func BootstrapContentsForTesting(contents []byte) grpcforunconflict.ServerOption {
 	return &serverOption{apply: func(o *serverOptions) { o.bootstrapContentsForTesting = contents }}
 }

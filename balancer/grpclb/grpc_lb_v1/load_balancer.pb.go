@@ -781,30 +781,30 @@ func file_grpc_lb_v1_load_balancer_proto_rawDescGZIP() []byte {
 
 var file_grpc_lb_v1_load_balancer_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_grpc_lb_v1_load_balancer_proto_goTypes = []interface{}{
-	(*LoadBalanceRequest)(nil),         // 0: grpc.lb.v1.LoadBalanceRequest
-	(*InitialLoadBalanceRequest)(nil),  // 1: grpc.lb.v1.InitialLoadBalanceRequest
-	(*ClientStatsPerToken)(nil),        // 2: grpc.lb.v1.ClientStatsPerToken
-	(*ClientStats)(nil),                // 3: grpc.lb.v1.ClientStats
-	(*LoadBalanceResponse)(nil),        // 4: grpc.lb.v1.LoadBalanceResponse
-	(*FallbackResponse)(nil),           // 5: grpc.lb.v1.FallbackResponse
-	(*InitialLoadBalanceResponse)(nil), // 6: grpc.lb.v1.InitialLoadBalanceResponse
-	(*ServerList)(nil),                 // 7: grpc.lb.v1.ServerList
-	(*Server)(nil),                     // 8: grpc.lb.v1.Server
+	(*LoadBalanceRequest)(nil),         // 0:grpcforunconflict.lb.v1.LoadBalanceRequest
+	(*InitialLoadBalanceRequest)(nil),  // 1:grpcforunconflict.lb.v1.InitialLoadBalanceRequest
+	(*ClientStatsPerToken)(nil),        // 2:grpcforunconflict.lb.v1.ClientStatsPerToken
+	(*ClientStats)(nil),                // 3:grpcforunconflict.lb.v1.ClientStats
+	(*LoadBalanceResponse)(nil),        // 4:grpcforunconflict.lb.v1.LoadBalanceResponse
+	(*FallbackResponse)(nil),           // 5:grpcforunconflict.lb.v1.FallbackResponse
+	(*InitialLoadBalanceResponse)(nil), // 6:grpcforunconflict.lb.v1.InitialLoadBalanceResponse
+	(*ServerList)(nil),                 // 7:grpcforunconflict.lb.v1.ServerList
+	(*Server)(nil),                     // 8:grpcforunconflict.lb.v1.Server
 	(*timestamppb.Timestamp)(nil),      // 9: google.protobuf.Timestamp
 	(*durationpb.Duration)(nil),        // 10: google.protobuf.Duration
 }
 var file_grpc_lb_v1_load_balancer_proto_depIdxs = []int32{
-	1,  // 0: grpc.lb.v1.LoadBalanceRequest.initial_request:type_name -> grpc.lb.v1.InitialLoadBalanceRequest
-	3,  // 1: grpc.lb.v1.LoadBalanceRequest.client_stats:type_name -> grpc.lb.v1.ClientStats
-	9,  // 2: grpc.lb.v1.ClientStats.timestamp:type_name -> google.protobuf.Timestamp
-	2,  // 3: grpc.lb.v1.ClientStats.calls_finished_with_drop:type_name -> grpc.lb.v1.ClientStatsPerToken
-	6,  // 4: grpc.lb.v1.LoadBalanceResponse.initial_response:type_name -> grpc.lb.v1.InitialLoadBalanceResponse
-	7,  // 5: grpc.lb.v1.LoadBalanceResponse.server_list:type_name -> grpc.lb.v1.ServerList
-	5,  // 6: grpc.lb.v1.LoadBalanceResponse.fallback_response:type_name -> grpc.lb.v1.FallbackResponse
-	10, // 7: grpc.lb.v1.InitialLoadBalanceResponse.client_stats_report_interval:type_name -> google.protobuf.Duration
-	8,  // 8: grpc.lb.v1.ServerList.servers:type_name -> grpc.lb.v1.Server
-	0,  // 9: grpc.lb.v1.LoadBalancer.BalanceLoad:input_type -> grpc.lb.v1.LoadBalanceRequest
-	4,  // 10: grpc.lb.v1.LoadBalancer.BalanceLoad:output_type -> grpc.lb.v1.LoadBalanceResponse
+	1,  // 0:grpcforunconflict.lb.v1.LoadBalanceRequest.initial_request:type_name ->grpcforunconflict.lb.v1.InitialLoadBalanceRequest
+	3,  // 1:grpcforunconflict.lb.v1.LoadBalanceRequest.client_stats:type_name ->grpcforunconflict.lb.v1.ClientStats
+	9,  // 2:grpcforunconflict.lb.v1.ClientStats.timestamp:type_name -> google.protobuf.Timestamp
+	2,  // 3:grpcforunconflict.lb.v1.ClientStats.calls_finished_with_drop:type_name ->grpcforunconflict.lb.v1.ClientStatsPerToken
+	6,  // 4:grpcforunconflict.lb.v1.LoadBalanceResponse.initial_response:type_name ->grpcforunconflict.lb.v1.InitialLoadBalanceResponse
+	7,  // 5:grpcforunconflict.lb.v1.LoadBalanceResponse.server_list:type_name ->grpcforunconflict.lb.v1.ServerList
+	5,  // 6:grpcforunconflict.lb.v1.LoadBalanceResponse.fallback_response:type_name ->grpcforunconflict.lb.v1.FallbackResponse
+	10, // 7:grpcforunconflict.lb.v1.InitialLoadBalanceResponse.client_stats_report_interval:type_name -> google.protobuf.Duration
+	8,  // 8:grpcforunconflict.lb.v1.ServerList.servers:type_name ->grpcforunconflict.lb.v1.Server
+	0,  // 9:grpcforunconflict.lb.v1.LoadBalancer.BalanceLoad:input_type ->grpcforunconflict.lb.v1.LoadBalanceRequest
+	4,  // 10:grpcforunconflict.lb.v1.LoadBalancer.BalanceLoad:output_type ->grpcforunconflict.lb.v1.LoadBalanceResponse
 	10, // [10:11] is the sub-list for method output_type
 	9,  // [9:10] is the sub-list for method input_type
 	9,  // [9:9] is the sub-list for extension type_name

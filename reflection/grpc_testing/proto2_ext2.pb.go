@@ -86,7 +86,7 @@ var file_reflection_grpc_testing_proto2_ext2_proto_extTypes = []protoimpl.Extens
 		ExtendedType:  (*ToBeExtended)(nil),
 		ExtensionType: (*string)(nil),
 		Field:         23,
-		Name:          "grpc.testing.frob",
+		Name:          "grpcforunconflict.testing.frob",
 		Tag:           "bytes,23,opt,name=frob",
 		Filename:      "reflection/grpc_testing/proto2_ext2.proto",
 	},
@@ -94,7 +94,7 @@ var file_reflection_grpc_testing_proto2_ext2_proto_extTypes = []protoimpl.Extens
 		ExtendedType:  (*ToBeExtended)(nil),
 		ExtensionType: (*AnotherExtension)(nil),
 		Field:         29,
-		Name:          "grpc.testing.nitz",
+		Name:          "grpcforunconflict.testing.nitz",
 		Tag:           "bytes,29,opt,name=nitz",
 		Filename:      "reflection/grpc_testing/proto2_ext2.proto",
 	},
@@ -104,7 +104,7 @@ var file_reflection_grpc_testing_proto2_ext2_proto_extTypes = []protoimpl.Extens
 var (
 	// optional string frob = 23;
 	E_Frob = &file_reflection_grpc_testing_proto2_ext2_proto_extTypes[0]
-	// optional grpc.testing.AnotherExtension nitz = 29;
+	// optionalgrpcforunconflict.testing.AnotherExtension nitz = 29;
 	E_Nitz = &file_reflection_grpc_testing_proto2_ext2_proto_extTypes[1]
 )
 
@@ -148,13 +148,13 @@ func file_reflection_grpc_testing_proto2_ext2_proto_rawDescGZIP() []byte {
 
 var file_reflection_grpc_testing_proto2_ext2_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_reflection_grpc_testing_proto2_ext2_proto_goTypes = []interface{}{
-	(*AnotherExtension)(nil), // 0: grpc.testing.AnotherExtension
-	(*ToBeExtended)(nil),     // 1: grpc.testing.ToBeExtended
+	(*AnotherExtension)(nil), // 0:grpcforunconflict.testing.AnotherExtension
+	(*ToBeExtended)(nil),     // 1:grpcforunconflict.testing.ToBeExtended
 }
 var file_reflection_grpc_testing_proto2_ext2_proto_depIdxs = []int32{
-	1, // 0: grpc.testing.frob:extendee -> grpc.testing.ToBeExtended
-	1, // 1: grpc.testing.nitz:extendee -> grpc.testing.ToBeExtended
-	0, // 2: grpc.testing.nitz:type_name -> grpc.testing.AnotherExtension
+	1, // 0:grpcforunconflict.testing.frob:extendee ->grpcforunconflict.testing.ToBeExtended
+	1, // 1:grpcforunconflict.testing.nitz:extendee ->grpcforunconflict.testing.ToBeExtended
+	0, // 2:grpcforunconflict.testing.nitz:type_name ->grpcforunconflict.testing.AnotherExtension
 	3, // [3:3] is the sub-list for method output_type
 	3, // [3:3] is the sub-list for method input_type
 	2, // [2:3] is the sub-list for extension type_name

@@ -28,21 +28,19 @@ import (
 	"sync"
 	"time"
 
-	lbgrpc "github.com/qiyouForSql/grpcforunconflict/balancer/grpclb/grpc_lb_v1"
 	lbpb "github.com/qiyouForSql/grpcforunconflict/balancer/grpclb/grpc_lb_v1"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/grpclog"
 	"github.com/qiyouForSql/grpcforunconflict/internal/pretty"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 )
 
 var logger = grpclog.Component("fake_grpclb")
 
 // ServerParams wraps options passed while creating a Server.
 type ServerParams struct {
-	ListenPort    int                 // Listening port for the balancer server.
-	ServerOptions []grpc.ServerOption // gRPC options for the balancer server.
+	ListenPort    int                              // Listening port for the balancer server.
+	ServerOptions []grpcforunconflict.ServerOption // gRPC options for the balancer server.
 
 	LoadBalancedServiceName string   // Service name being load balanced for.
 	LoadBalancedServicePort int      // Service port being load balanced for.
@@ -56,13 +54,13 @@ type ServerParams struct {
 //
 // It is safe for concurrent access.
 type Server struct {
-	lbgrpc.UnimplementedLoadBalancerServer
+	lbgrpcforunconflict.UnimplementedLoadBalancerServer
 
 	// Options copied over from ServerParams passed to NewServer.
-	sOpts       []grpc.ServerOption // gRPC server options.
-	serviceName string              // Service name being load balanced for.
-	servicePort int                 // Service port being load balanced for.
-	shortStream bool                // End balancer stream after sending server list.
+	sOpts       []grpcforunconflict.ServerOption // gRPC server options.
+	serviceName string                           // Service name being load balanced for.
+	servicePort int                              // Service port being load balanced for.
+	shortStream bool                             // End balancer stream after sending server list.
 
 	// Values initialized using ServerParams passed to NewServer.
 	backends []*lbpb.Server // Service backends to balance load across.
@@ -70,8 +68,8 @@ type Server struct {
 
 	// mu guards access to below fields.
 	mu         sync.Mutex
-	grpcServer *grpc.Server // Underlying grpc server.
-	address    string       // Actual listening address.
+	grpcServer *grpcforunconflict.Server // Underlying grpc server.
+	address    string                    // Actual listening address.
 
 	stopped chan struct{} // Closed when Stop() is called.
 }
@@ -121,7 +119,7 @@ func NewServer(params ServerParams) (*Server, error) {
 //
 // It returns early with a non-nil error if it is unable to start serving.
 // Otherwise, it blocks until Stop() is called, at which point it returns the
-// error returned by the underlying grpc.Server's Serve() method.
+// error returned by the underlyinggrpcforunconflict.Server's Serve() method.
 func (s *Server) Serve() error {
 	s.mu.Lock()
 	if s.grpcServer != nil {
@@ -129,12 +127,12 @@ func (s *Server) Serve() error {
 		return errors.New("Serve() called multiple times")
 	}
 
-	server := grpc.NewServer(s.sOpts...)
+	server := grpcforunconflict.NewServer(s.sOpts...)
 	s.grpcServer = server
 	s.mu.Unlock()
 
 	logger.Infof("Begin listening on %s", s.lis.Addr().String())
-	lbgrpc.RegisterLoadBalancerServer(server, s)
+	lbgrpcforunconflict.RegisterLoadBalancerServer(server, s)
 	return server.Serve(s.lis) // This call will block.
 }
 
@@ -158,7 +156,7 @@ func (s *Server) Address() string {
 }
 
 // BalanceLoad provides a fake implementation of the LoadBalancer service.
-func (s *Server) BalanceLoad(stream lbgrpc.LoadBalancer_BalanceLoadServer) error {
+func (s *Server) BalanceLoad(stream lbgrpcforunconflict.LoadBalancer_BalanceLoadServer) error {
 	logger.Info("New BalancerLoad stream started")
 
 	req, err := stream.Recv()

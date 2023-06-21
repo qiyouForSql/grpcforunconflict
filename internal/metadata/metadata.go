@@ -31,7 +31,7 @@ import (
 
 type mdKeyType string
 
-const mdKey = mdKeyType("grpc.internal.address.metadata")
+const mdKey = mdKeyType("grpcforunconflict.internal.address.metadata")
 
 type mdValue metadata.MD
 

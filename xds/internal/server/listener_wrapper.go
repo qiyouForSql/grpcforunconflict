@@ -94,7 +94,7 @@ type ListenerWrapperParams struct {
 
 // NewListenerWrapper creates a new listenerWrapper with params. It returns a
 // net.Listener and a channel which is written to, indicating that the former is
-// ready to be passed to grpc.Serve().
+// ready to be passed togrpcforunconflict.Serve().
 //
 // Only TCP listeners are supported.
 func NewListenerWrapper(params ListenerWrapperParams) (net.Listener, <-chan struct{}) {
@@ -251,13 +251,13 @@ func (l *listenerWrapper) Accept() (net.Conn, error) {
 		if err != nil {
 			// When a matching filter chain is not found, we close the
 			// connection right away, but do not return an error back to
-			// `grpc.Serve()` from where this Accept() was invoked. Returning an
-			// error to `grpc.Serve()` causes the server to shutdown. If we want
+			// `grpcforunconflict.Serve()` from where this Accept() was invoked. Returning an
+			// error to `grpcforunconflict.Serve()` causes the server to shutdown. If we want
 			// to avoid the server from shutting down, we would need to return
 			// an error type which implements the `Temporary() bool` method,
-			// which is invoked by `grpc.Serve()` to see if the returned error
+			// which is invoked by `grpcforunconflict.Serve()` to see if the returned error
 			// represents a temporary condition. In the case of a temporary
-			// error, `grpc.Serve()` method sleeps for a small duration and
+			// error, `grpcforunconflict.Serve()` method sleeps for a small duration and
 			// therefore ends up blocking all connection attempts during that
 			// time frame, which is also not ideal for an error like this.
 			l.logger.Warningf("Connection from %s to %s failed to find any matching filter chain", conn.RemoteAddr().String(), conn.LocalAddr().String())

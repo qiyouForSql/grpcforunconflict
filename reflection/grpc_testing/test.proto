@@ -16,7 +16,7 @@ syntax = "proto3";
 
 option go_package = "github.com/qiyouForSql/grpcforunconflict/reflection/grpc_testing";
 
-package grpc.testing;
+packagegrpcforunconflict.testing;
 
 message SearchResponse {
   message Result {

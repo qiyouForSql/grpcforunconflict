@@ -38,7 +38,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/internal/envconfig"
 	"github.com/qiyouForSql/grpcforunconflict/internal/pretty"
 	"github.com/qiyouForSql/grpcforunconflict/xds/bootstrap"
-	"google.golang.org/grpc"
 )
 
 const (
@@ -141,9 +140,9 @@ type ServerConfig struct {
 
 	// As part of unmarshaling the JSON config into this struct, we ensure that
 	// the credentials config is valid by building an instance of the specified
-	// credentials and store it here as a grpc.DialOption for easy access when
+	// credentials and store it here as agrpcforunconflict.DialOption for easy access when
 	// dialing this xDS server.
-	credsDialOption grpc.DialOption
+	credsDialOptiongrpcforunconflict.DialOption
 
 	// IgnoreResourceDeletion controls the behavior of the xDS client when the
 	// server deletes a previously sent Listener or Cluster resource. If set, the
@@ -154,7 +153,7 @@ type ServerConfig struct {
 }
 
 // CredsDialOption returns the configured credentials as a grpc dial option.
-func (sc *ServerConfig) CredsDialOption() grpc.DialOption {
+func (sc *ServerConfig) CredsDialOption() grpcforunconflict.DialOption {
 	return sc.credsDialOption
 }
 
@@ -211,7 +210,7 @@ func (sc *ServerConfig) UnmarshalJSON(data []byte) error {
 			return fmt.Errorf("failed to build credentials bundle from bootstrap for %q: %v", cc.Type, err)
 		}
 		sc.Creds = ChannelCreds(cc)
-		sc.credsDialOption = grpc.WithCredentialsBundle(bundle)
+		sc.credsDialOption = grpcforunconflict.WithCredentialsBundle(bundle)
 		break
 	}
 	return nil
@@ -555,7 +554,7 @@ func newConfigFromContents(data []byte) (*Config, error) {
 		node = &v3corepb.Node{}
 	}
 	node.UserAgentName = gRPCUserAgentName
-	node.UserAgentVersionType = &v3corepb.Node_UserAgentVersion{UserAgentVersion: grpc.Version}
+	node.UserAgentVersionType = &v3corepb.Node_UserAgentVersion{UserAgentVersion: grpcforunconflict.Version}
 	node.ClientFeatures = append(node.ClientFeatures, clientFeatureNoOverprovisioning, clientFeatureResourceWrapper)
 	config.NodeProto = node
 

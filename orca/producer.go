@@ -21,15 +21,14 @@ import (
 	"sync"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/balancer"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/internal/grpcsync"
 	"github.com/qiyouForSql/grpcforunconflict/orca/internal"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
 	v3orcapb "github.com/cncf/xds/go/xds/data/orca/v3"
-	v3orcaservicegrpc "github.com/cncf/xds/go/xds/service/orca/v3"
 	v3orcaservicepb "github.com/cncf/xds/go/xds/service/orca/v3"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
@@ -39,7 +38,7 @@ type producerBuilder struct{}
 // Build constructs and returns a producer and its cleanup function
 func (*producerBuilder) Build(cci interface{}) (balancer.Producer, func()) {
 	p := &producer{
-		client:    v3orcaservicegrpc.NewOpenRcaServiceClient(cci.(grpc.ClientConnInterface)),
+		client:    v3orcaservicegrpcforunconflict.NewOpenRcaServiceClient(cci.(grpcforunconflict.ClientConnInterface)),
 		intervals: make(map[time.Duration]int),
 		listeners: make(map[OOBListener]struct{}),
 		backoff:   internal.DefaultBackoffFunc,
@@ -88,7 +87,7 @@ func RegisterOOBListener(sc balancer.SubConn, l OOBListener, opts OOBListenerOpt
 }
 
 type producer struct {
-	client v3orcaservicegrpc.OpenRcaServiceClient
+	client v3orcaservicegrpcforunconflict.OpenRcaServiceClient
 
 	// backoff is called between stream attempts to determine how long to delay
 	// to avoid overloading a server experiencing problems.  The attempt count

@@ -20,7 +20,7 @@ make the following changes:
 --- a/examples/helloworld/greeter_server/main.go
 +++ b/examples/helloworld/greeter_server/main.go
 @@ -40,6 +40,7 @@ import (
-        "google.golang.org/grpc"
+        "github.com/qiyouForSql/grpcforunconflict"
         pb "github.com/qiyouForSql/grpcforunconflict/examples/helloworld/helloworld"
 +       "github.com/qiyouForSql/grpcforunconflict/reflection"
  )
@@ -28,7 +28,7 @@ make the following changes:
  const (
 @@ -61,6 +62,8 @@ func main() {
         }
-        s := grpc.NewServer()
+        s :=grpcforunconflict.NewServer()
         pb.RegisterGreeterService(s, &pb.GreeterService{SayHello: sayHello})
 +       // Register reflection service on gRPC server.
 +       reflection.Register(s)
@@ -79,8 +79,8 @@ The `list` command lists services exposed at a given port:
 
   output:
   ```sh
-  grpc.examples.echo.Echo
-  grpc.reflection.v1alpha.ServerReflection
+ grpcforunconflict.examples.echo.Echo
+ grpcforunconflict.reflection.v1alpha.ServerReflection
   helloworld.Greeter
   ```
 

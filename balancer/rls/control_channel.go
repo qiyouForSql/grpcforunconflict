@@ -32,7 +32,7 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/internal/pretty"
 	rlsgrpc "github.com/qiyouForSql/grpcforunconflict/internal/proto/grpc_lookup_v1"
 	rlspb "github.com/qiyouForSql/grpcforunconflict/internal/proto/grpc_lookup_v1"
-	"google.golang.org/grpc"
+	"github.com/qiyouForSql/grpcforunconflict"
 )
 
 var newAdaptiveThrottler = func() adaptiveThrottler { return adaptive.New() }
@@ -55,8 +55,8 @@ type controlChannel struct {
 	// hammering the RLS service while it is overloaded or down.
 	throttler adaptiveThrottler
 
-	cc     *grpc.ClientConn
-	client rlsgrpc.RouteLookupServiceClient
+	cc     *grpcforunconflict.ClientConn
+	client rlsgrpcforunconflict.RouteLookupServiceClient
 	logger *internalgrpclog.PrefixLogger
 }
 
@@ -75,11 +75,11 @@ func newControlChannel(rlsServerName, serviceConfig string, rpcTimeout time.Dura
 	if err != nil {
 		return nil, err
 	}
-	ctrlCh.cc, err = grpc.Dial(rlsServerName, dopts...)
+	ctrlCh.cc, err =grpcforunconflict.Dial(rlsServerName, dopts...)
 	if err != nil {
 		return nil, err
 	}
-	ctrlCh.client = rlsgrpc.NewRouteLookupServiceClient(ctrlCh.cc)
+	ctrlCh.client = rlsgrpcforunconflict.NewRouteLookupServiceClient(ctrlCh.cc)
 	ctrlCh.logger.Infof("Control channel created to RLS server at: %v", rlsServerName)
 
 	go ctrlCh.monitorConnectivityState()
@@ -87,23 +87,23 @@ func newControlChannel(rlsServerName, serviceConfig string, rpcTimeout time.Dura
 }
 
 // dialOpts constructs the dial options for the control plane channel.
-func (cc *controlChannel) dialOpts(bOpts balancer.BuildOptions, serviceConfig string) ([]grpc.DialOption, error) {
+func (cc *controlChannel) dialOpts(bOpts balancer.BuildOptions, serviceConfig string) ([]grpcforunconflict.DialOption, error) {
 	// The control plane channel will use the same authority as the parent
 	// channel for server authorization. This ensures that the identity of the
 	// RLS server and the identity of the backends is the same, so if the RLS
 	// config is injected by an attacker, it cannot cause leakage of private
 	// information contained in headers set by the application.
-	dopts := []grpc.DialOption{grpc.WithAuthority(bOpts.Authority)}
+	dopts := []grpcforunconflict.DialOption{grpcforunconflict.WithAuthority(bOpts.Authority)}
 	if bOpts.Dialer != nil {
-		dopts = append(dopts, grpc.WithContextDialer(bOpts.Dialer))
+		dopts = append(dopts,grpcforunconflict.WithContextDialer(bOpts.Dialer))
 	}
 
 	// The control channel will use the channel credentials from the parent
 	// channel, including any call creds associated with the channel creds.
-	var credsOpt grpc.DialOption
+	var credsOptgrpcforunconflict.DialOption
 	switch {
 	case bOpts.DialCreds != nil:
-		credsOpt = grpc.WithTransportCredentials(bOpts.DialCreds.Clone())
+		credsOpt =grpcforunconflict.WithTransportCredentials(bOpts.DialCreds.Clone())
 	case bOpts.CredsBundle != nil:
 		// The "fallback" mode in google default credentials (which is the only
 		// type of credentials we expect to be used with RLS) uses TLS/ALTS
@@ -113,10 +113,10 @@ func (cc *controlChannel) dialOpts(bOpts balancer.BuildOptions, serviceConfig st
 		if err != nil {
 			return nil, err
 		}
-		credsOpt = grpc.WithCredentialsBundle(bundle)
+		credsOpt =grpcforunconflict.WithCredentialsBundle(bundle)
 	default:
 		cc.logger.Warningf("no credentials available, using Insecure")
-		credsOpt = grpc.WithTransportCredentials(insecure.NewCredentials())
+		credsOpt =grpcforunconflict.WithTransportCredentials(insecure.NewCredentials())
 	}
 	dopts = append(dopts, credsOpt)
 
@@ -125,7 +125,7 @@ func (cc *controlChannel) dialOpts(bOpts balancer.BuildOptions, serviceConfig st
 	// resolver for the control channel.
 	if serviceConfig != "" {
 		cc.logger.Infof("Disabling service config from the name resolver and instead using: %s", serviceConfig)
-		dopts = append(dopts, grpc.WithDisableServiceConfig(), grpc.WithDefaultServiceConfig(serviceConfig))
+		dopts = append(dopts,grpcforunconflict.WithDisableServiceConfig(),grpcforunconflict.WithDefaultServiceConfig(serviceConfig))
 	}
 
 	return dopts, nil

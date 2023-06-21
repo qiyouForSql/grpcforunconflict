@@ -33,11 +33,10 @@ import (
 
 	v3corepb "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
 	v3endpointpb "github.com/envoyproxy/go-control-plane/envoy/config/endpoint/v3"
-	v3lrsgrpc "github.com/envoyproxy/go-control-plane/envoy/service/load_stats/v3"
 	v3lrspb "github.com/envoyproxy/go-control-plane/envoy/service/load_stats/v3"
 )
 
-type lrsStream = v3lrsgrpc.LoadReportingService_StreamLoadStatsClient
+type lrsStream = v3lrsgrpcforunconflict.LoadReportingService_StreamLoadStatsClient
 
 // ReportLoad starts reporting loads to the management server the transport is
 // configured to use.
@@ -118,7 +117,7 @@ func (t *Transport) lrsRunner(ctx context.Context) {
 			// goroutine.
 			streamCtx, cancel := context.WithCancel(ctx)
 			defer cancel()
-			stream, err := v3lrsgrpc.NewLoadReportingServiceClient(t.cc).StreamLoadStats(streamCtx)
+			stream, err := v3lrsgrpcforunconflict.NewLoadReportingServiceClient(t.cc).StreamLoadStats(streamCtx)
 			if err != nil {
 				t.logger.Warningf("Creating LRS stream to server %q failed: %v", t.serverURI, err)
 				return false

@@ -299,7 +299,7 @@ func (s) TestParseConfigErrors(t *testing.T) {
 				"childPolicy": [{"grpclb": {"childPolicy": [{"pickfirst": {}}]}}],
 				"childPolicyConfigTargetFieldName": "serviceName"
 			}`),
-			wantErr: "cannot unmarshal string into Go value of type grpc.jsonSC",
+			wantErr: "cannot unmarshal string into Go value of typegrpcforunconflict.jsonSC",
 		},
 		{
 			desc: "routeLookupChannelServiceConfig contains unknown LB policy",

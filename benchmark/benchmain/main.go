@@ -66,13 +66,10 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/grpclog"
 	"github.com/qiyouForSql/grpcforunconflict/internal/channelz"
+	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	"github.com/qiyouForSql/grpcforunconflict/keepalive"
 	"github.com/qiyouForSql/grpcforunconflict/metadata"
 	"github.com/qiyouForSql/grpcforunconflict/test/bufconn"
-	"google.golang.org/grpc"
-
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
-	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 var (
@@ -271,47 +268,47 @@ func unconstrainedStreamBenchmark(start startFunc, stop ucStopFunc, bf stats.Fea
 	stop(req, resp)
 }
 
-// makeClients returns a gRPC client (or multiple clients) for the grpc.testing.BenchmarkService
+// makeClients returns a gRPC client (or multiple clients) for thegrpcforunconflict.testing.BenchmarkService
 // service. The client is configured using the different options in the passed
 // 'bf'. Also returns a cleanup function to close the client and release
 // resources.
-func makeClients(bf stats.Features) ([]testgrpc.BenchmarkServiceClient, func()) {
+func makeClients(bf stats.Features) ([]testgrpcforunconflict.BenchmarkServiceClient, func()) {
 	nw := &latency.Network{Kbps: bf.Kbps, Latency: bf.Latency, MTU: bf.MTU}
-	opts := []grpc.DialOption{}
-	sopts := []grpc.ServerOption{}
+	opts := []grpcforunconflict.DialOption{}
+	sopts := []grpcforunconflict.ServerOption{}
 	if bf.ModeCompressor == compModeNop {
 		sopts = append(sopts,
-			grpc.RPCCompressor(nopCompressor{}),
-			grpc.RPCDecompressor(nopDecompressor{}),
+			grpcforunconflict.RPCCompressor(nopCompressor{}),
+			grpcforunconflict.RPCDecompressor(nopDecompressor{}),
 		)
 		opts = append(opts,
-			grpc.WithCompressor(nopCompressor{}),
-			grpc.WithDecompressor(nopDecompressor{}),
+			grpcforunconflict.WithCompressor(nopCompressor{}),
+			grpcforunconflict.WithDecompressor(nopDecompressor{}),
 		)
 	}
 	if bf.ModeCompressor == compModeGzip {
 		sopts = append(sopts,
-			grpc.RPCCompressor(grpc.NewGZIPCompressor()),
-			grpc.RPCDecompressor(grpc.NewGZIPDecompressor()),
+			grpcforunconflict.RPCCompressor(grpcforunconflict.NewGZIPCompressor()),
+			grpcforunconflict.RPCDecompressor(grpcforunconflict.NewGZIPDecompressor()),
 		)
 		opts = append(opts,
-			grpc.WithCompressor(grpc.NewGZIPCompressor()),
-			grpc.WithDecompressor(grpc.NewGZIPDecompressor()),
+			grpcforunconflict.WithCompressor(grpcforunconflict.NewGZIPCompressor()),
+			grpcforunconflict.WithDecompressor(grpcforunconflict.NewGZIPDecompressor()),
 		)
 	}
 	if bf.EnableKeepalive {
 		sopts = append(sopts,
-			grpc.KeepaliveParams(keepalive.ServerParameters{
+			grpcforunconflict.KeepaliveParams(keepalive.ServerParameters{
 				Time:    keepaliveTime,
 				Timeout: keepaliveTimeout,
 			}),
-			grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
+			grpcforunconflict.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
 				MinTime:             keepaliveMinTime,
 				PermitWithoutStream: true,
 			}),
 		)
 		opts = append(opts,
-			grpc.WithKeepaliveParams(keepalive.ClientParameters{
+			grpcforunconflict.WithKeepaliveParams(keepalive.ClientParameters{
 				Time:                keepaliveTime,
 				Timeout:             keepaliveTimeout,
 				PermitWithoutStream: true,
@@ -319,26 +316,26 @@ func makeClients(bf stats.Features) ([]testgrpc.BenchmarkServiceClient, func()) 
 		)
 	}
 	if bf.ClientReadBufferSize >= 0 {
-		opts = append(opts, grpc.WithReadBufferSize(bf.ClientReadBufferSize))
+		opts = append(opts, grpcforunconflict.WithReadBufferSize(bf.ClientReadBufferSize))
 	}
 	if bf.ClientWriteBufferSize >= 0 {
-		opts = append(opts, grpc.WithWriteBufferSize(bf.ClientWriteBufferSize))
+		opts = append(opts, grpcforunconflict.WithWriteBufferSize(bf.ClientWriteBufferSize))
 	}
 	if bf.ServerReadBufferSize >= 0 {
-		sopts = append(sopts, grpc.ReadBufferSize(bf.ServerReadBufferSize))
+		sopts = append(sopts, grpcforunconflict.ReadBufferSize(bf.ServerReadBufferSize))
 	}
 	if bf.ServerWriteBufferSize >= 0 {
-		sopts = append(sopts, grpc.WriteBufferSize(bf.ServerWriteBufferSize))
+		sopts = append(sopts, grpcforunconflict.WriteBufferSize(bf.ServerWriteBufferSize))
 	}
 
-	sopts = append(sopts, grpc.MaxConcurrentStreams(uint32(bf.MaxConcurrentCalls+1)))
-	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	sopts = append(sopts, grpcforunconflict.MaxConcurrentStreams(uint32(bf.MaxConcurrentCalls+1)))
+	opts = append(opts, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 
 	var lis net.Listener
 	if bf.UseBufConn {
 		bcLis := bufconn.Listen(256 * 1024)
 		lis = bcLis
-		opts = append(opts, grpc.WithContextDialer(func(ctx context.Context, address string) (net.Conn, error) {
+		opts = append(opts, grpcforunconflict.WithContextDialer(func(ctx context.Context, address string) (net.Conn, error) {
 			return nw.ContextDialer(func(context.Context, string, string) (net.Conn, error) {
 				return bcLis.Dial()
 			})(ctx, "", "")
@@ -349,17 +346,17 @@ func makeClients(bf stats.Features) ([]testgrpc.BenchmarkServiceClient, func()) 
 		if err != nil {
 			logger.Fatalf("Failed to listen: %v", err)
 		}
-		opts = append(opts, grpc.WithContextDialer(func(ctx context.Context, address string) (net.Conn, error) {
+		opts = append(opts, grpcforunconflict.WithContextDialer(func(ctx context.Context, address string) (net.Conn, error) {
 			return nw.ContextDialer((&net.Dialer{}).DialContext)(ctx, "tcp", lis.Addr().String())
 		}))
 	}
 	lis = nw.Listener(lis)
 	stopper := bm.StartServer(bm.ServerInfo{Type: "protobuf", Listener: lis}, sopts...)
-	conns := make([]*grpc.ClientConn, bf.Connections)
-	clients := make([]testgrpc.BenchmarkServiceClient, bf.Connections)
+	conns := make([]*grpcforunconflict.ClientConn, bf.Connections)
+	clients := make([]testgrpcforunconflict.BenchmarkServiceClient, bf.Connections)
 	for cn := 0; cn < bf.Connections; cn++ {
 		conns[cn] = bm.NewClientConn("" /* target not used */, opts...)
-		clients[cn] = testgrpc.NewBenchmarkServiceClient(conns[cn])
+		clients[cn] = testgrpcforunconflict.NewBenchmarkServiceClient(conns[cn])
 	}
 
 	return clients, func() {
@@ -388,10 +385,10 @@ func makeFuncUnary(bf stats.Features) (rpcCallFunc, rpcCleanupFunc) {
 func makeFuncStream(bf stats.Features) (rpcCallFunc, rpcCleanupFunc) {
 	clients, cleanup := makeClients(bf)
 
-	streams := make([][]testgrpc.BenchmarkService_StreamingCallClient, bf.Connections)
+	streams := make([][]testgrpcforunconflict.BenchmarkService_StreamingCallClient, bf.Connections)
 	for cn := 0; cn < bf.Connections; cn++ {
 		tc := clients[cn]
-		streams[cn] = make([]testgrpc.BenchmarkService_StreamingCallClient, bf.MaxConcurrentCalls)
+		streams[cn] = make([]testgrpcforunconflict.BenchmarkService_StreamingCallClient, bf.MaxConcurrentCalls)
 		for pos := 0; pos < bf.MaxConcurrentCalls; pos++ {
 
 			stream, err := tc.StreamingCall(context.Background())
@@ -418,11 +415,11 @@ func makeFuncStream(bf stats.Features) (rpcCallFunc, rpcCleanupFunc) {
 func makeFuncUnconstrainedStreamPreloaded(bf stats.Features) (rpcSendFunc, rpcRecvFunc, rpcCleanupFunc) {
 	streams, req, cleanup := setupUnconstrainedStream(bf)
 
-	preparedMsg := make([][]*grpc.PreparedMsg, len(streams))
+	preparedMsg := make([][]*grpcforunconflict.PreparedMsg, len(streams))
 	for cn, connStreams := range streams {
-		preparedMsg[cn] = make([]*grpc.PreparedMsg, len(connStreams))
+		preparedMsg[cn] = make([]*grpcforunconflict.PreparedMsg, len(connStreams))
 		for pos, stream := range connStreams {
-			preparedMsg[cn][pos] = &grpc.PreparedMsg{}
+			preparedMsg[cn][pos] = &grpcforunconflict.PreparedMsg{}
 			err := preparedMsg[cn][pos].Encode(stream, req)
 			if err != nil {
 				logger.Fatalf("%v.Encode(%v, %v) = %v", preparedMsg[cn][pos], req, stream, err)
@@ -447,16 +444,16 @@ func makeFuncUnconstrainedStream(bf stats.Features) (rpcSendFunc, rpcRecvFunc, r
 		}, cleanup
 }
 
-func setupUnconstrainedStream(bf stats.Features) ([][]testgrpc.BenchmarkService_StreamingCallClient, *testpb.SimpleRequest, rpcCleanupFunc) {
+func setupUnconstrainedStream(bf stats.Features) ([][]testgrpcforunconflict.BenchmarkService_StreamingCallClient, *testpb.SimpleRequest, rpcCleanupFunc) {
 	clients, cleanup := makeClients(bf)
 
-	streams := make([][]testgrpc.BenchmarkService_StreamingCallClient, bf.Connections)
+	streams := make([][]testgrpcforunconflict.BenchmarkService_StreamingCallClient, bf.Connections)
 	md := metadata.Pairs(benchmark.UnconstrainedStreamingHeader, "1",
 		benchmark.UnconstrainedStreamingDelayHeader, bf.SleepBetweenRPCs.String())
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
 	for cn := 0; cn < bf.Connections; cn++ {
 		tc := clients[cn]
-		streams[cn] = make([]testgrpc.BenchmarkService_StreamingCallClient, bf.MaxConcurrentCalls)
+		streams[cn] = make([]testgrpcforunconflict.BenchmarkService_StreamingCallClient, bf.MaxConcurrentCalls)
 		for pos := 0; pos < bf.MaxConcurrentCalls; pos++ {
 			stream, err := tc.StreamingCall(ctx)
 			if err != nil {
@@ -478,13 +475,13 @@ func setupUnconstrainedStream(bf stats.Features) ([][]testgrpc.BenchmarkService_
 
 // Makes a UnaryCall gRPC request using the given BenchmarkServiceClient and
 // request and response sizes.
-func unaryCaller(client testgrpc.BenchmarkServiceClient, reqSize, respSize int) {
+func unaryCaller(client testgrpcforunconflict.BenchmarkServiceClient, reqSize, respSize int) {
 	if err := bm.DoUnaryCall(client, reqSize, respSize); err != nil {
 		logger.Fatalf("DoUnaryCall failed: %v", err)
 	}
 }
 
-func streamCaller(stream testgrpc.BenchmarkService_StreamingCallClient, reqSize, respSize int) {
+func streamCaller(stream testgrpcforunconflict.BenchmarkService_StreamingCallClient, reqSize, respSize int) {
 	if err := bm.DoStreamingRoundTrip(stream, reqSize, respSize); err != nil {
 		logger.Fatalf("DoStreamingRoundTrip failed: %v", err)
 	}
@@ -849,7 +846,7 @@ func main() {
 	)
 
 	for _, bf := range opts.generateFeatures(featuresNum) {
-		grpc.EnableTracing = bf.EnableTrace
+		grpcforunconflict.EnableTracing = bf.EnableTrace
 		if bf.EnableChannelz {
 			channelz.TurnOn()
 		}

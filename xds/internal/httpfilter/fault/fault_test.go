@@ -42,7 +42,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/xds/e2e"
 	"github.com/qiyouForSql/grpcforunconflict/metadata"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	v3listenerpb "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
@@ -50,7 +49,6 @@ import (
 	fpb "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/http/fault/v3"
 	v3httppb "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/network/http_connection_manager/v3"
 	tpb "github.com/envoyproxy/go-control-plane/envoy/type/v3"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 
 	_ "github.com/qiyouForSql/grpcforunconflict/xds/internal/balancer" // Register the balancers.
@@ -68,14 +66,14 @@ func Test(t *testing.T) {
 }
 
 type testService struct {
-	testgrpc.TestServiceServer
+	testgrpcforunconflict.TestServiceServer
 }
 
 func (*testService) EmptyCall(context.Context, *testpb.Empty) (*testpb.Empty, error) {
 	return &testpb.Empty{}, nil
 }
 
-func (*testService) FullDuplexCall(stream testgrpc.TestService_FullDuplexCallServer) error {
+func (*testService) FullDuplexCall(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 	// End RPC after client does a CloseSend.
 	for {
 		if _, err := stream.Recv(); err == io.EOF {
@@ -116,8 +114,8 @@ func clientSetup(t *testing.T) (*e2e.ManagementServer, string, uint32, func()) {
 	}
 
 	// Initialize a gRPC server and register the stubServer on it.
-	server := grpc.NewServer()
-	testgrpc.RegisterTestServiceServer(server, &testService{})
+	server := grpcforunconflict.NewServer()
+	testgrpcforunconflict.RegisterTestServiceServer(server, &testService{})
 
 	// Create a local listener and pass it to Serve().
 	lis, err := testutils.LocalTCPListener()
@@ -527,13 +525,13 @@ func (s) TestFaultInjection_Unary(t *testing.T) {
 			}
 
 			// Create a ClientConn and run the test case.
-			cc, err := grpc.Dial("xds:///"+serviceName, grpc.WithTransportCredentials(insecure.NewCredentials()))
+			cc, err := grpcforunconflict.Dial("xds:///"+serviceName, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 			if err != nil {
 				t.Fatalf("failed to dial local test server: %v", err)
 			}
 			defer cc.Close()
 
-			client := testgrpc.NewTestServiceClient(cc)
+			client := testgrpcforunconflict.NewTestServiceClient(cc)
 			count := 0
 			for _, want := range tc.want {
 				ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
@@ -545,7 +543,7 @@ func (s) TestFaultInjection_Unary(t *testing.T) {
 					intnCalls = nil
 					newTimerCalls = nil
 					ctx = metadata.NewOutgoingContext(ctx, want.md)
-					_, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true))
+					_, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true))
 					t.Logf("%v: RPC %d: err: %v, intnCalls: %v, newTimerCalls: %v", want.name, count, err, intnCalls, newTimerCalls)
 					if status.Code(err) != want.code || !reflect.DeepEqual(intnCalls, want.randIn) || !reflect.DeepEqual(newTimerCalls, want.delays) {
 						t.Fatalf("WANTED code: %v, intnCalls: %v, newTimerCalls: %v", want.code, want.randIn, want.delays)
@@ -602,15 +600,15 @@ func (s) TestFaultInjection_MaxActiveFaults(t *testing.T) {
 	}
 
 	// Create a ClientConn
-	cc, err := grpc.Dial("xds:///myservice", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial("xds:///myservice", grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
 	defer cc.Close()
 
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 
-	streams := make(chan testgrpc.TestService_FullDuplexCallClient, 5) // startStream() is called 5 times
+	streams := make(chan testgrpcforunconflict.TestService_FullDuplexCallClient, 5) // startStream() is called 5 times
 	startStream := func() {
 		str, err := client.FullDuplexCall(ctx)
 		if err != nil {

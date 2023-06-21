@@ -26,6 +26,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/credentials"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
@@ -33,9 +34,7 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
 	"github.com/qiyouForSql/grpcforunconflict/peer"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -70,11 +69,11 @@ func testLocalCredsE2ESucceed(network, address string) error {
 		},
 	}
 
-	sopts := []grpc.ServerOption{grpc.Creds(local.NewCredentials())}
-	s := grpc.NewServer(sopts...)
+	sopts := []grpcforunconflict.ServerOption{grpcforunconflict.Creds(local.NewCredentials())}
+	s := grpcforunconflict.NewServer(sopts...)
 	defer s.Stop()
 
-	testgrpc.RegisterTestServiceServer(s, ss)
+	testgrpcforunconflict.RegisterTestServiceServer(s, ss)
 
 	lis, err := net.Listen(network, address)
 	if err != nil {
@@ -83,17 +82,17 @@ func testLocalCredsE2ESucceed(network, address string) error {
 
 	go s.Serve(lis)
 
-	var cc *grpc.ClientConn
+	var cc *grpcforunconflict.ClientConn
 	lisAddr := lis.Addr().String()
 
 	switch network {
 	case "unix":
-		cc, err = grpc.Dial(lisAddr, grpc.WithTransportCredentials(local.NewCredentials()), grpc.WithContextDialer(
+		cc, err = grpcforunconflict.Dial(lisAddr, grpcforunconflict.WithTransportCredentials(local.NewCredentials()), grpcforunconflict.WithContextDialer(
 			func(ctx context.Context, addr string) (net.Conn, error) {
 				return net.Dial("unix", addr)
 			}))
 	case "tcp":
-		cc, err = grpc.Dial(lisAddr, grpc.WithTransportCredentials(local.NewCredentials()))
+		cc, err = grpcforunconflict.Dial(lisAddr, grpcforunconflict.WithTransportCredentials(local.NewCredentials()))
 	default:
 		return fmt.Errorf("unsupported network %q", network)
 	}
@@ -102,7 +101,7 @@ func testLocalCredsE2ESucceed(network, address string) error {
 	}
 	defer cc.Close()
 
-	c := testgrpc.NewTestServiceClient(cc)
+	c := testgrpcforunconflict.NewTestServiceClient(cc)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -161,18 +160,18 @@ func spoofDialer(addr net.Addr) func(target string, t time.Duration) (net.Conn, 
 	}
 }
 
-func testLocalCredsE2EFail(dopts []grpc.DialOption) error {
+func testLocalCredsE2EFail(dopts []grpcforunconflict.DialOption) error {
 	ss := &stubserver.StubServer{
 		EmptyCallF: func(context.Context, *testpb.Empty) (*testpb.Empty, error) {
 			return &testpb.Empty{}, nil
 		},
 	}
 
-	sopts := []grpc.ServerOption{grpc.Creds(local.NewCredentials())}
-	s := grpc.NewServer(sopts...)
+	sopts := []grpcforunconflict.ServerOption{grpcforunconflict.Creds(local.NewCredentials())}
+	s := grpcforunconflict.NewServer(sopts...)
 	defer s.Stop()
 
-	testgrpc.RegisterTestServiceServer(s, ss)
+	testgrpcforunconflict.RegisterTestServiceServer(s, ss)
 
 	lis, err := net.Listen("tcp", "localhost:0")
 	if err != nil {
@@ -191,13 +190,13 @@ func testLocalCredsE2EFail(dopts []grpc.DialOption) error {
 
 	go s.Serve(spoofListener(lis, fakeClientAddr))
 
-	cc, err := grpc.Dial(lis.Addr().String(), append(dopts, grpc.WithDialer(spoofDialer(fakeServerAddr)))...)
+	cc, err := grpcforunconflict.Dial(lis.Addr().String(), append(dopts, grpcforunconflict.WithDialer(spoofDialer(fakeServerAddr)))...)
 	if err != nil {
 		return fmt.Errorf("Failed to dial server: %v, %v", err, lis.Addr().String())
 	}
 	defer cc.Close()
 
-	c := testgrpc.NewTestServiceClient(cc)
+	c := testgrpcforunconflict.NewTestServiceClient(cc)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -211,7 +210,7 @@ func isExpected(got, want error) bool {
 
 func (s) TestLocalCredsClientFail(t *testing.T) {
 	// Use local creds at client-side which should lead to client-side failure.
-	opts := []grpc.DialOption{grpc.WithTransportCredentials(local.NewCredentials())}
+	opts := []grpcforunconflict.DialOption{grpcforunconflict.WithTransportCredentials(local.NewCredentials())}
 	want := status.Error(codes.Unavailable, "transport: authentication handshake failed: local credentials rejected connection to non-local address")
 	if err := testLocalCredsE2EFail(opts); !isExpected(err, want) {
 		t.Fatalf("testLocalCredsE2EFail() = %v; want %v", err, want)
@@ -220,7 +219,7 @@ func (s) TestLocalCredsClientFail(t *testing.T) {
 
 func (s) TestLocalCredsServerFail(t *testing.T) {
 	// Use insecure at client-side which should lead to server-side failure.
-	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	opts := []grpcforunconflict.DialOption{grpcforunconflict.WithTransportCredentials(insecure.NewCredentials())}
 	if err := testLocalCredsE2EFail(opts); status.Code(err) != codes.Unavailable {
 		t.Fatalf("testLocalCredsE2EFail() = %v; want %v", err, codes.Unavailable)
 	}

@@ -26,21 +26,17 @@ import (
 	"reflect"
 	"strconv"
 
-	"github.com/envoyproxy/go-control-plane/pkg/cache/types"
-	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/xds/fakeserver"
-	"google.golang.org/grpc"
-
 	v3clusterpb "github.com/envoyproxy/go-control-plane/envoy/config/cluster/v3"
 	v3corepb "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
 	v3endpointpb "github.com/envoyproxy/go-control-plane/envoy/config/endpoint/v3"
 	v3listenerpb "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
 	v3routepb "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
-	v3discoverygrpc "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
 	v3discoverypb "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
-	v3lrsgrpc "github.com/envoyproxy/go-control-plane/envoy/service/load_stats/v3"
+	"github.com/envoyproxy/go-control-plane/pkg/cache/types"
 	v3cache "github.com/envoyproxy/go-control-plane/pkg/cache/v3"
 	v3resource "github.com/envoyproxy/go-control-plane/pkg/resource/v3"
 	v3server "github.com/envoyproxy/go-control-plane/pkg/server/v3"
+	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/xds/fakeserver"
 )
 
 // ManagementServer is a thin wrapper around the xDS control plane
@@ -55,11 +51,11 @@ type ManagementServer struct {
 	// management server.
 	LRSServer *fakeserver.Server
 
-	cancel  context.CancelFunc    // To stop the v3 ADS service.
-	xs      v3server.Server       // v3 implementation of ADS.
-	gs      *grpc.Server          // gRPC server which exports the ADS service.
-	cache   v3cache.SnapshotCache // Resource snapshot.
-	version int                   // Version of resource snapshot.
+	cancel  context.CancelFunc        // To stop the v3 ADS service.
+	xs      v3server.Server           // v3 implementation of ADS.
+	gs      *grpcforunconflict.Server // gRPC server which exports the ADS service.
+	cache   v3cache.SnapshotCache     // Resource snapshot.
+	version int                       // Version of resource snapshot.
 }
 
 // ManagementServerOptions contains options to be passed to the management
@@ -153,8 +149,8 @@ func StartManagementServer(opts ManagementServerOptions) (*ManagementServer, err
 	// Create an xDS management server and register the ADS implementation
 	// provided by it on a gRPC server.
 	xs := v3server.NewServer(ctx, cache, callbacks)
-	gs := grpc.NewServer()
-	v3discoverygrpc.RegisterAggregatedDiscoveryServiceServer(gs, xs)
+	gs := grpcforunconflict.NewServer()
+	v3discoverygrpcforunconflict.RegisterAggregatedDiscoveryServiceServer(gs, xs)
 	logger.Infof("Registered Aggregated Discovery Service (ADS)...")
 
 	mgmtServer := &ManagementServer{
@@ -167,7 +163,7 @@ func StartManagementServer(opts ManagementServerOptions) (*ManagementServer, err
 	}
 	if opts.SupportLoadReportingService {
 		lrs := fakeserver.NewServer(lis.Addr().String())
-		v3lrsgrpc.RegisterLoadReportingServiceServer(gs, lrs)
+		v3lrsgrpcforunconflict.RegisterLoadReportingServiceServer(gs, lrs)
 		mgmtServer.LRSServer = lrs
 		logger.Infof("Registered Load Reporting Service (LRS)...")
 	}

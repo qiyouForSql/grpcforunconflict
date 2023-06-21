@@ -64,7 +64,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	s := grpc.NewServer(grpc.KeepaliveEnforcementPolicy(kaep), grpc.KeepaliveParams(kasp))
+	s := grpcforunconflict.NewServer(grpcforunconflict.KeepaliveEnforcementPolicy(kaep), grpcforunconflict.KeepaliveParams(kasp))
 	pb.RegisterEchoServer(s, &server{})
 
 	if err := s.Serve(lis); err != nil {

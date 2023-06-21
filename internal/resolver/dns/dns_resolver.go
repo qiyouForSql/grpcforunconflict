@@ -17,7 +17,7 @@
  */
 
 // Package dns implements a dns resolver to be installed as the default resolver
-// in grpc.
+// ingrpcforunconflict.
 package dns
 
 import (
@@ -212,7 +212,7 @@ func (d *dnsResolver) watcher() {
 	for {
 		state, err := d.lookup()
 		if err != nil {
-			// Report error to the underlying grpc.ClientConn.
+			// Report error to the underlyinggrpcforunconflict.ClientConn.
 			d.cc.ReportError(err)
 		} else {
 			err = d.cc.UpdateState(*state)

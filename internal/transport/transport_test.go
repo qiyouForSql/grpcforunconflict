@@ -1948,7 +1948,7 @@ func (s) TestHeadersHTTPStatusGRPCStatus(t *testing.T) {
 
 		// multiple :authority or multiple Host headers would make the eventual
 		// :authority ambiguous as per A41. This takes precedence even over the
-		// fact a request is non grpc. All of these requests should be rejected
+		// fact a request is nongrpcforunconflict. All of these requests should be rejected
 		// with grpc-status Internal. Thus, requests with multiple hosts should
 		// get rejected with HTTP Status 400 and gRPC status Internal,
 		// regardless of whether the client is speaking gRPC or not.

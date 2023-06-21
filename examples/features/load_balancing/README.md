@@ -26,7 +26,7 @@ Two clients are created, to connect to both of these servers (they get both
 server addresses from the name resolver).
 
 Each client picks a different load balancer (using
-`grpc.WithDefaultServiceConfig`): `pick_first` or `round_robin`. (These two
+`grpcforunconflict.WithDefaultServiceConfig`): `pick_first` or `round_robin`. (These two
 policies are supported in gRPC by default. To add a custom balancing policy,
 implement the interfaces defined in
 https://godoc.org/google.golang.org/grpc/balancer).

@@ -39,7 +39,7 @@ import (
 
 var addr = flag.String("addr", "localhost:50051", "the address to connect to")
 
-func callUnaryEcho(ctx context.Context, client ecpb.EchoClient, message string, opts ...grpc.CallOption) error {
+func callUnaryEcho(ctx context.Context, client ecpb.EchoClient, message string, opts ...grpcforunconflict.CallOption) error {
 	resp, err := client.UnaryEcho(ctx, &ecpb.EchoRequest{Message: message}, opts...)
 	if err != nil {
 		return status.Errorf(status.Code(err), "UnaryEcho RPC failed: %v", err)
@@ -48,7 +48,7 @@ func callUnaryEcho(ctx context.Context, client ecpb.EchoClient, message string, 
 	return nil
 }
 
-func callBidiStreamingEcho(ctx context.Context, client ecpb.EchoClient, opts ...grpc.CallOption) error {
+func callBidiStreamingEcho(ctx context.Context, client ecpb.EchoClient, opts ...grpcforunconflict.CallOption) error {
 	c, err := client.BidirectionalStreamingEcho(ctx, opts...)
 	if err != nil {
 		return status.Errorf(status.Code(err), "BidirectionalStreamingEcho RPC failed: %v", err)
@@ -80,13 +80,13 @@ func callBidiStreamingEcho(ctx context.Context, client ecpb.EchoClient, opts ...
 	return nil
 }
 
-func newCredentialsCallOption(t token.Token) grpc.CallOption {
+func newCredentialsCallOption(t token.Token) grpcforunconflict.CallOption {
 	tokenBase64, err := t.Encode()
 	if err != nil {
 		log.Fatalf("encoding token: %v", err)
 	}
 	oath2Token := oauth2.Token{AccessToken: tokenBase64}
-	return grpc.PerRPCCredentials(oauth.TokenSource{TokenSource: oauth2.StaticTokenSource(&oath2Token)})
+	returngrpcforunconflict.PerRPCCredentials(oauth.TokenSource{TokenSource: oauth2.StaticTokenSource(&oath2Token)})
 }
 
 func main() {
@@ -98,9 +98,9 @@ func main() {
 		log.Fatalf("failed to load credentials: %v", err)
 	}
 	// Set up a connection to the server.
-	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(creds))
+	conn, err := grpcforunconflict.Dial(*addr, grpcforunconflict.WithTransportCredentials(creds))
 	if err != nil {
-		log.Fatalf("grpc.Dial(%q): %v", *addr, err)
+		log.Fatalf("grpcforunconflict.Dial(%q): %v", *addr, err)
 	}
 	defer conn.Close()
 

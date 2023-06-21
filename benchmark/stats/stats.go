@@ -29,8 +29,6 @@ import (
 	"strconv"
 	"sync"
 	"time"
-
-	"google.golang.org/grpc"
 )
 
 // FeatureIndex is an enum for features that usually differ across individual
@@ -330,7 +328,7 @@ func (s *Stats) StartRun(mode string, f Features, sf []bool) {
 	runtime.ReadMemStats(&s.startMS)
 	s.results = append(s.results, BenchResults{
 		GoVersion:      runtime.Version(),
-		GrpcVersion:    grpc.Version,
+		GrpcVersion:    grpcforunconflict.Version,
 		RunMode:        mode,
 		Features:       f,
 		SharedFeatures: sf,

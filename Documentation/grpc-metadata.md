@@ -7,12 +7,12 @@ This doc shows how to send and receive metadata in gRPC-go.
 
 Four kinds of service method:
 
-- [Unary RPC](https://grpc.io/docs/guides/concepts.html#unary-rpc)
-- [Server streaming RPC](https://grpc.io/docs/guides/concepts.html#server-streaming-rpc)
-- [Client streaming RPC](https://grpc.io/docs/guides/concepts.html#client-streaming-rpc)
-- [Bidirectional streaming RPC](https://grpc.io/docs/guides/concepts.html#bidirectional-streaming-rpc)
+- [Unary RPC](https://grpcforunconflict.io/docs/guides/concepts.html#unary-rpc)
+- [Server streaming RPC](https://grpcforunconflict.io/docs/guides/concepts.html#server-streaming-rpc)
+- [Client streaming RPC](https://grpcforunconflict.io/docs/guides/concepts.html#client-streaming-rpc)
+- [Bidirectional streaming RPC](https://grpcforunconflict.io/docs/guides/concepts.html#bidirectional-streaming-rpc)
 
-And concept of [metadata](https://grpc.io/docs/guides/concepts.html#metadata).
+And concept of [metadata](https://grpcforunconflict.io/docs/guides/concepts.html#metadata).
 
 ## Constructing metadata
 
@@ -134,8 +134,8 @@ var header, trailer metadata.MD // variable to store header and trailer
 r, err := client.SomeRPC(
     ctx,
     someRequest,
-    grpc.Header(&header),    // will retrieve header
-    grpc.Trailer(&trailer),  // will retrieve trailer
+   grpcforunconflict.Header(&header),    // will retrieve header
+   grpcforunconflict.Trailer(&trailer),  // will retrieve trailer
 )
 
 // do something with header and trailer
@@ -202,10 +202,10 @@ It should be the RPC handler's context or one derived from it:
 func (s *server) SomeRPC(ctx context.Context, in *pb.someRequest) (*pb.someResponse, error) {
     // create and send header
     header := metadata.Pairs("header-key", "val")
-    grpc.SendHeader(ctx, header)
+   grpcforunconflict.SendHeader(ctx, header)
     // create and set trailer
     trailer := metadata.Pairs("trailer-key", "val")
-    grpc.SetTrailer(ctx, trailer)
+   grpcforunconflict.SetTrailer(ctx, trailer)
 }
 ```
 

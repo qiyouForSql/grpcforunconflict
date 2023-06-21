@@ -21,7 +21,7 @@
 //
 // On the client-side, users simply need to import this package to get all xDS
 // functionality. On the server-side, users need to use the GRPCServer type
-// exported by this package instead of the regular grpc.Server.
+// exported by this package instead of the regular grpcforunconflict.Server.
 //
 // See https://github.com/grpc/grpc-go/tree/master/examples/features/xds for
 // example.
@@ -30,11 +30,11 @@ package xds
 import (
 	"fmt"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/internal"
 	internaladmin "github.com/qiyouForSql/grpcforunconflict/internal/admin"
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"github.com/qiyouForSql/grpcforunconflict/xds/csds"
-	"google.golang.org/grpc"
 
 	_ "github.com/qiyouForSql/grpcforunconflict/credentials/tls/certprovider/pemfile"           // Register the file watcher certificate provider plugin.
 	_ "github.com/qiyouForSql/grpcforunconflict/xds/internal/balancer"                          // Register the balancers.
@@ -45,26 +45,25 @@ import (
 	_ "github.com/qiyouForSql/grpcforunconflict/xds/internal/resolver"                          // Register the xds_resolver.
 	_ "github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/xdslbregistry/converter" // Register the xDS LB Registry Converters.
 
-	v3statusgrpc "github.com/envoyproxy/go-control-plane/envoy/service/status/v3"
 )
 
 func init() {
-	internaladmin.AddService(func(registrar grpc.ServiceRegistrar) (func(), error) {
-		var grpcServer *grpc.Server
+	internaladmin.AddService(func(registrar grpcforunconflict.ServiceRegistrar) (func(), error) {
+		var grpcServer *grpcforunconflict.Server
 		switch ss := registrar.(type) {
-		case *grpc.Server:
+		case *grpcforunconflict.Server:
 			grpcServer = ss
 		case *GRPCServer:
-			sss, ok := ss.gs.(*grpc.Server)
+			sss, ok := ss.gs.(*grpcforunconflict.Server)
 			if !ok {
-				logger.Warning("grpc server within xds.GRPCServer is not *grpc.Server, CSDS will not be registered")
+				logger.Warning("grpc server within xds.GRPCServer is not *grpcforunconflict.Server, CSDS will not be registered")
 				return nil, nil
 			}
 			grpcServer = sss
 		default:
 			// Returning an error would cause the top level admin.Register() to
 			// fail. Log a warning instead.
-			logger.Error("Server to register service on is neither a *grpc.Server or a *xds.GRPCServer, CSDS will not be registered")
+			logger.Error("Server to register service on is neither a *grpcforunconflict.Server or a *xds.GRPCServer, CSDS will not be registered")
 			return nil, nil
 		}
 
@@ -72,7 +71,7 @@ func init() {
 		if err != nil {
 			return nil, fmt.Errorf("failed to create csds server: %v", err)
 		}
-		v3statusgrpc.RegisterClientStatusDiscoveryServiceServer(grpcServer, csdss)
+		v3statusgrpcforunconflict.RegisterClientStatusDiscoveryServiceServer(grpcServer, csdss)
 		return csdss.Close, nil
 	})
 }
@@ -80,7 +79,7 @@ func init() {
 // NewXDSResolverWithConfigForTesting creates a new xDS resolver builder using
 // the provided xDS bootstrap config instead of the global configuration from
 // the supported environment variables.  The resolver.Builder is meant to be
-// used in conjunction with the grpc.WithResolvers DialOption.
+// used in conjunction with the grpcforunconflict.WithResolvers DialOption.
 //
 // # Testing Only
 //

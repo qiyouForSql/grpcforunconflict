@@ -24,6 +24,7 @@ import (
 	"time"
 
 	"github.com/golang/protobuf/proto"
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/balancer"
 	"github.com/qiyouForSql/grpcforunconflict/balancer/roundrobin"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
@@ -35,10 +36,8 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"github.com/qiyouForSql/grpcforunconflict/resolver/manual"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
 	v3orcapb "github.com/cncf/xds/go/xds/data/orca/v3"
-	v3orcaservicegrpc "github.com/cncf/xds/go/xds/service/orca/v3"
 	v3orcaservicepb "github.com/cncf/xds/go/xds/service/orca/v3"
 )
 
@@ -131,7 +130,7 @@ func (s) TestProducer(t *testing.T) {
 	smr := orca.NewServerMetricsRecorder()
 	opts := orca.ServiceOptions{MinReportingInterval: shortReportingInterval, ServerMetricsProvider: smr}
 	internal.AllowAnyMinReportingInterval.(func(*orca.ServiceOptions))(&opts)
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 	if err := orca.Register(s, opts); err != nil {
 		t.Fatalf("orca.Register failed: %v", err)
 	}
@@ -146,9 +145,9 @@ func (s) TestProducer(t *testing.T) {
 	li := &listenerInfo{listener: oobLis, opts: lisOpts}
 	addr := setListenerInfo(resolver.Address{Addr: lis.Addr().String()}, li)
 	r.InitialState(resolver.State{Addresses: []resolver.Address{addr}})
-	cc, err := grpc.Dial("whatever:///whatever", grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"customLB":{}}]}`), grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial("whatever:///whatever", grpcforunconflict.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"customLB":{}}]}`), grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		t.Fatalf("grpc.Dial failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial failed: %v", err)
 	}
 	defer cc.Close()
 
@@ -209,7 +208,7 @@ testReport:
 // channel back.  This allows tests to verify the client is sending requests
 // and processing responses properly.
 type fakeORCAService struct {
-	v3orcaservicegrpc.UnimplementedOpenRcaServiceServer
+	v3orcaservicegrpcforunconflict.UnimplementedOpenRcaServiceServer
 
 	reqCh  chan *v3orcaservicepb.OrcaLoadReportRequest
 	respCh chan interface{} // either *v3orcapb.OrcaLoadReport or error
@@ -226,7 +225,7 @@ func (f *fakeORCAService) close() {
 	close(f.respCh)
 }
 
-func (f *fakeORCAService) StreamCoreMetrics(req *v3orcaservicepb.OrcaLoadReportRequest, stream v3orcaservicegrpc.OpenRcaService_StreamCoreMetricsServer) error {
+func (f *fakeORCAService) StreamCoreMetrics(req *v3orcaservicepb.OrcaLoadReportRequest, stream v3orcaservicegrpcforunconflict.OpenRcaService_StreamCoreMetricsServer) error {
 	f.reqCh <- req
 	for resp := range f.respCh {
 		if err, ok := resp.(error); ok {
@@ -281,10 +280,10 @@ func (s) TestProducerBackoff(t *testing.T) {
 	}
 
 	// Register our fake ORCA service.
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 	fake := newFakeORCAService()
 	defer fake.close()
-	v3orcaservicegrpc.RegisterOpenRcaServiceServer(s, fake)
+	v3orcaservicegrpcforunconflict.RegisterOpenRcaServiceServer(s, fake)
 	go s.Serve(lis)
 	defer s.Stop()
 
@@ -309,9 +308,9 @@ func (s) TestProducerBackoff(t *testing.T) {
 	lisOpts := orca.OOBListenerOptions{ReportInterval: reportInterval}
 	li := &listenerInfo{listener: oobLis, opts: lisOpts}
 	r.InitialState(resolver.State{Addresses: []resolver.Address{setListenerInfo(resolver.Address{Addr: lis.Addr().String()}, li)}})
-	cc, err := grpc.Dial("whatever:///whatever", grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"customLB":{}}]}`), grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial("whatever:///whatever", grpcforunconflict.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"customLB":{}}]}`), grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		t.Fatalf("grpc.Dial failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial failed: %v", err)
 	}
 	defer cc.Close()
 
@@ -396,10 +395,10 @@ func (s) TestProducerMultipleListeners(t *testing.T) {
 	}
 
 	// Register our fake ORCA service.
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 	fake := newFakeORCAService()
 	defer fake.close()
-	v3orcaservicegrpc.RegisterOpenRcaServiceServer(s, fake)
+	v3orcaservicegrpcforunconflict.RegisterOpenRcaServiceServer(s, fake)
 	go s.Serve(lis)
 	defer s.Stop()
 
@@ -425,9 +424,9 @@ func (s) TestProducerMultipleListeners(t *testing.T) {
 	lisOpts1 := orca.OOBListenerOptions{ReportInterval: reportInterval1}
 	li := &listenerInfo{listener: oobLis1, opts: lisOpts1}
 	r.InitialState(resolver.State{Addresses: []resolver.Address{setListenerInfo(resolver.Address{Addr: lis.Addr().String()}, li)}})
-	cc, err := grpc.Dial("whatever:///whatever", grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"customLB":{}}]}`), grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial("whatever:///whatever", grpcforunconflict.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"customLB":{}}]}`), grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		t.Fatalf("grpc.Dial failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial failed: %v", err)
 	}
 	defer cc.Close()
 

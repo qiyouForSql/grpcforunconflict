@@ -27,12 +27,12 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	grpcforunconflict "github.com/qiyouForSql/grpcforunconflict"
 	core "github.com/qiyouForSql/grpcforunconflict/credentials/alts/internal"
 	altspb "github.com/qiyouForSql/grpcforunconflict/credentials/alts/internal/proto/grpc_gcp"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/alts/internal/testutil"
 	"github.com/qiyouForSql/grpcforunconflict/internal/envconfig"
 	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
-	grpc "google.golang.org/grpc"
 )
 
 type s struct {
@@ -64,7 +64,7 @@ const defaultTestTimeout = 10 * time.Second
 
 // testRPCStream mimics a altspb.HandshakerService_DoHandshakeClient object.
 type testRPCStream struct {
-	grpc.ClientStream
+	grpcforunconflict.ClientStream
 	t        *testing.T
 	isClient bool
 	// The resp expected to be returned by Recv(). Make sure this is set to
@@ -248,7 +248,7 @@ func (s) TestServerHandshake(t *testing.T) {
 
 // testUnresponsiveRPCStream is used for testing the PeerNotResponding case.
 type testUnresponsiveRPCStream struct {
-	grpc.ClientStream
+	grpcforunconflict.ClientStream
 }
 
 func (t *testUnresponsiveRPCStream) Recv() (*altspb.HandshakerResp, error) {
@@ -289,7 +289,7 @@ func (s) TestPeerNotResponding(t *testing.T) {
 
 func (s) TestNewClientHandshaker(t *testing.T) {
 	conn := testutil.NewTestConn(nil, nil)
-	clientConn := &grpc.ClientConn{}
+	clientConn := &grpcforunconflict.ClientConn{}
 	opts := &ClientHandshakerOptions{}
 	hs, err := NewClientHandshaker(context.Background(), clientConn, conn, opts)
 	if err != nil {
@@ -321,7 +321,7 @@ func (s) TestNewClientHandshaker(t *testing.T) {
 
 func (s) TestNewServerHandshaker(t *testing.T) {
 	conn := testutil.NewTestConn(nil, nil)
-	clientConn := &grpc.ClientConn{}
+	clientConn := &grpcforunconflict.ClientConn{}
 	opts := &ServerHandshakerOptions{}
 	hs, err := NewServerHandshaker(context.Background(), clientConn, conn, opts)
 	if err != nil {

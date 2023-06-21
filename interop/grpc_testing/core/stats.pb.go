@@ -312,15 +312,15 @@ func file_grpc_core_stats_proto_rawDescGZIP() []byte {
 
 var file_grpc_core_stats_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_grpc_core_stats_proto_goTypes = []interface{}{
-	(*Bucket)(nil),    // 0: grpc.core.Bucket
-	(*Histogram)(nil), // 1: grpc.core.Histogram
-	(*Metric)(nil),    // 2: grpc.core.Metric
-	(*Stats)(nil),     // 3: grpc.core.Stats
+	(*Bucket)(nil),    // 0:grpcforunconflict.core.Bucket
+	(*Histogram)(nil), // 1:grpcforunconflict.core.Histogram
+	(*Metric)(nil),    // 2:grpcforunconflict.core.Metric
+	(*Stats)(nil),     // 3:grpcforunconflict.core.Stats
 }
 var file_grpc_core_stats_proto_depIdxs = []int32{
-	0, // 0: grpc.core.Histogram.buckets:type_name -> grpc.core.Bucket
-	1, // 1: grpc.core.Metric.histogram:type_name -> grpc.core.Histogram
-	2, // 2: grpc.core.Stats.metrics:type_name -> grpc.core.Metric
+	0, // 0:grpcforunconflict.core.Histogram.buckets:type_name ->grpcforunconflict.core.Bucket
+	1, // 1:grpcforunconflict.core.Metric.histogram:type_name ->grpcforunconflict.core.Histogram
+	2, // 2:grpcforunconflict.core.Stats.metrics:type_name ->grpcforunconflict.core.Metric
 	3, // [3:3] is the sub-list for method output_type
 	3, // [3:3] is the sub-list for method input_type
 	3, // [3:3] is the sub-list for extension type_name

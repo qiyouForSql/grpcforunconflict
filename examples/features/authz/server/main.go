@@ -49,7 +49,7 @@ const (
 			{
 				"name": "allow_UnaryEcho",
 				"request": {
-					"paths": ["/grpc.examples.echo.Echo/UnaryEcho"],
+					"paths": ["/grpcforunconflict.examples.echo.Echo/UnaryEcho"],
 					"headers": [
 						{
 							"key": "UNARY_ECHO:W",
@@ -61,7 +61,7 @@ const (
 			{
 				"name": "allow_BidirectionalStreamingEcho",
 				"request": {
-					"paths": ["/grpc.examples.echo.Echo/BidirectionalStreamingEcho"],
+					"paths": ["/grpcforunconflict.examples.echo.Echo/BidirectionalStreamingEcho"],
 					"headers": [
 						{
 							"key": "STREAM_ECHO:RW",
@@ -138,7 +138,7 @@ func isAuthenticated(authorization []string) (username string, err error) {
 // authUnaryInterceptor looks up the authorization header from the incoming RPC context,
 // retrieves the username from it and creates a new context with the username before invoking
 // the provided handler.
-func authUnaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+func authUnaryInterceptor(ctx context.Context, req interface{}, info *grpcforunconflict.UnaryServerInfo, handlergrpcforunconflict.UnaryHandler) (interface{}, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return nil, errMissingMetadata
@@ -150,11 +150,11 @@ func authUnaryInterceptor(ctx context.Context, req interface{}, info *grpc.Unary
 	return handler(newContextWithRoles(ctx, username), req)
 }
 
-// wrappedStream wraps a grpc.ServerStream associated with an incoming RPC, and
+// wrappedStream wraps agrpcforunconflict.ServerStream associated with an incoming RPC, and
 // a custom context containing the username derived from the authorization header
 // specified in the incoming RPC metadata
 type wrappedStream struct {
-	grpc.ServerStream
+	grpcforunconflict.ServerStream
 	ctx context.Context
 }
 
@@ -162,14 +162,14 @@ func (w *wrappedStream) Context() context.Context {
 	return w.ctx
 }
 
-func newWrappedStream(ctx context.Context, s grpc.ServerStream) grpc.ServerStream {
+func newWrappedStream(ctx context.Context, sgrpcforunconflict.ServerStream) grpcforunconflict.ServerStream {
 	return &wrappedStream{s, ctx}
 }
 
 // authStreamInterceptor looks up the authorization header from the incoming RPC context,
 // retrieves the username from it and creates a new context with the username before invoking
 // the provided handler.
-func authStreamInterceptor(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+func authStreamInterceptor(srv interface{}, ssgrpcforunconflict.ServerStream, info *grpcforunconflict.StreamServerInfo, handlergrpcforunconflict.StreamHandler) error {
 	md, ok := metadata.FromIncomingContext(ss.Context())
 	if !ok {
 		return errMissingMetadata
@@ -200,9 +200,9 @@ func main() {
 	if err != nil {
 		log.Fatalf("Creating a static authz interceptor: %v", err)
 	}
-	unaryInts := grpc.ChainUnaryInterceptor(authUnaryInterceptor, staticInteceptor.UnaryInterceptor)
-	streamInts := grpc.ChainStreamInterceptor(authStreamInterceptor, staticInteceptor.StreamInterceptor)
-	s := grpc.NewServer(grpc.Creds(creds), unaryInts, streamInts)
+	unaryInts := grpcforunconflict.ChainUnaryInterceptor(authUnaryInterceptor, staticInteceptor.UnaryInterceptor)
+	streamInts := grpcforunconflict.ChainStreamInterceptor(authStreamInterceptor, staticInteceptor.StreamInterceptor)
+	s := grpcforunconflict.NewServer(grpcforunconflict.Creds(creds), unaryInts, streamInts)
 
 	// Register EchoServer on the server.
 	pb.RegisterEchoServer(s, &server{})

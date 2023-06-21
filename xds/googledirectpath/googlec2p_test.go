@@ -27,12 +27,12 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal/envconfig"
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient"
 	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/bootstrap"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/testing/protocmp"
 	"google.golang.org/protobuf/types/known/structpb"
 
@@ -201,7 +201,7 @@ func TestBuildXDS(t *testing.T) {
 				Metadata:             nil,
 				Locality:             &v3corepb.Locality{Zone: testZone},
 				UserAgentName:        gRPCUserAgentName,
-				UserAgentVersionType: &v3corepb.Node_UserAgentVersion{UserAgentVersion: grpc.Version},
+				UserAgentVersionType: &v3corepb.Node_UserAgentVersion{UserAgentVersion: grpcforunconflict.Version},
 				ClientFeatures:       []string{clientFeatureNoOverprovisioning},
 			}
 			if tt.ipv6 {
@@ -263,7 +263,7 @@ func TestBuildXDS(t *testing.T) {
 // an expected error.
 func TestBuildFailsWhenCalledWithAuthority(t *testing.T) {
 	uri := "google-c2p://an-authority/resource"
-	cc, err := grpc.Dial(uri, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(uri, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	defer func() {
 		if cc != nil {
 			cc.Close()
@@ -271,6 +271,6 @@ func TestBuildFailsWhenCalledWithAuthority(t *testing.T) {
 	}()
 	wantErr := "google-c2p URI scheme does not support authorities"
 	if err == nil || !strings.Contains(err.Error(), wantErr) {
-		t.Fatalf("grpc.Dial(%s) returned error: %v, want: %v", uri, err, wantErr)
+		t.Fatalf("grpcforunconflict.Dial(%s) returned error: %v, want: %v", uri, err, wantErr)
 	}
 }

@@ -171,7 +171,7 @@ func (s) TestConfigSelector(t *testing.T) {
 				t.Fatalf("no config selector data")
 			}
 
-			if want := "/grpc.testing.TestService/EmptyCall"; gotInfo.Method != want {
+			if want := "/grpcforunconflict.testing.TestService/EmptyCall"; gotInfo.Method != want {
 				t.Errorf("gotInfo.Method = %q; want %q", gotInfo.Method, want)
 			}
 

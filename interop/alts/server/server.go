@@ -29,9 +29,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/grpclog"
 	"github.com/qiyouForSql/grpcforunconflict/interop"
 	"github.com/qiyouForSql/grpcforunconflict/tap"
-	"google.golang.org/grpc"
-
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 const (
@@ -64,8 +61,8 @@ func main() {
 		opts.HandshakerServiceAddress = *hsAddr
 	}
 	altsTC := alts.NewServerCreds(opts)
-	grpcServer := grpc.NewServer(grpc.Creds(altsTC), grpc.InTapHandle(authz))
-	testgrpc.RegisterTestServiceServer(grpcServer, interop.NewTestServer())
+	grpcServer := grpcforunconflict.NewServer(grpcforunconflict.Creds(altsTC), grpcforunconflict.InTapHandle(authz))
+	testgrpcforunconflict.RegisterTestServiceServer(grpcServer, interop.NewTestServer())
 	grpcServer.Serve(lis)
 }
 

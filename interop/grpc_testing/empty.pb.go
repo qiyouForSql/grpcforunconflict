@@ -39,7 +39,7 @@ const (
 // return value of a service API. For instance:
 //
 //	service Foo {
-//	  rpc Bar (grpc.testing.Empty) returns (grpc.testing.Empty) { };
+//	  rpc Bar (grpcforunconflict.testing.Empty) returns (grpcforunconflict.testing.Empty) { };
 //	};
 type Empty struct {
 	state         protoimpl.MessageState
@@ -105,7 +105,7 @@ func file_grpc_testing_empty_proto_rawDescGZIP() []byte {
 
 var file_grpc_testing_empty_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_grpc_testing_empty_proto_goTypes = []interface{}{
-	(*Empty)(nil), // 0: grpc.testing.Empty
+	(*Empty)(nil), // 0:grpcforunconflict.testing.Empty
 }
 var file_grpc_testing_empty_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type

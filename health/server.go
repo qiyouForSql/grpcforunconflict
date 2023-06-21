@@ -25,28 +25,27 @@ import (
 	"sync"
 
 	"github.com/qiyouForSql/grpcforunconflict/codes"
-	healthgrpc "github.com/qiyouForSql/grpcforunconflict/health/grpc_health_v1"
 	healthpb "github.com/qiyouForSql/grpcforunconflict/health/grpc_health_v1"
 	"github.com/qiyouForSql/grpcforunconflict/status"
 )
 
 // Server implements `service Health`.
 type Server struct {
-	healthgrpc.UnimplementedHealthServer
+	healthgrpcforunconflict.UnimplementedHealthServer
 	mu sync.RWMutex
 	// If shutdown is true, it's expected all serving status is NOT_SERVING, and
 	// will stay in NOT_SERVING.
 	shutdown bool
 	// statusMap stores the serving status of the services this Server monitors.
 	statusMap map[string]healthpb.HealthCheckResponse_ServingStatus
-	updates   map[string]map[healthgrpc.Health_WatchServer]chan healthpb.HealthCheckResponse_ServingStatus
+	updates   map[string]map[healthgrpcforunconflict.Health_WatchServer]chan healthpb.HealthCheckResponse_ServingStatus
 }
 
 // NewServer returns a new Server.
 func NewServer() *Server {
 	return &Server{
 		statusMap: map[string]healthpb.HealthCheckResponse_ServingStatus{"": healthpb.HealthCheckResponse_SERVING},
-		updates:   make(map[string]map[healthgrpc.Health_WatchServer]chan healthpb.HealthCheckResponse_ServingStatus),
+		updates:   make(map[string]map[healthgrpcforunconflict.Health_WatchServer]chan healthpb.HealthCheckResponse_ServingStatus),
 	}
 }
 
@@ -63,7 +62,7 @@ func (s *Server) Check(ctx context.Context, in *healthpb.HealthCheckRequest) (*h
 }
 
 // Watch implements `service Health`.
-func (s *Server) Watch(in *healthpb.HealthCheckRequest, stream healthgrpc.Health_WatchServer) error {
+func (s *Server) Watch(in *healthpb.HealthCheckRequest, stream healthgrpcforunconflict.Health_WatchServer) error {
 	service := in.Service
 	// update channel is used for getting service status updates.
 	update := make(chan healthpb.HealthCheckResponse_ServingStatus, 1)
@@ -77,7 +76,7 @@ func (s *Server) Watch(in *healthpb.HealthCheckRequest, stream healthgrpc.Health
 
 	// Registers the update channel to the correct place in the updates map.
 	if _, ok := s.updates[service]; !ok {
-		s.updates[service] = make(map[healthgrpc.Health_WatchServer]chan healthpb.HealthCheckResponse_ServingStatus)
+		s.updates[service] = make(map[healthgrpcforunconflict.Health_WatchServer]chan healthpb.HealthCheckResponse_ServingStatus)
 	}
 	s.updates[service][stream] = update
 	defer func() {

@@ -51,7 +51,7 @@ func (s *server) UnaryEcho(ctx context.Context, in *pb.EchoRequest) (*pb.EchoRes
 	// Create trailer in defer to record function return time.
 	defer func() {
 		trailer := metadata.Pairs("timestamp", time.Now().Format(timestampFormat))
-		grpc.SetTrailer(ctx, trailer)
+		grpcforunconflict.SetTrailer(ctx, trailer)
 	}()
 
 	// Read metadata from client.
@@ -68,7 +68,7 @@ func (s *server) UnaryEcho(ctx context.Context, in *pb.EchoRequest) (*pb.EchoRes
 
 	// Create and send header.
 	header := metadata.New(map[string]string{"location": "MTV", "timestamp": time.Now().Format(timestampFormat)})
-	grpc.SendHeader(ctx, header)
+	grpcforunconflict.SendHeader(ctx, header)
 
 	fmt.Printf("request received: %v, sending echo\n", in)
 
@@ -202,7 +202,7 @@ func main() {
 	}
 	fmt.Printf("server listening at %v\n", lis.Addr())
 
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 	pb.RegisterEchoServer(s, &server{})
 	s.Serve(lis)
 }

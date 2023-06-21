@@ -34,7 +34,7 @@ var (
 	// see https://github.com/grpc/grpc/blob/master/doc/service_config.md to know more about service config
 	retryPolicy = `{
 		"methodConfig": [{
-		  "name": [{"service": "grpc.examples.echo.Echo"}],
+		  "name": [{"service": "grpcforunconflict.examples.echo.Echo"}],
 		  "waitForReady": true,
 		  "retryPolicy": {
 			  "MaxAttempts": 4,
@@ -46,9 +46,9 @@ var (
 		}]}`
 )
 
-// use grpc.WithDefaultServiceConfig() to set service config
-func retryDial() (*grpc.ClientConn, error) {
-	return grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithDefaultServiceConfig(retryPolicy))
+// usegrpcforunconflict.WithDefaultServiceConfig() to set service config
+func retryDial() (*grpcforunconflict.ClientConn, error) {
+	returngrpcforunconflict.Dial(*addr, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithDefaultServiceConfig(retryPolicy))
 }
 
 func main() {

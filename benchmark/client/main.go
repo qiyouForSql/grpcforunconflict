@@ -53,9 +53,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/grpclog"
 	"github.com/qiyouForSql/grpcforunconflict/internal/syscall"
-	"google.golang.org/grpc"
-
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -133,15 +130,15 @@ func main() {
 	fmt.Println("Client Mem Profile:", mf.Name())
 }
 
-func buildConnections(ctx context.Context) []*grpc.ClientConn {
-	ccs := make([]*grpc.ClientConn, *numConn)
+func buildConnections(ctx context.Context) []*grpcforunconflict.ClientConn {
+	ccs := make([]*grpcforunconflict.ClientConn, *numConn)
 	for i := range ccs {
-		ccs[i] = benchmark.NewClientConnWithContext(ctx, "localhost:"+*port, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+		ccs[i] = benchmark.NewClientConnWithContext(ctx, "localhost:"+*port, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithBlock())
 	}
 	return ccs
 }
 
-func runWithConn(cc *grpc.ClientConn, req *testpb.SimpleRequest, warmDeadline, endDeadline time.Time) {
+func runWithConn(cc *grpcforunconflict.ClientConn, req *testpb.SimpleRequest, warmDeadline, endDeadline time.Time) {
 	for i := 0; i < *numRPC; i++ {
 		wg.Add(1)
 		go func() {
@@ -166,8 +163,8 @@ func runWithConn(cc *grpc.ClientConn, req *testpb.SimpleRequest, warmDeadline, e
 	}
 }
 
-func makeCaller(cc *grpc.ClientConn, req *testpb.SimpleRequest) func() {
-	client := testgrpc.NewBenchmarkServiceClient(cc)
+func makeCaller(cc *grpcforunconflict.ClientConn, req *testpb.SimpleRequest) func() {
+	client := testgrpcforunconflict.NewBenchmarkServiceClient(cc)
 	if *rpcType == "unary" {
 		return func() {
 			if _, err := client.UnaryCall(context.Background(), req); err != nil {

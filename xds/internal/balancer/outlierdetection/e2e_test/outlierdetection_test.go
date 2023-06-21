@@ -31,14 +31,11 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/internal"
 	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
 	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
+	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	"github.com/qiyouForSql/grpcforunconflict/peer"
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"github.com/qiyouForSql/grpcforunconflict/resolver/manual"
 	"github.com/qiyouForSql/grpcforunconflict/serviceconfig"
-	"google.golang.org/grpc"
-
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
-	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 
 	_ "github.com/qiyouForSql/grpcforunconflict/xds/internal/balancer/outlierdetection" // To register helper functions which register/unregister Outlier Detection LB Policy.
 )
@@ -102,7 +99,7 @@ func setupBackends(t *testing.T) ([]string, func()) {
 //
 // Returns a non-nil error if context deadline expires before RPCs start to get
 // roundrobined across the given backends.
-func checkRoundRobinRPCs(ctx context.Context, client testgrpc.TestServiceClient, addrs []resolver.Address) error {
+func checkRoundRobinRPCs(ctx context.Context, client testgrpcforunconflict.TestServiceClient, addrs []resolver.Address) error {
 	wantAddrCount := make(map[string]int)
 	for _, addr := range addrs {
 		wantAddrCount[addr.Addr]++
@@ -114,7 +111,7 @@ func checkRoundRobinRPCs(ctx context.Context, client testgrpc.TestServiceClient,
 			iteration := make([]string, len(addrs))
 			for c := 0; c < len(addrs); c++ {
 				var peer peer.Peer
-				client.EmptyCall(ctx, &testpb.Empty{}, grpc.Peer(&peer))
+				client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Peer(&peer))
 				if peer.Addr != nil {
 					iteration[c] = peer.Addr.String()
 				}
@@ -220,14 +217,14 @@ func (s) TestOutlierDetectionAlgorithmsE2E(t *testing.T) {
 				ServiceConfig: sc,
 			})
 
-			cc, err := grpc.Dial(mr.Scheme()+":///", grpc.WithResolvers(mr), grpc.WithTransportCredentials(insecure.NewCredentials()))
+			cc, err := grpcforunconflict.Dial(mr.Scheme()+":///", grpcforunconflict.WithResolvers(mr), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 			if err != nil {
-				t.Fatalf("grpc.Dial() failed: %v", err)
+				t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 			}
 			defer cc.Close()
 			ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 			defer cancel()
-			testServiceClient := testgrpc.NewTestServiceClient(cc)
+			testServiceClient := testgrpcforunconflict.NewTestServiceClient(cc)
 
 			// At first, due to no statistics on each of the backends, the 3
 			// upstreams should all be round robined across.
@@ -297,14 +294,14 @@ func (s) TestNoopConfiguration(t *testing.T) {
 		Addresses:     fullAddresses,
 		ServiceConfig: sc,
 	})
-	cc, err := grpc.Dial(mr.Scheme()+":///", grpc.WithResolvers(mr), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(mr.Scheme()+":///", grpcforunconflict.WithResolvers(mr), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	defer cc.Close()
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	testServiceClient := testgrpc.NewTestServiceClient(cc)
+	testServiceClient := testgrpcforunconflict.NewTestServiceClient(cc)
 
 	for i := 0; i < 2; i++ {
 		// Since the Outlier Detection Balancer starts with a noop

@@ -29,15 +29,14 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/encoding"
 	"github.com/qiyouForSql/grpcforunconflict/internal/envconfig"
 	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
 	"github.com/qiyouForSql/grpcforunconflict/metadata"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -54,7 +53,7 @@ func testCompressServerHasNoSupport(t *testing.T, e env) {
 	te.clientNopCompression = true
 	te.startServer(&testServer{security: e.security})
 	defer te.tearDown()
-	tc := testgrpc.NewTestServiceClient(te.clientConn())
+	tc := testgrpcforunconflict.NewTestServiceClient(te.clientConn())
 
 	const argSize = 271828
 	const respSize = 314159
@@ -95,7 +94,7 @@ func testCompressOK(t *testing.T, e env) {
 	te.clientCompression = true
 	te.startServer(&testServer{security: e.security})
 	defer te.tearDown()
-	tc := testgrpc.NewTestServiceClient(te.clientConn())
+	tc := testgrpcforunconflict.NewTestServiceClient(te.clientConn())
 
 	// Unary call
 	const argSize = 271828
@@ -156,7 +155,7 @@ func testIdentityEncoding(t *testing.T, e env) {
 	te := newTest(t, e)
 	te.startServer(&testServer{security: e.security})
 	defer te.tearDown()
-	tc := testgrpc.NewTestServiceClient(te.clientConn())
+	tc := testgrpcforunconflict.NewTestServiceClient(te.clientConn())
 
 	// Unary call
 	payload, err := newPayload(testpb.PayloadType_COMPRESSABLE, 5)
@@ -175,7 +174,7 @@ func testIdentityEncoding(t *testing.T, e env) {
 	// Streaming RPC
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	stream, err := tc.FullDuplexCall(ctx, grpc.UseCompressor("identity"))
+	stream, err := tc.FullDuplexCall(ctx, grpcforunconflict.UseCompressor("identity"))
 	if err != nil {
 		t.Fatalf("%v.FullDuplexCall(_) = _, %v, want <nil>", tc, err)
 	}
@@ -200,19 +199,19 @@ func testIdentityEncoding(t *testing.T, e env) {
 	}
 }
 
-// renameCompressor is a grpc.Compressor wrapper that allows customizing the
+// renameCompressor is agrpcforunconflict.Compressor wrapper that allows customizing the
 // Type() of another compressor.
 type renameCompressor struct {
-	grpc.Compressor
+	grpcforunconflict.Compressor
 	name string
 }
 
 func (r *renameCompressor) Type() string { return r.name }
 
-// renameDecompressor is a grpc.Decompressor wrapper that allows customizing the
+// renameDecompressor is agrpcforunconflict.Decompressor wrapper that allows customizing the
 // Type() of another Decompressor.
 type renameDecompressor struct {
-	grpc.Decompressor
+	grpcforunconflict.Decompressor
 	name string
 }
 
@@ -222,8 +221,8 @@ func (s) TestClientForwardsGrpcAcceptEncodingHeader(t *testing.T) {
 	wantGrpcAcceptEncodingCh := make(chan []string, 1)
 	defer close(wantGrpcAcceptEncodingCh)
 
-	compressor := renameCompressor{Compressor: grpc.NewGZIPCompressor(), name: "testgzip"}
-	decompressor := renameDecompressor{Decompressor: grpc.NewGZIPDecompressor(), name: "testgzip"}
+	compressor := renameCompressor{Compressor: grpcforunconflict.NewGZIPCompressor(), name: "testgzip"}
+	decompressor := renameDecompressor{Decompressor: grpcforunconflict.NewGZIPDecompressor(), name: "testgzip"}
 
 	ss := &stubserver.StubServer{
 		EmptyCallF: func(ctx context.Context, in *testpb.Empty) (*testpb.Empty, error) {
@@ -237,7 +236,7 @@ func (s) TestClientForwardsGrpcAcceptEncodingHeader(t *testing.T) {
 			return &testpb.Empty{}, nil
 		},
 	}
-	if err := ss.Start([]grpc.ServerOption{grpc.RPCDecompressor(&decompressor)}); err != nil {
+	if err := ss.Start([]grpcforunconflict.ServerOption{grpcforunconflict.RPCDecompressor(&decompressor)}); err != nil {
 		t.Fatalf("Error starting endpoint server: %v", err)
 	}
 	defer ss.Stop()
@@ -251,13 +250,13 @@ func (s) TestClientForwardsGrpcAcceptEncodingHeader(t *testing.T) {
 	}
 
 	wantGrpcAcceptEncodingCh <- []string{"gzip"}
-	if _, err := ss.Client.EmptyCall(ctx, &testpb.Empty{}, grpc.UseCompressor("gzip")); err != nil {
+	if _, err := ss.Client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.UseCompressor("gzip")); err != nil {
 		t.Fatalf("ss.Client.EmptyCall(_, _) = _, %v; want _, nil", err)
 	}
 
 	// Use compressor directly which is not registered via
 	// encoding.RegisterCompressor.
-	if err := ss.StartClient(grpc.WithCompressor(&compressor)); err != nil {
+	if err := ss.StartClient(grpcforunconflict.WithCompressor(&compressor)); err != nil {
 		t.Fatalf("Error starting client: %v", err)
 	}
 	wantGrpcAcceptEncodingCh <- []string{"gzip,testgzip"}
@@ -292,7 +291,7 @@ func (s) TestSetSendCompressorSuccess(t *testing.T) {
 	for _, tt := range []struct {
 		name                string
 		desc                string
-		dialOpts            []grpc.DialOption
+		dialOpts            []grpcforunconflict.DialOption
 		resCompressor       string
 		wantCompressInvokes int32
 	}{
@@ -306,10 +305,10 @@ func (s) TestSetSendCompressorSuccess(t *testing.T) {
 			name:          "gzip_request_and_identity_response",
 			desc:          "request is gzip compressed and response is uncompressed with identity",
 			resCompressor: "identity",
-			dialOpts: []grpc.DialOption{
+			dialOpts: []grpcforunconflict.DialOption{
 				// Use WithCompressor instead of UseCompressor to avoid counting
 				// the client's compressor usage.
-				grpc.WithCompressor(grpc.NewGZIPCompressor()),
+				grpcforunconflict.WithCompressor(grpcforunconflict.NewGZIPCompressor()),
 			},
 			wantCompressInvokes: 0,
 		},
@@ -326,11 +325,11 @@ func (s) TestSetSendCompressorSuccess(t *testing.T) {
 	}
 }
 
-func testUnarySetSendCompressorSuccess(t *testing.T, resCompressor string, wantCompressInvokes int32, dialOpts []grpc.DialOption) {
+func testUnarySetSendCompressorSuccess(t *testing.T, resCompressor string, wantCompressInvokes int32, dialOpts []grpcforunconflict.DialOption) {
 	wc := setupGzipWrapCompressor(t)
 	ss := &stubserver.StubServer{
 		EmptyCallF: func(ctx context.Context, in *testpb.Empty) (*testpb.Empty, error) {
-			if err := grpc.SetSendCompressor(ctx, resCompressor); err != nil {
+			if err := grpcforunconflict.SetSendCompressor(ctx, resCompressor); err != nil {
 				return nil, err
 			}
 			return &testpb.Empty{}, nil
@@ -354,15 +353,15 @@ func testUnarySetSendCompressorSuccess(t *testing.T, resCompressor string, wantC
 	}
 }
 
-func testStreamSetSendCompressorSuccess(t *testing.T, resCompressor string, wantCompressInvokes int32, dialOpts []grpc.DialOption) {
+func testStreamSetSendCompressorSuccess(t *testing.T, resCompressor string, wantCompressInvokes int32, dialOpts []grpcforunconflict.DialOption) {
 	wc := setupGzipWrapCompressor(t)
 	ss := &stubserver.StubServer{
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			if _, err := stream.Recv(); err != nil {
 				return err
 			}
 
-			if err := grpc.SetSendCompressor(stream.Context(), resCompressor); err != nil {
+			if err := grpcforunconflict.SetSendCompressor(stream.Context(), resCompressor); err != nil {
 				return err
 			}
 
@@ -429,7 +428,7 @@ func (s) TestUnadvertisedSetSendCompressorFailure(t *testing.T) {
 func testUnarySetSendCompressorFailure(t *testing.T, resCompressor string, wantErr error) {
 	ss := &stubserver.StubServer{
 		EmptyCallF: func(ctx context.Context, in *testpb.Empty) (*testpb.Empty, error) {
-			if err := grpc.SetSendCompressor(ctx, resCompressor); err != nil {
+			if err := grpcforunconflict.SetSendCompressor(ctx, resCompressor); err != nil {
 				return nil, err
 			}
 			return &testpb.Empty{}, nil
@@ -450,12 +449,12 @@ func testUnarySetSendCompressorFailure(t *testing.T, resCompressor string, wantE
 
 func testStreamSetSendCompressorFailure(t *testing.T, resCompressor string, wantErr error) {
 	ss := &stubserver.StubServer{
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			if _, err := stream.Recv(); err != nil {
 				return err
 			}
 
-			if err := grpc.SetSendCompressor(stream.Context(), resCompressor); err != nil {
+			if err := grpcforunconflict.SetSendCompressor(stream.Context(), resCompressor); err != nil {
 				return err
 			}
 
@@ -488,8 +487,8 @@ func (s) TestUnarySetSendCompressorAfterHeaderSendFailure(t *testing.T) {
 	ss := &stubserver.StubServer{
 		EmptyCallF: func(ctx context.Context, in *testpb.Empty) (*testpb.Empty, error) {
 			// Send headers early and then set send compressor.
-			grpc.SendHeader(ctx, metadata.MD{})
-			err := grpc.SetSendCompressor(ctx, "gzip")
+			grpcforunconflict.SendHeader(ctx, metadata.MD{})
+			err := grpcforunconflict.SetSendCompressor(ctx, "gzip")
 			if err == nil {
 				t.Error("Wanted set send compressor error")
 				return &testpb.Empty{}, nil
@@ -513,10 +512,10 @@ func (s) TestUnarySetSendCompressorAfterHeaderSendFailure(t *testing.T) {
 
 func (s) TestStreamSetSendCompressorAfterHeaderSendFailure(t *testing.T) {
 	ss := &stubserver.StubServer{
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			// Send headers early and then set send compressor.
-			grpc.SendHeader(stream.Context(), metadata.MD{})
-			err := grpc.SetSendCompressor(stream.Context(), "gzip")
+			grpcforunconflict.SendHeader(stream.Context(), metadata.MD{})
+			err := grpcforunconflict.SetSendCompressor(stream.Context(), "gzip")
 			if err == nil {
 				t.Error("Wanted set send compressor error")
 			}
@@ -572,7 +571,7 @@ func (s) TestClientSupportedCompressors(t *testing.T) {
 		t.Run(tt.desc, func(t *testing.T) {
 			ss := &stubserver.StubServer{
 				EmptyCallF: func(ctx context.Context, in *testpb.Empty) (*testpb.Empty, error) {
-					got, err := grpc.ClientSupportedCompressors(ctx)
+					got, err := grpcforunconflict.ClientSupportedCompressors(ctx)
 					if err != nil {
 						return nil, err
 					}
@@ -614,7 +613,7 @@ func testCompressorRegister(t *testing.T, e env) {
 
 	te.startServer(&testServer{security: e.security})
 	defer te.tearDown()
-	tc := testgrpc.NewTestServiceClient(te.clientConn())
+	tc := testgrpcforunconflict.NewTestServiceClient(te.clientConn())
 
 	// Unary call
 	const argSize = 271828
@@ -688,7 +687,7 @@ func (s) TestGzipBadChecksum(t *testing.T) {
 			return &testpb.SimpleResponse{}, nil
 		},
 	}
-	if err := ss.Start(nil, grpc.WithCompressor(badGzipCompressor{})); err != nil {
+	if err := ss.Start(nil, grpcforunconflict.WithCompressor(badGzipCompressor{})); err != nil {
 		t.Fatalf("Error starting endpoint server: %v", err)
 	}
 	defer ss.Stop()

@@ -27,6 +27,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/balancer"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
@@ -38,9 +39,7 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/resolver/manual"
 	"github.com/qiyouForSql/grpcforunconflict/serviceconfig"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -56,7 +55,7 @@ func (s) TestResolverUpdateDuringBuild_ServiceConfigParseError(t *testing.T) {
 	r := manual.NewBuilderWithScheme("whatever")
 	r.InitialState(resolver.State{ServiceConfig: &serviceconfig.ParseResult{Err: errors.New("resolver build err")}})
 
-	cc, err := grpc.Dial(r.Scheme()+":///test.server", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(r))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.server", grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(r))
 	if err != nil {
 		t.Fatalf("Dial(_, _) = _, %v; want _, nil", err)
 	}
@@ -64,7 +63,7 @@ func (s) TestResolverUpdateDuringBuild_ServiceConfigParseError(t *testing.T) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	const wantMsg = "error parsing service config"
 	const wantCode = codes.Unavailable
 	if _, err := client.EmptyCall(ctx, &testpb.Empty{}); status.Code(err) != wantCode || !strings.Contains(status.Convert(err).Message(), wantMsg) {
@@ -88,7 +87,7 @@ func (s) TestResolverUpdateDuringBuild_ServiceConfigInvalidTypeError(t *testing.
 	r := manual.NewBuilderWithScheme("whatever")
 	r.InitialState(resolver.State{ServiceConfig: &serviceconfig.ParseResult{Config: fakeConfig{}}})
 
-	cc, err := grpc.Dial(r.Scheme()+":///test.server", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(r))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.server", grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(r))
 	if err != nil {
 		t.Fatalf("Dial(_, _) = _, %v; want _, nil", err)
 	}
@@ -96,7 +95,7 @@ func (s) TestResolverUpdateDuringBuild_ServiceConfigInvalidTypeError(t *testing.
 
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	const wantMsg = "illegal service config type"
 	const wantCode = codes.Unavailable
 	if _, err := client.EmptyCall(ctx, &testpb.Empty{}); status.Code(err) != wantCode || !strings.Contains(status.Convert(err).Message(), wantMsg) {
@@ -111,7 +110,7 @@ func (s) TestResolverUpdateDuringBuild_ServiceConfigInvalidTypeError(t *testing.
 func (s) TestResolverUpdate_InvalidServiceConfigAsFirstUpdate(t *testing.T) {
 	r := manual.NewBuilderWithScheme("whatever")
 
-	cc, err := grpc.Dial(r.Scheme()+":///test.server", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(r))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.server", grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(r))
 	if err != nil {
 		t.Fatalf("Dial(_, _) = _, %v; want _, nil", err)
 	}
@@ -122,7 +121,7 @@ func (s) TestResolverUpdate_InvalidServiceConfigAsFirstUpdate(t *testing.T) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	const wantMsg = "error parsing service config"
 	const wantCode = codes.Unavailable
 	if _, err := client.EmptyCall(ctx, &testpb.Empty{}); status.Code(err) != wantCode || !strings.Contains(status.Convert(err).Message(), wantMsg) {
@@ -158,7 +157,7 @@ func (s) TestResolverUpdate_InvalidServiceConfigAfterGoodUpdate(t *testing.T) {
 	ccUpdateCh := testutils.NewChannel()
 	stub.Register(t.Name(), stub.BalancerFuncs{
 		Init: func(bd *stub.BalancerData) {
-			pf := balancer.Get(grpc.PickFirstBalancerName)
+			pf := balancer.Get(grpcforunconflict.PickFirstBalancerName)
 			bd.Data = pf.Build(bd.ClientConn, bd.BuildOptions)
 		},
 		ParseConfig: func(lbCfg json.RawMessage) (serviceconfig.LoadBalancingConfig, error) {
@@ -195,7 +194,7 @@ func (s) TestResolverUpdate_InvalidServiceConfigAfterGoodUpdate(t *testing.T) {
 
 	r := manual.NewBuilderWithScheme("whatever")
 
-	cc, err := grpc.Dial(r.Scheme()+":///test.server", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(r))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.server", grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(r))
 	if err != nil {
 		t.Fatalf("Dial(_, _) = _, %v; want _, nil", err)
 	}
@@ -235,7 +234,7 @@ func (s) TestResolverUpdate_InvalidServiceConfigAfterGoodUpdate(t *testing.T) {
 	}
 
 	// Ensure RPCs are successful.
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	if _, err := client.EmptyCall(ctx, &testpb.Empty{}); err != nil {
 		t.Fatalf("EmptyCall RPC failed: %v", err)
 	}

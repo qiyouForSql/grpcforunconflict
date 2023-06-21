@@ -30,6 +30,7 @@ import (
 	"time"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/balancer"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/credentials"
@@ -39,7 +40,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/metadata"
 	"github.com/qiyouForSql/grpcforunconflict/status"
 	"github.com/qiyouForSql/grpcforunconflict/testdata"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -109,12 +109,12 @@ func (s) TestLookupFailure(t *testing.T) {
 // respond within the configured rpc timeout.
 func (s) TestLookupDeadlineExceeded(t *testing.T) {
 	// A unary interceptor which returns a status error with DeadlineExceeded.
-	interceptor := func(ctx context.Context, req interface{}, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+	interceptor := func(ctx context.Context, req interface{}, _ *grpcforunconflict.UnaryServerInfo, handlergrpcforunconflict.UnaryHandler) (resp interface{}, err error) {
 		return nil, status.Error(codes.DeadlineExceeded, "deadline exceeded")
 	}
 
 	// Start an RLS server and set the throttler to never throttle.
-	rlsServer, _ := rlstest.SetupFakeRLSServer(t, nil, grpc.UnaryInterceptor(interceptor))
+	rlsServer, _ := rlstest.SetupFakeRLSServer(t, nil, grpcforunconflict.UnaryInterceptor(interceptor))
 	overrideAdaptiveThrottler(t, neverThrottlingThrottler())
 
 	// Create a control channel with a small deadline.
@@ -191,7 +191,7 @@ func (f *testPerRPCCredentials) RequireTransportSecurity() bool {
 
 // Unary server interceptor which validates if the RPC contains call credentials
 // which match `perRPCCredsData
-func callCredsValidatingServerInterceptor(ctx context.Context, req interface{}, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+func callCredsValidatingServerInterceptor(ctx context.Context, req interface{}, _ *grpcforunconflict.UnaryServerInfo, handlergrpcforunconflict.UnaryHandler) (resp interface{}, err error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return nil, status.Error(codes.PermissionDenied, "didn't find metadata in context")
@@ -254,7 +254,7 @@ var (
 	}
 )
 
-func testControlChannelCredsSuccess(t *testing.T, sopts []grpc.ServerOption, bopts balancer.BuildOptions) {
+func testControlChannelCredsSuccess(t *testing.T, sopts []grpcforunconflict.ServerOption, bopts balancer.BuildOptions) {
 	// Start an RLS server and set the throttler to never throttle requests.
 	rlsServer, _ := rlstest.SetupFakeRLSServer(t, nil, sopts...)
 	overrideAdaptiveThrottler(t, neverThrottlingThrottler())
@@ -312,7 +312,7 @@ func (s) TestControlChannelCredsSuccess(t *testing.T) {
 
 	tests := []struct {
 		name  string
-		sopts []grpc.ServerOption
+		sopts []grpcforunconflict.ServerOption
 		bopts balancer.BuildOptions
 	}{
 		{
@@ -322,7 +322,7 @@ func (s) TestControlChannelCredsSuccess(t *testing.T) {
 		},
 		{
 			name:  "transport creds only",
-			sopts: []grpc.ServerOption{grpc.Creds(serverCreds)},
+			sopts: []grpcforunconflict.ServerOption{grpcforunconflict.Creds(serverCreds)},
 			bopts: balancer.BuildOptions{
 				DialCreds: clientCreds,
 				Authority: "x.test.example.com",
@@ -330,9 +330,9 @@ func (s) TestControlChannelCredsSuccess(t *testing.T) {
 		},
 		{
 			name: "creds bundle",
-			sopts: []grpc.ServerOption{
-				grpc.Creds(serverCreds),
-				grpc.UnaryInterceptor(callCredsValidatingServerInterceptor),
+			sopts: []grpcforunconflict.ServerOption{
+				grpcforunconflict.Creds(serverCreds),
+				grpcforunconflict.UnaryInterceptor(callCredsValidatingServerInterceptor),
 			},
 			bopts: balancer.BuildOptions{
 				CredsBundle: &testCredsBundle{
@@ -350,7 +350,7 @@ func (s) TestControlChannelCredsSuccess(t *testing.T) {
 	}
 }
 
-func testControlChannelCredsFailure(t *testing.T, sopts []grpc.ServerOption, bopts balancer.BuildOptions, wantCode codes.Code, wantErrRegex *regexp.Regexp) {
+func testControlChannelCredsFailure(t *testing.T, sopts []grpcforunconflict.ServerOption, bopts balancer.BuildOptions, wantCode codes.Code, wantErrRegex *regexp.Regexp) {
 	// StartFakeRouteLookupServer a fake server.
 	//
 	// Start an RLS server and set the throttler to never throttle requests. The
@@ -394,14 +394,14 @@ func (s) TestControlChannelCredsFailure(t *testing.T) {
 
 	tests := []struct {
 		name         string
-		sopts        []grpc.ServerOption
+		sopts        []grpcforunconflict.ServerOption
 		bopts        balancer.BuildOptions
 		wantCode     codes.Code
 		wantErrRegex *regexp.Regexp
 	}{
 		{
 			name:  "transport creds authority mismatch",
-			sopts: []grpc.ServerOption{grpc.Creds(serverCreds)},
+			sopts: []grpcforunconflict.ServerOption{grpcforunconflict.Creds(serverCreds)},
 			bopts: balancer.BuildOptions{
 				DialCreds: clientCreds,
 				Authority: "authority-mismatch",
@@ -421,9 +421,9 @@ func (s) TestControlChannelCredsFailure(t *testing.T) {
 		},
 		{
 			name: "call creds mismatch",
-			sopts: []grpc.ServerOption{
-				grpc.Creds(serverCreds),
-				grpc.UnaryInterceptor(callCredsValidatingServerInterceptor), // server expects call creds
+			sopts: []grpcforunconflict.ServerOption{
+				grpcforunconflict.Creds(serverCreds),
+				grpcforunconflict.UnaryInterceptor(callCredsValidatingServerInterceptor), // server expects call creds
 			},
 			bopts: balancer.BuildOptions{
 				CredsBundle: &testCredsBundle{

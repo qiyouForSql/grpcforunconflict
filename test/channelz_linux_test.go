@@ -27,8 +27,6 @@ import (
 	"time"
 
 	"github.com/qiyouForSql/grpcforunconflict/internal/channelz"
-
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 func (s) TestCZSocketMetricsSocketOption(t *testing.T) {
@@ -45,7 +43,7 @@ func testCZSocketMetricsSocketOption(t *testing.T, e env) {
 	te.startServer(&testServer{security: e.security})
 	defer te.tearDown()
 	cc := te.clientConn()
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	doSuccessfulUnaryCall(tc, t)
 
 	time.Sleep(10 * time.Millisecond)

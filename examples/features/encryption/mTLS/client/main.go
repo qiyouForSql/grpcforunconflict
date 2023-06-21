@@ -70,7 +70,7 @@ func main() {
 		RootCAs:      ca,
 	}
 
-	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(credentials.NewTLS(tlsConfig)))
+	conn, err := grpcforunconflict.Dial(*addr, grpcforunconflict.WithTransportCredentials(credentials.NewTLS(tlsConfig)))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}

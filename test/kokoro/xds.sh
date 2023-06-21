@@ -16,7 +16,7 @@ sudo ln -s /usr/local/go/bin/go /usr/bin/go
 for i in 1 2 3; do go build && break || sleep 5; done
 popd
 
-git clone -b master --single-branch --depth=1 https://github.com/grpc/grpc.git
+git clone -b master --single-branch --depth=1 https://github.com/grpc/grpcforunconflict.git
 
 grpc/tools/run_tests/helper_scripts/prep_xds.sh
 

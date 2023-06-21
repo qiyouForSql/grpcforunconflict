@@ -27,16 +27,14 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/admin"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/xds/bootstrap"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
-	v3statusgrpc "github.com/envoyproxy/go-control-plane/envoy/service/status/v3"
 	v3statuspb "github.com/envoyproxy/go-control-plane/envoy/service/status/v3"
-	channelzgrpc "github.com/qiyouForSql/grpcforunconflict/channelz/grpc_channelz_v1"
 	channelzpb "github.com/qiyouForSql/grpcforunconflict/channelz/grpc_channelz_v1"
 )
 
@@ -69,7 +67,7 @@ func RunRegisterTests(t *testing.T, ec ExpectedStatusCodes) {
 		t.Fatalf("cannot create listener: %v", err)
 	}
 
-	server := grpc.NewServer()
+	server := grpcforunconflict.NewServer()
 	defer server.Stop()
 	cleanup, err := admin.Register(server)
 	if err != nil {
@@ -80,7 +78,7 @@ func RunRegisterTests(t *testing.T, ec ExpectedStatusCodes) {
 		server.Serve(lis)
 	}()
 
-	conn, err := grpc.Dial(lis.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpcforunconflict.Dial(lis.Addr().String(), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("cannot connect to server: %v", err)
 	}
@@ -98,19 +96,19 @@ func RunRegisterTests(t *testing.T, ec ExpectedStatusCodes) {
 }
 
 // RunChannelz makes a channelz RPC.
-func RunChannelz(conn *grpc.ClientConn) error {
-	c := channelzgrpc.NewChannelzClient(conn)
+func RunChannelz(conn *grpcforunconflict.ClientConn) error {
+	c := channelzgrpcforunconflict.NewChannelzClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	_, err := c.GetTopChannels(ctx, &channelzpb.GetTopChannelsRequest{}, grpc.WaitForReady(true))
+	_, err := c.GetTopChannels(ctx, &channelzpb.GetTopChannelsRequest{}, grpcforunconflict.WaitForReady(true))
 	return err
 }
 
 // RunCSDS makes a CSDS RPC.
-func RunCSDS(conn *grpc.ClientConn) error {
-	c := v3statusgrpc.NewClientStatusDiscoveryServiceClient(conn)
+func RunCSDS(conn *grpcforunconflict.ClientConn) error {
+	c := v3statusgrpcforunconflict.NewClientStatusDiscoveryServiceClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	_, err := c.FetchClientStatus(ctx, &v3statuspb.ClientStatusRequest{}, grpc.WaitForReady(true))
+	_, err := c.FetchClientStatus(ctx, &v3statuspb.ClientStatusRequest{}, grpcforunconflict.WaitForReady(true))
 	return err
 }

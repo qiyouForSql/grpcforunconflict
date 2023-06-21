@@ -26,7 +26,6 @@ import (
 	"time"
 
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
-	echogrpc "github.com/qiyouForSql/grpcforunconflict/examples/features/proto/echo"
 	echopb "github.com/qiyouForSql/grpcforunconflict/examples/features/proto/echo"
 	"github.com/qiyouForSql/grpcforunconflict/examples/features/stats_monitoring/statshandler"
 )
@@ -35,11 +34,11 @@ var addr = flag.String("addr", "localhost:50051", "the address to connect to")
 
 func main() {
 	flag.Parse()
-	opts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithStatsHandler(statshandler.New()),
+	opts := []grpcforunconflict.DialOption{
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithStatsHandler(statshandler.New()),
 	}
-	conn, err := grpc.Dial(*addr, opts...)
+	conn, err := grpcforunconflict.Dial(*addr, opts...)
 	if err != nil {
 		log.Fatalf("failed to connect to server %q: %v", *addr, err)
 	}
@@ -48,7 +47,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	c := echogrpc.NewEchoClient(conn)
+	c := echogrpcforunconflict.NewEchoClient(conn)
 
 	resp, err := c.UnaryEcho(ctx, &echopb.EchoRequest{Message: "stats handler demo"})
 	if err != nil {

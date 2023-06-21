@@ -27,7 +27,6 @@ import (
 
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	ppb "github.com/qiyouForSql/grpcforunconflict/profiling/proto"
-	"google.golang.org/grpc"
 )
 
 func setEnabled(ctx context.Context, c ppb.ProfilingClient, enabled bool) error {
@@ -79,7 +78,7 @@ func remoteCommand() error {
 	}
 
 	logger.Infof("dialing %s", *flagAddress)
-	cc, err := grpc.Dial(*flagAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(*flagAddress, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		logger.Errorf("cannot dial %s: %v", *flagAddress, err)
 		return err

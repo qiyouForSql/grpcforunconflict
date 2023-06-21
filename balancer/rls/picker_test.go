@@ -24,6 +24,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal/grpcsync"
@@ -31,11 +32,9 @@ import (
 	rlstest "github.com/qiyouForSql/grpcforunconflict/internal/testutils/rls"
 	"github.com/qiyouForSql/grpcforunconflict/metadata"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/durationpb"
 
 	rlspb "github.com/qiyouForSql/grpcforunconflict/internal/proto/grpc_lookup_v1"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -54,9 +53,9 @@ func (s) TestPick_DataCacheMiss_NoPendingEntry_ThrottledWithDefaultTarget(t *tes
 	// Register a manual resolver and push the RLS service config through it.
 	r := startManualResolverWithConfig(t, rlsConfig)
 
-	cc, err := grpc.Dial(r.Scheme()+":///", grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	defer cc.Close()
 
@@ -85,9 +84,9 @@ func (s) TestPick_DataCacheMiss_NoPendingEntry_ThrottledWithoutDefaultTarget(t *
 	r := startManualResolverWithConfig(t, rlsConfig)
 
 	// Dial the backend.
-	cc, err := grpc.Dial(r.Scheme()+":///", grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	defer cc.Close()
 
@@ -116,9 +115,9 @@ func (s) TestPick_DataCacheMiss_NoPendingEntry_NotThrottled(t *testing.T) {
 	r := startManualResolverWithConfig(t, rlsConfig)
 
 	// Dial the backend.
-	cc, err := grpc.Dial(r.Scheme()+":///", grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	defer cc.Close()
 
@@ -158,14 +157,14 @@ func (s) TestPick_DataCacheMiss_PendingEntryExists(t *testing.T) {
 			// also lead to creation of a pending entry, and further RPCs by the
 			// client should not result in RLS requests being sent out.
 			rlsReqCh := make(chan struct{}, 1)
-			interceptor := func(ctx context.Context, req interface{}, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+			interceptor := func(ctx context.Context, req interface{}, _ *grpcforunconflict.UnaryServerInfo, handlergrpcforunconflict.UnaryHandler) (resp interface{}, err error) {
 				rlsReqCh <- struct{}{}
 				<-ctx.Done()
 				return nil, ctx.Err()
 			}
 
 			// Start an RLS server and set the throttler to never throttle.
-			rlsServer, _ := rlstest.SetupFakeRLSServer(t, nil, grpc.UnaryInterceptor(interceptor))
+			rlsServer, _ := rlstest.SetupFakeRLSServer(t, nil, grpcforunconflict.UnaryInterceptor(interceptor))
 			overrideAdaptiveThrottler(t, neverThrottlingThrottler())
 
 			// Build RLS service config with an optional default target.
@@ -180,9 +179,9 @@ func (s) TestPick_DataCacheMiss_PendingEntryExists(t *testing.T) {
 			r := startManualResolverWithConfig(t, rlsConfig)
 
 			// Dial the backend.
-			cc, err := grpc.Dial(r.Scheme()+":///", grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+			cc, err := grpcforunconflict.Dial(r.Scheme()+":///", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 			if err != nil {
-				t.Fatalf("grpc.Dial() failed: %v", err)
+				t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 			}
 			defer cc.Close()
 
@@ -193,7 +192,7 @@ func (s) TestPick_DataCacheMiss_PendingEntryExists(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 			defer cancel()
 			go func() {
-				client := testgrpc.NewTestServiceClient(cc)
+				client := testgrpcforunconflict.NewTestServiceClient(cc)
 				client.EmptyCall(ctx, &testpb.Empty{})
 			}()
 
@@ -233,9 +232,9 @@ func (s) TestPick_DataCacheHit_NoPendingEntry_ValidEntry(t *testing.T) {
 	r := startManualResolverWithConfig(t, rlsConfig)
 
 	// Dial the backend.
-	cc, err := grpc.Dial(r.Scheme()+":///", grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	defer cc.Close()
 
@@ -296,9 +295,9 @@ func (s) TestPick_DataCacheHit_NoPendingEntry_ValidEntry_WithHeaderData(t *testi
 	r := startManualResolverWithConfig(t, rlsConfig)
 
 	// Dial the backend.
-	cc, err := grpc.Dial(r.Scheme()+":///", grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	defer cc.Close()
 
@@ -306,7 +305,7 @@ func (s) TestPick_DataCacheHit_NoPendingEntry_ValidEntry_WithHeaderData(t *testi
 	// data sent by the RLS server.
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	if _, err := testgrpc.NewTestServiceClient(cc).EmptyCall(ctx, &testpb.Empty{}); err != nil {
+	if _, err := testgrpcforunconflict.NewTestServiceClient(cc).EmptyCall(ctx, &testpb.Empty{}); err != nil {
 		t.Fatalf("EmptyCall() RPC: %v", err)
 	}
 }
@@ -363,9 +362,9 @@ func (s) TestPick_DataCacheHit_NoPendingEntry_StaleEntry(t *testing.T) {
 			r := startManualResolverWithConfig(t, rlsConfig)
 
 			// Dial the backend.
-			cc, err := grpc.Dial(r.Scheme()+":///", grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+			cc, err := grpcforunconflict.Dial(r.Scheme()+":///", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 			if err != nil {
-				t.Fatalf("grpc.Dial() failed: %v", err)
+				t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 			}
 			defer cc.Close()
 
@@ -472,9 +471,9 @@ func (s) TestPick_DataCacheHit_NoPendingEntry_ExpiredEntry(t *testing.T) {
 			r := startManualResolverWithConfig(t, rlsConfig)
 
 			// Dial the backend.
-			cc, err := grpc.Dial(r.Scheme()+":///", grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+			cc, err := grpcforunconflict.Dial(r.Scheme()+":///", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 			if err != nil {
-				t.Fatalf("grpc.Dial() failed: %v", err)
+				t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 			}
 			defer cc.Close()
 
@@ -570,9 +569,9 @@ func (s) TestPick_DataCacheHit_NoPendingEntry_ExpiredEntryInBackoff(t *testing.T
 			r := startManualResolverWithConfig(t, rlsConfig)
 
 			// Dial the backend.
-			cc, err := grpc.Dial(r.Scheme()+":///", grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+			cc, err := grpcforunconflict.Dial(r.Scheme()+":///", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 			if err != nil {
-				t.Fatalf("grpc.Dial() failed: %v", err)
+				t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 			}
 			defer cc.Close()
 
@@ -633,7 +632,7 @@ func (s) TestPick_DataCacheHit_PendingEntryExists_StaleEntry(t *testing.T) {
 			// expired entry and a pending entry in the cache.
 			rlsReqCh := make(chan struct{}, 1)
 			firstRPCDone := grpcsync.NewEvent()
-			interceptor := func(ctx context.Context, req interface{}, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+			interceptor := func(ctx context.Context, req interface{}, _ *grpcforunconflict.UnaryServerInfo, handlergrpcforunconflict.UnaryHandler) (resp interface{}, err error) {
 				select {
 				case rlsReqCh <- struct{}{}:
 				default:
@@ -646,7 +645,7 @@ func (s) TestPick_DataCacheHit_PendingEntryExists_StaleEntry(t *testing.T) {
 			}
 
 			// Start an RLS server and set the throttler to never throttle.
-			rlsServer, _ := rlstest.SetupFakeRLSServer(t, nil, grpc.UnaryInterceptor(interceptor))
+			rlsServer, _ := rlstest.SetupFakeRLSServer(t, nil, grpcforunconflict.UnaryInterceptor(interceptor))
 			overrideAdaptiveThrottler(t, neverThrottlingThrottler())
 
 			// Build RLS service config with an optional default target.
@@ -672,9 +671,9 @@ func (s) TestPick_DataCacheHit_PendingEntryExists_StaleEntry(t *testing.T) {
 			r := startManualResolverWithConfig(t, rlsConfig)
 
 			// Dial the backend.
-			cc, err := grpc.Dial(r.Scheme()+":///", grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+			cc, err := grpcforunconflict.Dial(r.Scheme()+":///", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 			if err != nil {
-				t.Fatalf("grpc.Dial() failed: %v", err)
+				t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 			}
 			defer cc.Close()
 
@@ -733,7 +732,7 @@ func (s) TestPick_DataCacheHit_PendingEntryExists_ExpiredEntry(t *testing.T) {
 			// expired entry and a pending entry in the cache.
 			rlsReqCh := make(chan struct{}, 1)
 			firstRPCDone := grpcsync.NewEvent()
-			interceptor := func(ctx context.Context, req interface{}, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+			interceptor := func(ctx context.Context, req interface{}, _ *grpcforunconflict.UnaryServerInfo, handlergrpcforunconflict.UnaryHandler) (resp interface{}, err error) {
 				select {
 				case rlsReqCh <- struct{}{}:
 				default:
@@ -746,7 +745,7 @@ func (s) TestPick_DataCacheHit_PendingEntryExists_ExpiredEntry(t *testing.T) {
 			}
 
 			// Start an RLS server and set the throttler to never throttle.
-			rlsServer, _ := rlstest.SetupFakeRLSServer(t, nil, grpc.UnaryInterceptor(interceptor))
+			rlsServer, _ := rlstest.SetupFakeRLSServer(t, nil, grpcforunconflict.UnaryInterceptor(interceptor))
 			overrideAdaptiveThrottler(t, neverThrottlingThrottler())
 
 			// Build RLS service config with an optional default target.
@@ -770,9 +769,9 @@ func (s) TestPick_DataCacheHit_PendingEntryExists_ExpiredEntry(t *testing.T) {
 			r := startManualResolverWithConfig(t, rlsConfig)
 
 			// Dial the backend.
-			cc, err := grpc.Dial(r.Scheme()+":///", grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+			cc, err := grpcforunconflict.Dial(r.Scheme()+":///", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 			if err != nil {
-				t.Fatalf("grpc.Dial() failed: %v", err)
+				t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 			}
 			defer cc.Close()
 
@@ -791,7 +790,7 @@ func (s) TestPick_DataCacheHit_PendingEntryExists_ExpiredEntry(t *testing.T) {
 			// force us to send an RLS request which would block on the server,
 			// giving us a pending cache entry for the duration of the test.
 			go func() {
-				for client := testgrpc.NewTestServiceClient(cc); ctx.Err() == nil; <-time.After(defaultTestShortTimeout) {
+				for client := testgrpcforunconflict.NewTestServiceClient(cc); ctx.Err() == nil; <-time.After(defaultTestShortTimeout) {
 					client.EmptyCall(ctx, &testpb.Empty{})
 				}
 			}()

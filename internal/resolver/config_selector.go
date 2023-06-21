@@ -55,7 +55,7 @@ type RPCConfig struct {
 	Interceptor  ClientInterceptor
 }
 
-// ClientStream is the same as grpc.ClientStream, but defined here for circular
+// ClientStream is the same asgrpcforunconflict.ClientStream, but defined here for circular
 // dependency reasons.
 type ClientStream interface {
 	// Header returns the header metadata received from the server if there
@@ -127,7 +127,7 @@ type ServerInterceptor interface {
 
 type csKeyType string
 
-const csKey = csKeyType("grpc.internal.resolver.configSelector")
+const csKey = csKeyType("grpcforunconflict.internal.resolver.configSelector")
 
 // SetConfigSelector sets the config selector in state and returns the new
 // state.

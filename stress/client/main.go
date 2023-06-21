@@ -30,6 +30,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/credentials"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
@@ -37,9 +38,7 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/interop"
 	"github.com/qiyouForSql/grpcforunconflict/status"
 	"github.com/qiyouForSql/grpcforunconflict/testdata"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	metricspb "github.com/qiyouForSql/grpcforunconflict/stress/grpc_testing"
 )
 
@@ -203,42 +202,42 @@ func startServer(server *server, port int) {
 		logger.Fatalf("failed to listen: %v", err)
 	}
 
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 	metricspb.RegisterMetricsServiceServer(s, server)
 	s.Serve(lis)
 
 }
 
 // performRPCs uses weightedRandomTestSelector to select test case and runs the tests.
-func performRPCs(gauge *gauge, conn *grpc.ClientConn, selector *weightedRandomTestSelector, stop <-chan bool) {
-	client := testgrpc.NewTestServiceClient(conn)
+func performRPCs(gauge *gauge, conn *grpcforunconflict.ClientConn, selector *weightedRandomTestSelector, stop <-chan bool) {
+	client := testgrpcforunconflict.NewTestServiceClient(conn)
 	var numCalls int64
 	startTime := time.Now()
 	for {
 		test := selector.getNextTest()
 		switch test {
 		case "empty_unary":
-			interop.DoEmptyUnaryCall(client, grpc.WaitForReady(true))
+			interop.DoEmptyUnaryCall(client, grpcforunconflict.WaitForReady(true))
 		case "large_unary":
-			interop.DoLargeUnaryCall(client, grpc.WaitForReady(true))
+			interop.DoLargeUnaryCall(client, grpcforunconflict.WaitForReady(true))
 		case "client_streaming":
-			interop.DoClientStreaming(client, grpc.WaitForReady(true))
+			interop.DoClientStreaming(client, grpcforunconflict.WaitForReady(true))
 		case "server_streaming":
-			interop.DoServerStreaming(client, grpc.WaitForReady(true))
+			interop.DoServerStreaming(client, grpcforunconflict.WaitForReady(true))
 		case "ping_pong":
-			interop.DoPingPong(client, grpc.WaitForReady(true))
+			interop.DoPingPong(client, grpcforunconflict.WaitForReady(true))
 		case "empty_stream":
-			interop.DoEmptyStream(client, grpc.WaitForReady(true))
+			interop.DoEmptyStream(client, grpcforunconflict.WaitForReady(true))
 		case "timeout_on_sleeping_server":
-			interop.DoTimeoutOnSleepingServer(client, grpc.WaitForReady(true))
+			interop.DoTimeoutOnSleepingServer(client, grpcforunconflict.WaitForReady(true))
 		case "cancel_after_begin":
-			interop.DoCancelAfterBegin(client, grpc.WaitForReady(true))
+			interop.DoCancelAfterBegin(client, grpcforunconflict.WaitForReady(true))
 		case "cancel_after_first_response":
-			interop.DoCancelAfterFirstResponse(client, grpc.WaitForReady(true))
+			interop.DoCancelAfterFirstResponse(client, grpcforunconflict.WaitForReady(true))
 		case "status_code_and_message":
-			interop.DoStatusCodeAndMessage(client, grpc.WaitForReady(true))
+			interop.DoStatusCodeAndMessage(client, grpcforunconflict.WaitForReady(true))
 		case "custom_metadata":
-			interop.DoCustomMetadata(client, grpc.WaitForReady(true))
+			interop.DoCustomMetadata(client, grpcforunconflict.WaitForReady(true))
 		}
 		numCalls++
 		gauge.set(int64(float64(numCalls) / time.Since(startTime).Seconds()))
@@ -272,8 +271,8 @@ func logParameterInfo(addresses []string, tests []testCaseWithWeight) {
 	}
 }
 
-func newConn(address string, useTLS, testCA bool, tlsServerName string) (*grpc.ClientConn, error) {
-	var opts []grpc.DialOption
+func newConn(address string, useTLS, testCA bool, tlsServerName string) (*grpcforunconflict.ClientConn, error) {
+	var opts []grpcforunconflict.DialOption
 	if useTLS {
 		var sn string
 		if tlsServerName != "" {
@@ -292,11 +291,11 @@ func newConn(address string, useTLS, testCA bool, tlsServerName string) (*grpc.C
 		} else {
 			creds = credentials.NewClientTLSFromCert(nil, sn)
 		}
-		opts = append(opts, grpc.WithTransportCredentials(creds))
+		opts = append(opts, grpcforunconflict.WithTransportCredentials(creds))
 	} else {
-		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		opts = append(opts, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	}
-	return grpc.Dial(address, opts...)
+	returngrpcforunconflict.Dial(address, opts...)
 }
 
 func main() {

@@ -43,7 +43,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/metadata"
 	"github.com/qiyouForSql/grpcforunconflict/peer"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/structpb"
 )
@@ -1782,7 +1781,7 @@ func (s) TestChainEngine(t *testing.T) {
 						method: data.rpcData.fullMethod,
 					}
 
-					ctx = grpc.NewContextWithServerTransportStream(ctx, stream)
+					ctx = grpcforunconflict.NewContextWithServerTransportStream(ctx, stream)
 					err = cre.IsAuthorized(ctx)
 					if gotCode := status.Code(err); gotCode != data.wantStatusCode {
 						t.Fatalf("IsAuthorized(%+v, %+v) returned (%+v), want(%+v)", ctx, data.rpcData.fullMethod, gotCode, data.wantStatusCode)

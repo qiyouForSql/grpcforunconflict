@@ -32,7 +32,7 @@ import (
 
 const (
 	exampleScheme      = "example"
-	exampleServiceName = "resolver.example.grpc.io"
+	exampleServiceName = "resolver.example.grpcforunconflict.io"
 
 	backendAddr = "localhost:50051"
 )
@@ -47,7 +47,7 @@ func callUnaryEcho(c ecpb.EchoClient, message string) {
 	fmt.Println(r.Message)
 }
 
-func makeRPCs(cc *grpc.ClientConn, n int) {
+func makeRPCs(cc *grpcforunconflict.ClientConn, n int) {
 	hwc := ecpb.NewEchoClient(cc)
 	for i := 0; i < n; i++ {
 		callUnaryEcho(hwc, "this is examples/name_resolving")
@@ -55,9 +55,9 @@ func makeRPCs(cc *grpc.ClientConn, n int) {
 }
 
 func main() {
-	passthroughConn, err := grpc.Dial(
+	passthroughConn, err := grpcforunconflict.Dial(
 		fmt.Sprintf("passthrough:///%s", backendAddr), // Dial to "passthrough:///localhost:50051"
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
@@ -69,9 +69,9 @@ func main() {
 
 	fmt.Println()
 
-	exampleConn, err := grpc.Dial(
-		fmt.Sprintf("%s:///%s", exampleScheme, exampleServiceName), // Dial to "example:///resolver.example.grpc.io"
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	exampleConn, err := grpcforunconflict.Dial(
+		fmt.Sprintf("%s:///%s", exampleScheme, exampleServiceName), // Dial to "example:///resolver.example.grpcforunconflict.io"
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
 	)
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)

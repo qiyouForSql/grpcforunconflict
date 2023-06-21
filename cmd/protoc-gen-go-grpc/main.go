@@ -30,7 +30,7 @@
 // This generates Go service definitions for the protocol buffer defined by
 // file.proto.  With that input, the output will be written to:
 //
-//	path/to/file_grpc.pb.go
+//	path/to/file_grpcforunconflict.pb.go
 package main
 
 import (

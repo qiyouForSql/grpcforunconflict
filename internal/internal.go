@@ -57,7 +57,7 @@ var (
 	// GetServerCredentials returns the transport credentials configured on a
 	// gRPC server. An xDS-enabled server needs to know what type of credentials
 	// is configured on the underlying gRPC server. This is set by server.go.
-	GetServerCredentials interface{} // func (*grpc.Server) credentials.TransportCredentials
+	GetServerCredentials interface{} // func (*grpcforunconflict.Server) credentials.TransportCredentials
 	// CanonicalString returns the canonical string of the code defined here:
 	// https://github.com/grpc/grpc/blob/master/doc/statuscodes.md.
 	//
@@ -66,9 +66,9 @@ var (
 	CanonicalString interface{} // func (codes.Code) string
 	// DrainServerTransports initiates a graceful close of existing connections
 	// on a gRPC server accepted on the provided listener address. An
-	// xDS-enabled server invokes this method on a grpc.Server when a particular
+	// xDS-enabled server invokes this method on agrpcforunconflict.Server when a particular
 	// listener moves to "not-serving" mode.
-	DrainServerTransports interface{} // func(*grpc.Server, string)
+	DrainServerTransports interface{} // func(*grpcforunconflict.Server, string)
 	// AddGlobalServerOptions adds an array of ServerOption that will be
 	// effective globally for newly created servers. The priority will be: 1.
 	// user-provided; 2. this method; 3. default values.
@@ -95,7 +95,7 @@ var (
 	//
 	// This is used in the 1.0 release of gcp/observability, and thus must not be
 	// deleted or changed.
-	DisableGlobalDialOptions interface{} // func() grpc.DialOption
+	DisableGlobalDialOptions interface{} // func()grpcforunconflict.DialOption
 	// ClearGlobalDialOptions clears the array of extra DialOption. This
 	// method is useful in testing and benchmarking.
 	//
@@ -104,28 +104,28 @@ var (
 	ClearGlobalDialOptions func()
 	// JoinDialOptions combines the dial options passed as arguments into a
 	// single dial option.
-	JoinDialOptions interface{} // func(...grpc.DialOption) grpc.DialOption
+	JoinDialOptions interface{} // func(...grpcforunconflict.DialOption)grpcforunconflict.DialOption
 	// JoinServerOptions combines the server options passed as arguments into a
 	// single server option.
-	JoinServerOptions interface{} // func(...grpc.ServerOption) grpc.ServerOption
+	JoinServerOptions interface{} // func(...grpcforunconflict.ServerOption)grpcforunconflict.ServerOption
 
 	// WithBinaryLogger returns a DialOption that specifies the binary logger
 	// for a ClientConn.
 	//
 	// This is used in the 1.0 release of gcp/observability, and thus must not be
 	// deleted or changed.
-	WithBinaryLogger interface{} // func(binarylog.Logger) grpc.DialOption
+	WithBinaryLogger interface{} // func(binarylog.Logger)grpcforunconflict.DialOption
 	// BinaryLogger returns a ServerOption that can set the binary logger for a
 	// server.
 	//
 	// This is used in the 1.0 release of gcp/observability, and thus must not be
 	// deleted or changed.
-	BinaryLogger interface{} // func(binarylog.Logger) grpc.ServerOption
+	BinaryLogger interface{} // func(binarylog.Logger)grpcforunconflict.ServerOption
 
 	// NewXDSResolverWithConfigForTesting creates a new xds resolver builder using
 	// the provided xds bootstrap config instead of the global configuration from
 	// the supported environment variables.  The resolver.Builder is meant to be
-	// used in conjunction with the grpc.WithResolvers DialOption.
+	// used in conjunction with thegrpcforunconflict.WithResolvers DialOption.
 	//
 	// Testing Only
 	//

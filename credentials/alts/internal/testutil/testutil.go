@@ -29,7 +29,6 @@ import (
 
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/alts/internal/conn"
-	altsgrpc "github.com/qiyouForSql/grpcforunconflict/credentials/alts/internal/proto/grpc_gcp"
 	altspb "github.com/qiyouForSql/grpcforunconflict/credentials/alts/internal/proto/grpc_gcp"
 )
 
@@ -130,11 +129,11 @@ func MakeFrame(pl string) []byte {
 
 // FakeHandshaker is a fake implementation of the ALTS handshaker service.
 type FakeHandshaker struct {
-	altsgrpc.HandshakerServiceServer
+	altsgrpcforunconflict.HandshakerServiceServer
 }
 
 // DoHandshake performs a fake ALTS handshake.
-func (h *FakeHandshaker) DoHandshake(stream altsgrpc.HandshakerService_DoHandshakeServer) error {
+func (h *FakeHandshaker) DoHandshake(stream altsgrpcforunconflict.HandshakerService_DoHandshakeServer) error {
 	var isAssistingClient bool
 	var handshakeFramesReceivedSoFar []byte
 	for {

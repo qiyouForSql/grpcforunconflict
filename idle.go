@@ -31,7 +31,7 @@ var timeAfterFunc = func(d time.Duration, f func()) *time.Timer {
 	return time.AfterFunc(d, f)
 }
 
-// idlenessEnforcer is the functionality provided by grpc.ClientConn to enter
+// idlenessEnforcer is the functionality provided bygrpcforunconflict.ClientConn to enter
 // and exit from idle mode.
 type idlenessEnforcer interface {
 	exitIdleMode() error
@@ -64,7 +64,7 @@ type idlenessManagerImpl struct {
 
 	// Can be accessed without atomics or mutex since these are set at creation
 	// time and read-only after that.
-	enforcer idlenessEnforcer // Functionality provided by grpc.ClientConn.
+	enforcer idlenessEnforcer // Functionality provided bygrpcforunconflict.ClientConn.
 	timeout  int64            // Idle timeout duration nanos stored as an int64.
 
 	// idleMu is used to guarantee mutual exclusion in two scenarios:

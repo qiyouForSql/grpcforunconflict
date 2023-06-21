@@ -32,12 +32,12 @@ import (
 // cOptsDisableLogTrace are client options for the go client libraries which are
 // used to configure connections to GCP exporting backends. These disable global
 // dial and server options set by this module, which configure logging, metrics,
-// and tracing on all created grpc.ClientConn's and grpc.Server's. These options
+// and tracing on all createdgrpcforunconflict.ClientConn's andgrpcforunconflict.Server's. These options
 // turn on only metrics, and also disable the client libraries behavior of
 // plumbing in the older opencensus instrumentation code.
 var cOptsDisableLogTrace = []option.ClientOption{
 	option.WithTelemetryDisabled(),
-	option.WithGRPCDialOption(internal.DisableGlobalDialOptions.(func() grpc.DialOption)()),
+	option.WithGRPCDialOption(internal.DisableGlobalDialOptions.(func() grpcforunconflict.DialOption)()),
 	option.WithGRPCDialOption(opencensus.DialOption(opencensus.TraceOptions{
 		DisableTrace: true,
 	})),

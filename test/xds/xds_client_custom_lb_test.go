@@ -24,6 +24,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	_ "github.com/qiyouForSql/grpcforunconflict/balancer/weightedroundrobin" // To register weighted_round_robin_experimental.
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal/envconfig"
@@ -32,7 +33,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/roundrobin"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/xds/e2e"
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
-	"google.golang.org/grpc"
 
 	v3xdsxdstypepb "github.com/cncf/xds/go/xds/type/v3"
 	v3clusterpb "github.com/envoyproxy/go-control-plane/envoy/config/cluster/v3"
@@ -45,7 +45,6 @@ import (
 	v3wrrlocalitypb "github.com/envoyproxy/go-control-plane/envoy/extensions/load_balancing_policies/wrr_locality/v3"
 	"github.com/golang/protobuf/proto"
 	structpb "github.com/golang/protobuf/ptypes/struct"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	"google.golang.org/protobuf/types/known/durationpb"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 )
@@ -230,13 +229,13 @@ func (s) TestWrrLocality(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			cc, err := grpc.Dial(fmt.Sprintf("xds:///%s", serviceName), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(r))
+			cc, err := grpcforunconflict.Dial(fmt.Sprintf("xds:///%s", serviceName), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(r))
 			if err != nil {
 				t.Fatalf("Failed to dial local test server: %v", err)
 			}
 			defer cc.Close()
 
-			client := testgrpc.NewTestServiceClient(cc)
+			client := testgrpcforunconflict.NewTestServiceClient(cc)
 			var addrDistWant []resolver.Address
 			for _, addrAndCount := range test.addressDistributionWant {
 				for i := 0; i < addrAndCount.count; i++ {

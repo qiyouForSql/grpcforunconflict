@@ -22,7 +22,7 @@ syntax = "proto3";
 
 option go_package = "github.com/qiyouForSql/grpcforunconflict/stress/grpc_testing";
 
-package grpc.testing;
+packagegrpcforunconflict.testing;
 
 // Response message containing the gauge name and value
 message GaugeResponse {

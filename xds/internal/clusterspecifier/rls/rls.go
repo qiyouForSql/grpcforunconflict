@@ -53,7 +53,7 @@ func init() {
 type rls struct{}
 
 func (rls) TypeURLs() []string {
-	return []string{"type.googleapis.com/grpc.lookup.v1.RouteLookupClusterSpecifier"}
+	return []string{"type.googleapis.com/grpcforunconflict.lookup.v1.RouteLookupClusterSpecifier"}
 }
 
 // lbConfigJSON is the RLS LB Policies configuration in JSON format.

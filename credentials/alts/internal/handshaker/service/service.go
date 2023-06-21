@@ -23,8 +23,8 @@ package service
 import (
 	"sync"
 
+	grpcforunconflict "github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
-	grpc "google.golang.org/grpc"
 )
 
 var (
@@ -33,15 +33,15 @@ var (
 	// hsConn represents a mapping from a hypervisor handshaker service address
 	// to a corresponding connection to a hypervisor handshaker service
 	// instance.
-	hsConnMap = make(map[string]*grpc.ClientConn)
+	hsConnMap = make(map[string]*grpcforunconflict.ClientConn)
 	// hsDialer will be reassigned in tests.
-	hsDialer = grpc.Dial
+	hsDialer = grpcforunconflict.Dial
 )
 
 // Dial dials the handshake service in the hypervisor. If a connection has
 // already been established, this function returns it. Otherwise, a new
 // connection is created.
-func Dial(hsAddress string) (*grpc.ClientConn, error) {
+func Dial(hsAddress string) (*grpcforunconflict.ClientConn, error) {
 	mu.Lock()
 	defer mu.Unlock()
 
@@ -50,7 +50,7 @@ func Dial(hsAddress string) (*grpc.ClientConn, error) {
 		// Create a new connection to the handshaker service. Note that
 		// this connection stays open until the application is closed.
 		var err error
-		hsConn, err = hsDialer(hsAddress, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		hsConn, err = hsDialer(hsAddress, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 		if err != nil {
 			return nil, err
 		}
@@ -73,6 +73,6 @@ func CloseForTesting() error {
 	}
 
 	// Reset the connection map.
-	hsConnMap = make(map[string]*grpc.ClientConn)
+	hsConnMap = make(map[string]*grpcforunconflict.ClientConn)
 	return nil
 }

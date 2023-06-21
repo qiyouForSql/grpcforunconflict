@@ -25,16 +25,15 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/connectivity"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	xdscreds "github.com/qiyouForSql/grpcforunconflict/credentials/xds"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/xds/e2e"
 	"github.com/qiyouForSql/grpcforunconflict/xds"
-	"google.golang.org/grpc"
 
 	v3listenerpb "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -63,9 +62,9 @@ func (s) TestServerSideXDS_RedundantUpdateSuppression(t *testing.T) {
 	})
 
 	// Initialize an xDS-enabled gRPC server and register the stubServer on it.
-	server := xds.NewGRPCServer(grpc.Creds(creds), modeChangeOpt, xds.BootstrapContentsForTesting(bootstrapContents))
+	server := xds.NewGRPCServer(grpcforunconflict.Creds(creds), modeChangeOpt, xds.BootstrapContentsForTesting(bootstrapContents))
 	defer server.Stop()
-	testgrpc.RegisterTestServiceServer(server, &testService{})
+	testgrpcforunconflict.RegisterTestServiceServer(server, &testService{})
 
 	// Setup the management server to respond with the listener resources.
 	host, port, err := hostPortFromListener(lis)
@@ -100,7 +99,7 @@ func (s) TestServerSideXDS_RedundantUpdateSuppression(t *testing.T) {
 	}
 
 	// Create a ClientConn and make a successful RPCs.
-	cc, err := grpc.Dial(lis.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(lis.Addr().String(), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
@@ -205,9 +204,9 @@ func (s) TestServerSideXDS_ServingModeChanges(t *testing.T) {
 	})
 
 	// Initialize an xDS-enabled gRPC server and register the stubServer on it.
-	server := xds.NewGRPCServer(grpc.Creds(creds), modeChangeOpt, xds.BootstrapContentsForTesting(bootstrapContents))
+	server := xds.NewGRPCServer(grpcforunconflict.Creds(creds), modeChangeOpt, xds.BootstrapContentsForTesting(bootstrapContents))
 	defer server.Stop()
-	testgrpc.RegisterTestServiceServer(server, &testService{})
+	testgrpcforunconflict.RegisterTestServiceServer(server, &testService{})
 
 	// Setup the management server to respond with server-side Listener
 	// resources for both listeners.
@@ -259,7 +258,7 @@ func (s) TestServerSideXDS_ServingModeChanges(t *testing.T) {
 	}
 
 	// Create a ClientConn to the first listener and make a successful RPCs.
-	cc1, err := grpc.Dial(lis1.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc1, err := grpcforunconflict.Dial(lis1.Addr().String(), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
@@ -267,7 +266,7 @@ func (s) TestServerSideXDS_ServingModeChanges(t *testing.T) {
 	waitForSuccessfulRPC(ctx, t, cc1)
 
 	// Create a ClientConn to the second listener and make a successful RPCs.
-	cc2, err := grpc.Dial(lis2.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc2, err := grpcforunconflict.Dial(lis2.Addr().String(), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
@@ -327,7 +326,7 @@ func (s) TestServerSideXDS_ServingModeChanges(t *testing.T) {
 	// short timeout since we expect this to fail.
 	sCtx, sCancel := context.WithTimeout(ctx, defaultTestShortTimeout)
 	defer sCancel()
-	if _, err := grpc.DialContext(sCtx, lis1.Addr().String(), grpc.WithBlock(), grpc.WithTransportCredentials(insecure.NewCredentials())); err == nil {
+	if _, err := grpcforunconflict.DialContext(sCtx, lis1.Addr().String(), grpcforunconflict.WithBlock(), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials())); err == nil {
 		t.Fatal("successfully created clientConn to a server in \"not-serving\" state")
 	}
 
@@ -362,20 +361,20 @@ func (s) TestServerSideXDS_ServingModeChanges(t *testing.T) {
 	waitForSuccessfulRPC(ctx, t, cc2)
 }
 
-func waitForSuccessfulRPC(ctx context.Context, t *testing.T, cc *grpc.ClientConn) {
+func waitForSuccessfulRPC(ctx context.Context, t *testing.T, cc *grpcforunconflict.ClientConn) {
 	t.Helper()
 
-	c := testgrpc.NewTestServiceClient(cc)
-	if _, err := c.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); err != nil {
+	c := testgrpcforunconflict.NewTestServiceClient(cc)
+	if _, err := c.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); err != nil {
 		t.Fatalf("rpc EmptyCall() failed: %v", err)
 	}
 }
 
-func waitForFailedRPC(ctx context.Context, t *testing.T, cc *grpc.ClientConn) {
+func waitForFailedRPC(ctx context.Context, t *testing.T, cc *grpcforunconflict.ClientConn) {
 	t.Helper()
 
 	// Attempt one RPC before waiting for the ticker to expire.
-	c := testgrpc.NewTestServiceClient(cc)
+	c := testgrpcforunconflict.NewTestServiceClient(cc)
 	if _, err := c.EmptyCall(ctx, &testpb.Empty{}); err != nil {
 		return
 	}

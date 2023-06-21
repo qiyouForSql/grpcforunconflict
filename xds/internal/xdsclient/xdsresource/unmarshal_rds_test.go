@@ -1383,7 +1383,7 @@ func (s) TestRoutesProtoToSlice(t *testing.T) {
 									},
 								}},
 							HashPolicy: []*v3routepb.RouteAction_HashPolicy{
-								{PolicySpecifier: &v3routepb.RouteAction_HashPolicy_FilterState_{FilterState: &v3routepb.RouteAction_HashPolicy_FilterState{Key: "io.grpc.channel_id"}}},
+								{PolicySpecifier: &v3routepb.RouteAction_HashPolicy_FilterState_{FilterState: &v3routepb.RouteAction_HashPolicy_FilterState{Key: "io.grpcforunconflict.channel_id"}}},
 							},
 						}},
 				},
@@ -1562,7 +1562,7 @@ func (s) TestHashPoliciesProtoToSlice(t *testing.T) {
 		{
 			name: "channel-id-hash-policy",
 			hashPolicies: []*v3routepb.RouteAction_HashPolicy{
-				{PolicySpecifier: &v3routepb.RouteAction_HashPolicy_FilterState_{FilterState: &v3routepb.RouteAction_HashPolicy_FilterState{Key: "io.grpc.channel_id"}}},
+				{PolicySpecifier: &v3routepb.RouteAction_HashPolicy_FilterState_{FilterState: &v3routepb.RouteAction_HashPolicy_FilterState{Key: "io.grpcforunconflict.channel_id"}}},
 			},
 			wantHashPolicies: []*HashPolicy{
 				{HashPolicyType: HashPolicyTypeChannelID},
@@ -1602,7 +1602,7 @@ func (s) TestHashPoliciesProtoToSlice(t *testing.T) {
 					},
 				},
 				{
-					PolicySpecifier: &v3routepb.RouteAction_HashPolicy_FilterState_{FilterState: &v3routepb.RouteAction_HashPolicy_FilterState{Key: "io.grpc.channel_id"}},
+					PolicySpecifier: &v3routepb.RouteAction_HashPolicy_FilterState_{FilterState: &v3routepb.RouteAction_HashPolicy_FilterState{Key: "io.grpcforunconflict.channel_id"}},
 					Terminal:        true,
 				},
 			},

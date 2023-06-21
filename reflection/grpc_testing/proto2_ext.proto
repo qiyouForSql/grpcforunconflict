@@ -16,7 +16,7 @@ syntax = "proto2";
 
 option go_package = "github.com/qiyouForSql/grpcforunconflict/reflection/grpc_testing";
 
-package grpc.testing;
+packagegrpcforunconflict.testing;
 
 import "reflection/grpc_testing/proto2.proto";
 import "reflection/grpc_testing/test.proto";

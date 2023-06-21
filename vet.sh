@@ -90,7 +90,7 @@ git grep -l -e 'grpclog.I' --or -e 'grpclog.W' --or -e 'grpclog.E' --or -e 'grpc
 # - Ensure all ptypes proto packages are renamed when importing.
 not git grep "\(import \|^\s*\)\"github.com/golang/protobuf/ptypes/" -- "*.go"
 
-# - Ensure all xds proto imports are renamed to *pb or *grpc.
+# - Ensure all xds proto imports are renamed to *pb or *grpcforunconflict.
 git grep '"github.com/envoyproxy/go-control-plane/envoy' -- '*.go' ':(exclude)*.pb.go' | not grep -v 'pb "\|grpc "'
 
 misspell -error .
@@ -133,24 +133,24 @@ balancer.ErrTransientFailure
 balancer.Picker
 extDesc.Filename is deprecated
 github.com/golang/protobuf/jsonpb is deprecated
-grpc.CallCustomCodec
-grpc.Code
-grpc.Compressor
-grpc.CustomCodec
-grpc.Decompressor
-grpc.MaxMsgSize
-grpc.MethodConfig
-grpc.NewGZIPCompressor
-grpc.NewGZIPDecompressor
-grpc.RPCCompressor
-grpc.RPCDecompressor
-grpc.ServiceConfig
-grpc.WithCompressor
-grpc.WithDecompressor
-grpc.WithDialer
-grpc.WithMaxMsgSize
-grpc.WithServiceConfig
-grpc.WithTimeout
+grpcforunconflict.CallCustomCodec
+grpcforunconflict.Code
+grpcforunconflict.Compressor
+grpcforunconflict.CustomCodec
+grpcforunconflict.Decompressor
+grpcforunconflict.MaxMsgSize
+grpcforunconflict.MethodConfig
+grpcforunconflict.NewGZIPCompressor
+grpcforunconflict.NewGZIPDecompressor
+grpcforunconflict.RPCCompressor
+grpcforunconflict.RPCDecompressor
+grpcforunconflict.ServiceConfig
+grpcforunconflict.WithCompressor
+grpcforunconflict.WithDecompressor
+grpcforunconflict.WithDialer
+grpcforunconflict.WithMaxMsgSize
+grpcforunconflict.WithServiceConfig
+grpcforunconflict.WithTimeout
 http.CloseNotifier
 info.SecurityVersion
 proto is deprecated

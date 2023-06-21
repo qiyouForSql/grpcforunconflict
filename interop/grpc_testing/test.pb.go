@@ -143,55 +143,55 @@ var file_grpc_testing_test_proto_rawDesc = []byte{
 }
 
 var file_grpc_testing_test_proto_goTypes = []interface{}{
-	(*Empty)(nil),                                // 0: grpc.testing.Empty
-	(*SimpleRequest)(nil),                        // 1: grpc.testing.SimpleRequest
-	(*StreamingOutputCallRequest)(nil),           // 2: grpc.testing.StreamingOutputCallRequest
-	(*StreamingInputCallRequest)(nil),            // 3: grpc.testing.StreamingInputCallRequest
-	(*ReconnectParams)(nil),                      // 4: grpc.testing.ReconnectParams
-	(*LoadBalancerStatsRequest)(nil),             // 5: grpc.testing.LoadBalancerStatsRequest
-	(*LoadBalancerAccumulatedStatsRequest)(nil),  // 6: grpc.testing.LoadBalancerAccumulatedStatsRequest
-	(*ClientConfigureRequest)(nil),               // 7: grpc.testing.ClientConfigureRequest
-	(*SimpleResponse)(nil),                       // 8: grpc.testing.SimpleResponse
-	(*StreamingOutputCallResponse)(nil),          // 9: grpc.testing.StreamingOutputCallResponse
-	(*StreamingInputCallResponse)(nil),           // 10: grpc.testing.StreamingInputCallResponse
-	(*ReconnectInfo)(nil),                        // 11: grpc.testing.ReconnectInfo
-	(*LoadBalancerStatsResponse)(nil),            // 12: grpc.testing.LoadBalancerStatsResponse
-	(*LoadBalancerAccumulatedStatsResponse)(nil), // 13: grpc.testing.LoadBalancerAccumulatedStatsResponse
-	(*ClientConfigureResponse)(nil),              // 14: grpc.testing.ClientConfigureResponse
+	(*Empty)(nil),                                // 0:grpcforunconflict.testing.Empty
+	(*SimpleRequest)(nil),                        // 1:grpcforunconflict.testing.SimpleRequest
+	(*StreamingOutputCallRequest)(nil),           // 2:grpcforunconflict.testing.StreamingOutputCallRequest
+	(*StreamingInputCallRequest)(nil),            // 3:grpcforunconflict.testing.StreamingInputCallRequest
+	(*ReconnectParams)(nil),                      // 4:grpcforunconflict.testing.ReconnectParams
+	(*LoadBalancerStatsRequest)(nil),             // 5:grpcforunconflict.testing.LoadBalancerStatsRequest
+	(*LoadBalancerAccumulatedStatsRequest)(nil),  // 6:grpcforunconflict.testing.LoadBalancerAccumulatedStatsRequest
+	(*ClientConfigureRequest)(nil),               // 7:grpcforunconflict.testing.ClientConfigureRequest
+	(*SimpleResponse)(nil),                       // 8:grpcforunconflict.testing.SimpleResponse
+	(*StreamingOutputCallResponse)(nil),          // 9:grpcforunconflict.testing.StreamingOutputCallResponse
+	(*StreamingInputCallResponse)(nil),           // 10:grpcforunconflict.testing.StreamingInputCallResponse
+	(*ReconnectInfo)(nil),                        // 11:grpcforunconflict.testing.ReconnectInfo
+	(*LoadBalancerStatsResponse)(nil),            // 12:grpcforunconflict.testing.LoadBalancerStatsResponse
+	(*LoadBalancerAccumulatedStatsResponse)(nil), // 13:grpcforunconflict.testing.LoadBalancerAccumulatedStatsResponse
+	(*ClientConfigureResponse)(nil),              // 14:grpcforunconflict.testing.ClientConfigureResponse
 }
 var file_grpc_testing_test_proto_depIdxs = []int32{
-	0,  // 0: grpc.testing.TestService.EmptyCall:input_type -> grpc.testing.Empty
-	1,  // 1: grpc.testing.TestService.UnaryCall:input_type -> grpc.testing.SimpleRequest
-	1,  // 2: grpc.testing.TestService.CacheableUnaryCall:input_type -> grpc.testing.SimpleRequest
-	2,  // 3: grpc.testing.TestService.StreamingOutputCall:input_type -> grpc.testing.StreamingOutputCallRequest
-	3,  // 4: grpc.testing.TestService.StreamingInputCall:input_type -> grpc.testing.StreamingInputCallRequest
-	2,  // 5: grpc.testing.TestService.FullDuplexCall:input_type -> grpc.testing.StreamingOutputCallRequest
-	2,  // 6: grpc.testing.TestService.HalfDuplexCall:input_type -> grpc.testing.StreamingOutputCallRequest
-	0,  // 7: grpc.testing.TestService.UnimplementedCall:input_type -> grpc.testing.Empty
-	0,  // 8: grpc.testing.UnimplementedService.UnimplementedCall:input_type -> grpc.testing.Empty
-	4,  // 9: grpc.testing.ReconnectService.Start:input_type -> grpc.testing.ReconnectParams
-	0,  // 10: grpc.testing.ReconnectService.Stop:input_type -> grpc.testing.Empty
-	5,  // 11: grpc.testing.LoadBalancerStatsService.GetClientStats:input_type -> grpc.testing.LoadBalancerStatsRequest
-	6,  // 12: grpc.testing.LoadBalancerStatsService.GetClientAccumulatedStats:input_type -> grpc.testing.LoadBalancerAccumulatedStatsRequest
-	0,  // 13: grpc.testing.XdsUpdateHealthService.SetServing:input_type -> grpc.testing.Empty
-	0,  // 14: grpc.testing.XdsUpdateHealthService.SetNotServing:input_type -> grpc.testing.Empty
-	7,  // 15: grpc.testing.XdsUpdateClientConfigureService.Configure:input_type -> grpc.testing.ClientConfigureRequest
-	0,  // 16: grpc.testing.TestService.EmptyCall:output_type -> grpc.testing.Empty
-	8,  // 17: grpc.testing.TestService.UnaryCall:output_type -> grpc.testing.SimpleResponse
-	8,  // 18: grpc.testing.TestService.CacheableUnaryCall:output_type -> grpc.testing.SimpleResponse
-	9,  // 19: grpc.testing.TestService.StreamingOutputCall:output_type -> grpc.testing.StreamingOutputCallResponse
-	10, // 20: grpc.testing.TestService.StreamingInputCall:output_type -> grpc.testing.StreamingInputCallResponse
-	9,  // 21: grpc.testing.TestService.FullDuplexCall:output_type -> grpc.testing.StreamingOutputCallResponse
-	9,  // 22: grpc.testing.TestService.HalfDuplexCall:output_type -> grpc.testing.StreamingOutputCallResponse
-	0,  // 23: grpc.testing.TestService.UnimplementedCall:output_type -> grpc.testing.Empty
-	0,  // 24: grpc.testing.UnimplementedService.UnimplementedCall:output_type -> grpc.testing.Empty
-	0,  // 25: grpc.testing.ReconnectService.Start:output_type -> grpc.testing.Empty
-	11, // 26: grpc.testing.ReconnectService.Stop:output_type -> grpc.testing.ReconnectInfo
-	12, // 27: grpc.testing.LoadBalancerStatsService.GetClientStats:output_type -> grpc.testing.LoadBalancerStatsResponse
-	13, // 28: grpc.testing.LoadBalancerStatsService.GetClientAccumulatedStats:output_type -> grpc.testing.LoadBalancerAccumulatedStatsResponse
-	0,  // 29: grpc.testing.XdsUpdateHealthService.SetServing:output_type -> grpc.testing.Empty
-	0,  // 30: grpc.testing.XdsUpdateHealthService.SetNotServing:output_type -> grpc.testing.Empty
-	14, // 31: grpc.testing.XdsUpdateClientConfigureService.Configure:output_type -> grpc.testing.ClientConfigureResponse
+	0,  // 0:grpcforunconflict.testing.TestService.EmptyCall:input_type ->grpcforunconflict.testing.Empty
+	1,  // 1:grpcforunconflict.testing.TestService.UnaryCall:input_type ->grpcforunconflict.testing.SimpleRequest
+	1,  // 2:grpcforunconflict.testing.TestService.CacheableUnaryCall:input_type ->grpcforunconflict.testing.SimpleRequest
+	2,  // 3:grpcforunconflict.testing.TestService.StreamingOutputCall:input_type ->grpcforunconflict.testing.StreamingOutputCallRequest
+	3,  // 4:grpcforunconflict.testing.TestService.StreamingInputCall:input_type ->grpcforunconflict.testing.StreamingInputCallRequest
+	2,  // 5:grpcforunconflict.testing.TestService.FullDuplexCall:input_type ->grpcforunconflict.testing.StreamingOutputCallRequest
+	2,  // 6:grpcforunconflict.testing.TestService.HalfDuplexCall:input_type ->grpcforunconflict.testing.StreamingOutputCallRequest
+	0,  // 7:grpcforunconflict.testing.TestService.UnimplementedCall:input_type ->grpcforunconflict.testing.Empty
+	0,  // 8:grpcforunconflict.testing.UnimplementedService.UnimplementedCall:input_type ->grpcforunconflict.testing.Empty
+	4,  // 9:grpcforunconflict.testing.ReconnectService.Start:input_type ->grpcforunconflict.testing.ReconnectParams
+	0,  // 10:grpcforunconflict.testing.ReconnectService.Stop:input_type ->grpcforunconflict.testing.Empty
+	5,  // 11:grpcforunconflict.testing.LoadBalancerStatsService.GetClientStats:input_type ->grpcforunconflict.testing.LoadBalancerStatsRequest
+	6,  // 12:grpcforunconflict.testing.LoadBalancerStatsService.GetClientAccumulatedStats:input_type ->grpcforunconflict.testing.LoadBalancerAccumulatedStatsRequest
+	0,  // 13:grpcforunconflict.testing.XdsUpdateHealthService.SetServing:input_type ->grpcforunconflict.testing.Empty
+	0,  // 14:grpcforunconflict.testing.XdsUpdateHealthService.SetNotServing:input_type ->grpcforunconflict.testing.Empty
+	7,  // 15:grpcforunconflict.testing.XdsUpdateClientConfigureService.Configure:input_type ->grpcforunconflict.testing.ClientConfigureRequest
+	0,  // 16:grpcforunconflict.testing.TestService.EmptyCall:output_type ->grpcforunconflict.testing.Empty
+	8,  // 17:grpcforunconflict.testing.TestService.UnaryCall:output_type ->grpcforunconflict.testing.SimpleResponse
+	8,  // 18:grpcforunconflict.testing.TestService.CacheableUnaryCall:output_type ->grpcforunconflict.testing.SimpleResponse
+	9,  // 19:grpcforunconflict.testing.TestService.StreamingOutputCall:output_type ->grpcforunconflict.testing.StreamingOutputCallResponse
+	10, // 20:grpcforunconflict.testing.TestService.StreamingInputCall:output_type ->grpcforunconflict.testing.StreamingInputCallResponse
+	9,  // 21:grpcforunconflict.testing.TestService.FullDuplexCall:output_type ->grpcforunconflict.testing.StreamingOutputCallResponse
+	9,  // 22:grpcforunconflict.testing.TestService.HalfDuplexCall:output_type ->grpcforunconflict.testing.StreamingOutputCallResponse
+	0,  // 23:grpcforunconflict.testing.TestService.UnimplementedCall:output_type ->grpcforunconflict.testing.Empty
+	0,  // 24:grpcforunconflict.testing.UnimplementedService.UnimplementedCall:output_type ->grpcforunconflict.testing.Empty
+	0,  // 25:grpcforunconflict.testing.ReconnectService.Start:output_type ->grpcforunconflict.testing.Empty
+	11, // 26:grpcforunconflict.testing.ReconnectService.Stop:output_type ->grpcforunconflict.testing.ReconnectInfo
+	12, // 27:grpcforunconflict.testing.LoadBalancerStatsService.GetClientStats:output_type ->grpcforunconflict.testing.LoadBalancerStatsResponse
+	13, // 28:grpcforunconflict.testing.LoadBalancerStatsService.GetClientAccumulatedStats:output_type ->grpcforunconflict.testing.LoadBalancerAccumulatedStatsResponse
+	0,  // 29:grpcforunconflict.testing.XdsUpdateHealthService.SetServing:output_type ->grpcforunconflict.testing.Empty
+	0,  // 30:grpcforunconflict.testing.XdsUpdateHealthService.SetNotServing:output_type ->grpcforunconflict.testing.Empty
+	14, // 31:grpcforunconflict.testing.XdsUpdateClientConfigureService.Configure:output_type ->grpcforunconflict.testing.ClientConfigureResponse
 	16, // [16:32] is the sub-list for method output_type
 	0,  // [0:16] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name

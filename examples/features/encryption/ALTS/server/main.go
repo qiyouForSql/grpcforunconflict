@@ -50,7 +50,7 @@ func main() {
 	// Create alts based credential.
 	altsTC := alts.NewServerCreds(alts.DefaultServerOptions())
 
-	s := grpc.NewServer(grpc.Creds(altsTC))
+	s := grpcforunconflict.NewServer(grpcforunconflict.Creds(altsTC))
 
 	// Register EchoServer on the server.
 	pb.RegisterEchoServer(s, &ecServer{})

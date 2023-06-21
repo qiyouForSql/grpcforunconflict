@@ -35,7 +35,6 @@ import (
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	"github.com/qiyouForSql/grpcforunconflict/status"
 	"github.com/qiyouForSql/grpcforunconflict/testdata"
-	"google.golang.org/grpc"
 )
 
 var (
@@ -80,7 +79,7 @@ func startBenchmarkServer(config *testpb.ServerConfig, serverPort int) (*benchma
 	}
 	runtime.GOMAXPROCS(numOfCores)
 
-	var opts []grpc.ServerOption
+	var opts []grpcforunconflict.ServerOption
 
 	// Sanity check for server type.
 	switch config.ServerType {
@@ -103,7 +102,7 @@ func startBenchmarkServer(config *testpb.ServerConfig, serverPort int) (*benchma
 		if err != nil {
 			logger.Fatalf("failed to generate credentials: %v", err)
 		}
-		opts = append(opts, grpc.Creds(creds))
+		opts = append(opts, grpcforunconflict.Creds(creds))
 	}
 
 	// Priority: config.Port > serverPort > default (0).
@@ -122,7 +121,7 @@ func startBenchmarkServer(config *testpb.ServerConfig, serverPort int) (*benchma
 	if config.PayloadConfig != nil {
 		switch payload := config.PayloadConfig.Payload.(type) {
 		case *testpb.PayloadConfig_BytebufParams:
-			opts = append(opts, grpc.CustomCodec(byteBufCodec{}))
+			opts = append(opts, grpcforunconflict.CustomCodec(byteBufCodec{}))
 			closeFunc = benchmark.StartServer(benchmark.ServerInfo{
 				Type:     "bytebuf",
 				Metadata: payload.BytebufParams.RespSize,

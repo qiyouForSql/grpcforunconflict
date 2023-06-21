@@ -51,7 +51,7 @@ type connWrapper struct {
 	// The certificate providers created for this connection.
 	rootProvider, identityProvider certprovider.Provider
 
-	// The connection deadline as configured by the grpc.Server on the rawConn
+	// The connection deadline as configured by thegrpcforunconflict.Server on the rawConn
 	// that is returned by a call to Accept(). This is set to the connection
 	// timeout value configured by the user (or to a default value) before
 	// initiating the transport credential handshake, and set to zero after

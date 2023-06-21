@@ -31,14 +31,13 @@ import (
 	"sync"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/grpclog"
 	"github.com/qiyouForSql/grpcforunconflict/interop"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -69,7 +68,7 @@ func largeSimpleRequest() *testpb.SimpleRequest {
 }
 
 // sends two unary calls. The server asserts that the calls use different connections.
-func goaway(tc testgrpc.TestServiceClient) {
+func goaway(tc testgrpcforunconflict.TestServiceClient) {
 	interop.DoLargeUnaryCall(tc)
 	// sleep to ensure that the client has time to recv the GOAWAY.
 	// TODO(ncteisen): make this less hacky.
@@ -77,7 +76,7 @@ func goaway(tc testgrpc.TestServiceClient) {
 	interop.DoLargeUnaryCall(tc)
 }
 
-func rstAfterHeader(tc testgrpc.TestServiceClient) {
+func rstAfterHeader(tc testgrpcforunconflict.TestServiceClient) {
 	req := largeSimpleRequest()
 	reply, err := tc.UnaryCall(context.Background(), req)
 	if reply != nil {
@@ -88,7 +87,7 @@ func rstAfterHeader(tc testgrpc.TestServiceClient) {
 	}
 }
 
-func rstDuringData(tc testgrpc.TestServiceClient) {
+func rstDuringData(tc testgrpcforunconflict.TestServiceClient) {
 	req := largeSimpleRequest()
 	reply, err := tc.UnaryCall(context.Background(), req)
 	if reply != nil {
@@ -99,7 +98,7 @@ func rstDuringData(tc testgrpc.TestServiceClient) {
 	}
 }
 
-func rstAfterData(tc testgrpc.TestServiceClient) {
+func rstAfterData(tc testgrpcforunconflict.TestServiceClient) {
 	req := largeSimpleRequest()
 	reply, err := tc.UnaryCall(context.Background(), req)
 	if reply != nil {
@@ -110,12 +109,12 @@ func rstAfterData(tc testgrpc.TestServiceClient) {
 	}
 }
 
-func ping(tc testgrpc.TestServiceClient) {
+func ping(tc testgrpcforunconflict.TestServiceClient) {
 	// The server will assert that every ping it sends was ACK-ed by the client.
 	interop.DoLargeUnaryCall(tc)
 }
 
-func maxStreams(tc testgrpc.TestServiceClient) {
+func maxStreams(tc testgrpcforunconflict.TestServiceClient) {
 	interop.DoLargeUnaryCall(tc)
 	var wg sync.WaitGroup
 	for i := 0; i < 15; i++ {
@@ -131,14 +130,14 @@ func maxStreams(tc testgrpc.TestServiceClient) {
 func main() {
 	flag.Parse()
 	serverAddr := net.JoinHostPort(*serverHost, strconv.Itoa(*serverPort))
-	var opts []grpc.DialOption
-	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	conn, err := grpc.Dial(serverAddr, opts...)
+	var opts []grpcforunconflict.DialOption
+	opts = append(opts, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpcforunconflict.Dial(serverAddr, opts...)
 	if err != nil {
 		logger.Fatalf("Fail to dial: %v", err)
 	}
 	defer conn.Close()
-	tc := testgrpc.NewTestServiceClient(conn)
+	tc := testgrpcforunconflict.NewTestServiceClient(conn)
 	switch *testCase {
 	case "goaway":
 		goaway(tc)

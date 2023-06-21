@@ -24,15 +24,14 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/credentials"
 	"github.com/qiyouForSql/grpcforunconflict/internal/grpcsync"
 	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
 	"github.com/qiyouForSql/grpcforunconflict/internal/transport"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -87,7 +86,7 @@ func (s) TestClientTransportRestartsAfterStreamIDExhausted(t *testing.T) {
 	}()
 
 	ss := &stubserver.StubServer{
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			if _, err := stream.Recv(); err != nil {
 				return status.Errorf(codes.Internal, "unexpected error receiving: %v", err)
 			}
@@ -102,7 +101,7 @@ func (s) TestClientTransportRestartsAfterStreamIDExhausted(t *testing.T) {
 	}
 
 	creds := &transportRestartCheckCreds{}
-	if err := ss.Start(nil, grpc.WithTransportCredentials(creds)); err != nil {
+	if err := ss.Start(nil, grpcforunconflict.WithTransportCredentials(creds)); err != nil {
 		t.Fatalf("Starting stubServer: %v", err)
 	}
 	defer ss.Stop()
@@ -110,7 +109,7 @@ func (s) TestClientTransportRestartsAfterStreamIDExhausted(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
 
-	var streams []testgrpc.TestService_FullDuplexCallClient
+	var streams []testgrpcforunconflict.TestService_FullDuplexCallClient
 
 	const numStreams = 3
 	// expected number of conns when each stream is created i.e., 3rd stream is created

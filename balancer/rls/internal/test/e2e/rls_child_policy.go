@@ -27,7 +27,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/internal/grpcsync"
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"github.com/qiyouForSql/grpcforunconflict/serviceconfig"
-	"google.golang.org/grpc"
 )
 
 const (
@@ -68,7 +67,7 @@ type bb struct {
 func (bb bb) Name() string { return bb.name }
 
 func (bb bb) Build(cc balancer.ClientConn, opts balancer.BuildOptions) balancer.Balancer {
-	pf := balancer.Get(grpc.PickFirstBalancerName)
+	pf := balancer.Get(grpcforunconflict.PickFirstBalancerName)
 	b := &bal{
 		Balancer: pf.Build(cc, opts),
 		bf:       bb.bf,

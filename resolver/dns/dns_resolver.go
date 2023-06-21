@@ -17,7 +17,7 @@
  */
 
 // Package dns implements a dns resolver to be installed as the default resolver
-// in grpc.
+// ingrpcforunconflict.
 //
 // Deprecated: this package is imported by grpc and should not need to be
 // imported directly by users.

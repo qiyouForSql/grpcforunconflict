@@ -27,7 +27,6 @@ import (
 
 	"github.com/qiyouForSql/grpcforunconflict/gcp/observability"
 	"github.com/qiyouForSql/grpcforunconflict/interop"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 var (
@@ -45,9 +44,9 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	server := grpc.NewServer()
+	server := grpcforunconflict.NewServer()
 	defer server.Stop()
-	testgrpc.RegisterTestServiceServer(server, interop.NewTestServer())
+	testgrpcforunconflict.RegisterTestServiceServer(server, interop.NewTestServer())
 	log.Printf("Observability interop server listening on %v", lis.Addr())
 	server.Serve(lis)
 }

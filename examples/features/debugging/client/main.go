@@ -50,7 +50,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	defer lis.Close()
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 	service.RegisterChannelzServiceToServer(s)
 	go s.Serve(lis)
 	defer s.Stop()
@@ -58,7 +58,7 @@ func main() {
 	/***** Initialize manual resolver and Dial *****/
 	r := manual.NewBuilderWithScheme("whatever")
 	// Set up a connection to the server.
-	conn, err := grpc.Dial(r.Scheme()+":///test.server", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(r), grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy":"round_robin"}`))
+	conn, err := grpcforunconflict.Dial(r.Scheme()+":///test.server", grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(r), grpcforunconflict.WithDefaultServiceConfig(`{"loadBalancingPolicy":"round_robin"}`))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}

@@ -30,7 +30,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/internal"
 	"github.com/qiyouForSql/grpcforunconflict/internal/backoff"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 )
 
 var (
@@ -52,7 +51,7 @@ func init() {
 	internal.HealthCheckFunc = clientHealthCheck
 }
 
-const healthCheckMethod = "/grpc.health.v1.Health/Watch"
+const healthCheckMethod = "/grpcforunconflict.health.v1.Health/Watch"
 
 // This function implements the protocol defined at:
 // https://github.com/grpc/grpc/blob/master/doc/health-checking.md
@@ -76,11 +75,11 @@ retryConnection:
 			continue retryConnection
 		}
 
-		s, ok := rawS.(grpc.ClientStream)
+		s, ok := rawS.(grpcforunconflict.ClientStream)
 		// Ideally, this should never happen. But if it happens, the server is marked as healthy for LBing purposes.
 		if !ok {
 			setConnectivityState(connectivity.Ready, nil)
-			return fmt.Errorf("newStream returned %v (type %T); want grpc.ClientStream", rawS, rawS)
+			return fmt.Errorf("newStream returned %v (type %T); wantgrpcforunconflict.ClientStream", rawS, rawS)
 		}
 
 		if err = s.SendMsg(&healthpb.HealthCheckRequest{Service: service}); err != nil && err != io.EOF {

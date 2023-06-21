@@ -31,6 +31,7 @@ import (
 	"time"
 
 	"github.com/golang/protobuf/proto"
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal/grpcsync"
@@ -38,9 +39,7 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/metadata"
 	"github.com/qiyouForSql/grpcforunconflict/stats"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -59,10 +58,10 @@ func (s) TestRetryUnary(t *testing.T) {
 			return nil, status.New(codes.AlreadyExists, "retryable error").Err()
 		},
 	}
-	if err := ss.Start([]grpc.ServerOption{},
-		grpc.WithDefaultServiceConfig(`{
+	if err := ss.Start([]grpcforunconflict.ServerOption{},
+		grpcforunconflict.WithDefaultServiceConfig(`{
     "methodConfig": [{
-      "name": [{"service": "grpc.testing.TestService"}],
+      "name": [{"service": "grpcforunconflict.testing.TestService"}],
       "waitForReady": true,
       "retryPolicy": {
         "MaxAttempts": 4,
@@ -114,10 +113,10 @@ func (s) TestRetryThrottling(t *testing.T) {
 			return nil, status.New(codes.Unavailable, "retryable error").Err()
 		},
 	}
-	if err := ss.Start([]grpc.ServerOption{},
-		grpc.WithDefaultServiceConfig(`{
+	if err := ss.Start([]grpcforunconflict.ServerOption{},
+		grpcforunconflict.WithDefaultServiceConfig(`{
     "methodConfig": [{
-      "name": [{"service": "grpc.testing.TestService"}],
+      "name": [{"service": "grpcforunconflict.testing.TestService"}],
       "waitForReady": true,
       "retryPolicy": {
         "MaxAttempts": 4,
@@ -176,12 +175,12 @@ func (s) TestRetryStreaming(t *testing.T) {
 
 	largePayload, _ := newPayload(testpb.PayloadType_COMPRESSABLE, 500)
 
-	type serverOp func(stream testgrpc.TestService_FullDuplexCallServer) error
-	type clientOp func(stream testgrpc.TestService_FullDuplexCallClient) error
+	type serverOp func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error
+	type clientOp func(stream testgrpcforunconflict.TestService_FullDuplexCallClient) error
 
 	// Server Operations
 	sAttempts := func(n int) serverOp {
-		return func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		return func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			const key = "grpc-previous-rpc-attempts"
 			md, ok := metadata.FromIncomingContext(stream.Context())
 			if !ok {
@@ -194,7 +193,7 @@ func (s) TestRetryStreaming(t *testing.T) {
 		}
 	}
 	sReq := func(b byte) serverOp {
-		return func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		return func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			want := req(b)
 			if got, err := stream.Recv(); err != nil || !proto.Equal(got, want) {
 				return status.Errorf(codes.Internal, "server: Recv() = %v, %v; want %v, <nil>", got, err, want)
@@ -203,7 +202,7 @@ func (s) TestRetryStreaming(t *testing.T) {
 		}
 	}
 	sReqPayload := func(p *testpb.Payload) serverOp {
-		return func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		return func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			want := &testpb.StreamingOutputCallRequest{Payload: p}
 			if got, err := stream.Recv(); err != nil || !proto.Equal(got, want) {
 				return status.Errorf(codes.Internal, "server: Recv() = %v, %v; want %v, <nil>", got, err, want)
@@ -212,7 +211,7 @@ func (s) TestRetryStreaming(t *testing.T) {
 		}
 	}
 	sRes := func(b byte) serverOp {
-		return func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		return func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			msg := res(b)
 			if err := stream.Send(msg); err != nil {
 				return status.Errorf(codes.Internal, "server: Send(%v) = %v; want <nil>", msg, err)
@@ -221,12 +220,12 @@ func (s) TestRetryStreaming(t *testing.T) {
 		}
 	}
 	sErr := func(c codes.Code) serverOp {
-		return func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		return func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			return status.New(c, "").Err()
 		}
 	}
 	sCloseSend := func() serverOp {
-		return func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		return func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			if msg, err := stream.Recv(); msg != nil || err != io.EOF {
 				return status.Errorf(codes.Internal, "server: Recv() = %v, %v; want <nil>, io.EOF", msg, err)
 			}
@@ -234,7 +233,7 @@ func (s) TestRetryStreaming(t *testing.T) {
 		}
 	}
 	sPushback := func(s string) serverOp {
-		return func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		return func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			stream.SetTrailer(metadata.MD{"grpc-retry-pushback-ms": []string{s}})
 			return nil
 		}
@@ -242,7 +241,7 @@ func (s) TestRetryStreaming(t *testing.T) {
 
 	// Client Operations
 	cReq := func(b byte) clientOp {
-		return func(stream testgrpc.TestService_FullDuplexCallClient) error {
+		return func(stream testgrpcforunconflict.TestService_FullDuplexCallClient) error {
 			msg := req(b)
 			if err := stream.Send(msg); err != nil {
 				return fmt.Errorf("client: Send(%v) = %v; want <nil>", msg, err)
@@ -251,7 +250,7 @@ func (s) TestRetryStreaming(t *testing.T) {
 		}
 	}
 	cReqPayload := func(p *testpb.Payload) clientOp {
-		return func(stream testgrpc.TestService_FullDuplexCallClient) error {
+		return func(stream testgrpcforunconflict.TestService_FullDuplexCallClient) error {
 			msg := &testpb.StreamingOutputCallRequest{Payload: p}
 			if err := stream.Send(msg); err != nil {
 				return fmt.Errorf("client: Send(%v) = %v; want <nil>", msg, err)
@@ -260,7 +259,7 @@ func (s) TestRetryStreaming(t *testing.T) {
 		}
 	}
 	cRes := func(b byte) clientOp {
-		return func(stream testgrpc.TestService_FullDuplexCallClient) error {
+		return func(stream testgrpcforunconflict.TestService_FullDuplexCallClient) error {
 			want := res(b)
 			if got, err := stream.Recv(); err != nil || !proto.Equal(got, want) {
 				return fmt.Errorf("client: Recv() = %v, %v; want %v, <nil>", got, err, want)
@@ -269,7 +268,7 @@ func (s) TestRetryStreaming(t *testing.T) {
 		}
 	}
 	cErr := func(c codes.Code) clientOp {
-		return func(stream testgrpc.TestService_FullDuplexCallClient) error {
+		return func(stream testgrpcforunconflict.TestService_FullDuplexCallClient) error {
 			want := status.New(c, "").Err()
 			if c == codes.OK {
 				want = io.EOF
@@ -284,7 +283,7 @@ func (s) TestRetryStreaming(t *testing.T) {
 		}
 	}
 	cCloseSend := func() clientOp {
-		return func(stream testgrpc.TestService_FullDuplexCallClient) error {
+		return func(stream testgrpcforunconflict.TestService_FullDuplexCallClient) error {
 			if err := stream.CloseSend(); err != nil {
 				return fmt.Errorf("client: CloseSend() = %v; want <nil>", err)
 			}
@@ -293,13 +292,13 @@ func (s) TestRetryStreaming(t *testing.T) {
 	}
 	var curTime time.Time
 	cGetTime := func() clientOp {
-		return func(_ testgrpc.TestService_FullDuplexCallClient) error {
+		return func(_ testgrpcforunconflict.TestService_FullDuplexCallClient) error {
 			curTime = time.Now()
 			return nil
 		}
 	}
 	cCheckElapsed := func(d time.Duration) clientOp {
-		return func(_ testgrpc.TestService_FullDuplexCallClient) error {
+		return func(_ testgrpcforunconflict.TestService_FullDuplexCallClient) error {
 			if elapsed := time.Since(curTime); elapsed < d {
 				return fmt.Errorf("elapsed time: %v; want >= %v", elapsed, d)
 			}
@@ -307,13 +306,13 @@ func (s) TestRetryStreaming(t *testing.T) {
 		}
 	}
 	cHdr := func() clientOp {
-		return func(stream testgrpc.TestService_FullDuplexCallClient) error {
+		return func(stream testgrpcforunconflict.TestService_FullDuplexCallClient) error {
 			_, err := stream.Header()
 			return err
 		}
 	}
 	cCtx := func() clientOp {
-		return func(stream testgrpc.TestService_FullDuplexCallClient) error {
+		return func(stream testgrpcforunconflict.TestService_FullDuplexCallClient) error {
 			stream.Context()
 			return nil
 		}
@@ -402,7 +401,7 @@ func (s) TestRetryStreaming(t *testing.T) {
 	var serverOpIter int
 	var serverOps []serverOp
 	ss := &stubserver.StubServer{
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			for serverOpIter < len(serverOps) {
 				op := serverOps[serverOpIter]
 				serverOpIter++
@@ -413,10 +412,10 @@ func (s) TestRetryStreaming(t *testing.T) {
 			return nil
 		},
 	}
-	if err := ss.Start([]grpc.ServerOption{}, grpc.WithDefaultCallOptions(grpc.MaxRetryRPCBufferSize(200)),
-		grpc.WithDefaultServiceConfig(`{
+	if err := ss.Start([]grpcforunconflict.ServerOption{}, grpcforunconflict.WithDefaultCallOptions(grpcforunconflict.MaxRetryRPCBufferSize(200)),
+		grpcforunconflict.WithDefaultServiceConfig(`{
     "methodConfig": [{
-      "name": [{"service": "grpc.testing.TestService"}],
+      "name": [{"service": "grpcforunconflict.testing.TestService"}],
       "waitForReady": true,
       "retryPolicy": {
           "MaxAttempts": 4,
@@ -434,7 +433,7 @@ func (s) TestRetryStreaming(t *testing.T) {
 		if ctx.Err() != nil {
 			t.Fatalf("Timed out waiting for service config update")
 		}
-		if ss.CC.GetMethodConfig("/grpc.testing.TestService/FullDuplexCall").WaitForReady != nil {
+		if ss.CC.GetMethodConfig("/grpcforunconflict.testing.TestService/FullDuplexCall").WaitForReady != nil {
 			break
 		}
 		time.Sleep(time.Millisecond)
@@ -515,10 +514,10 @@ func (s) TestRetryStats(t *testing.T) {
 	}
 	server.start(t, lis)
 	handler := &retryStatsHandler{}
-	cc, err := grpc.Dial(lis.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithStatsHandler(handler),
-		grpc.WithDefaultServiceConfig((`{
+	cc, err := grpcforunconflict.Dial(lis.Addr().String(), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithStatsHandler(handler),
+		grpcforunconflict.WithDefaultServiceConfig((`{
     "methodConfig": [{
-      "name": [{"service": "grpc.testing.TestService"}],
+      "name": [{"service": "grpcforunconflict.testing.TestService"}],
       "retryPolicy": {
           "MaxAttempts": 4,
           "InitialBackoff": ".01s",
@@ -535,7 +534,7 @@ func (s) TestRetryStats(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
 
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 
 	if _, err := client.EmptyCall(ctx, &testpb.Empty{}); err != nil {
 		t.Fatalf("unexpected EmptyCall error: %v", err)
@@ -543,18 +542,18 @@ func (s) TestRetryStats(t *testing.T) {
 	handler.mu.Lock()
 	want := []stats.RPCStats{
 		&stats.Begin{},
-		&stats.OutHeader{FullMethod: "/grpc.testing.TestService/EmptyCall"},
+		&stats.OutHeader{FullMethod: "/grpcforunconflict.testing.TestService/EmptyCall"},
 		&stats.OutPayload{WireLength: 5},
 		&stats.End{},
 
 		&stats.Begin{IsTransparentRetryAttempt: true},
-		&stats.OutHeader{FullMethod: "/grpc.testing.TestService/EmptyCall"},
+		&stats.OutHeader{FullMethod: "/grpcforunconflict.testing.TestService/EmptyCall"},
 		&stats.OutPayload{WireLength: 5},
 		&stats.InTrailer{Trailer: metadata.Pairs("content-type", "application/grpc", "grpc-retry-pushback-ms", "10")},
 		&stats.End{},
 
 		&stats.Begin{},
-		&stats.OutHeader{FullMethod: "/grpc.testing.TestService/EmptyCall"},
+		&stats.OutHeader{FullMethod: "/grpcforunconflict.testing.TestService/EmptyCall"},
 		&stats.OutPayload{WireLength: 5},
 		&stats.InHeader{},
 		&stats.InPayload{WireLength: 5},
@@ -643,7 +642,7 @@ func (s) TestRetryTransparentWhenCommitted(t *testing.T) {
 
 	first := grpcsync.NewEvent()
 	ss := &stubserver.StubServer{
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			// signal?
 			if !first.HasFired() {
 				first.Fire()
@@ -656,10 +655,10 @@ func (s) TestRetryTransparentWhenCommitted(t *testing.T) {
 		},
 	}
 
-	if err := ss.Start([]grpc.ServerOption{grpc.MaxConcurrentStreams(1)},
-		grpc.WithDefaultServiceConfig(`{
+	if err := ss.Start([]grpcforunconflict.ServerOption{grpcforunconflict.MaxConcurrentStreams(1)},
+		grpcforunconflict.WithDefaultServiceConfig(`{
     "methodConfig": [{
-      "name": [{"service": "grpc.testing.TestService"}],
+      "name": [{"service": "grpcforunconflict.testing.TestService"}],
       "waitForReady": true,
       "retryPolicy": {
         "MaxAttempts": 2,

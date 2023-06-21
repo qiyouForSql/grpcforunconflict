@@ -68,7 +68,7 @@ func (s) TestParseClusterSpecifierConfig(t *testing.T) {
 		},
 	}
 	for _, test := range tests {
-		cs := clusterspecifier.Get("type.googleapis.com/grpc.lookup.v1.RouteLookupClusterSpecifier")
+		cs := clusterspecifier.Get("type.googleapis.com/grpcforunconflict.lookup.v1.RouteLookupClusterSpecifier")
 		if cs == nil {
 			t.Fatal("Error getting cluster specifier")
 		}

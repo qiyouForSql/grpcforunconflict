@@ -29,6 +29,7 @@ import (
 	"github.com/golang/protobuf/proto"
 	timestamppb "github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/google/go-cmp/cmp"
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/balancer"
 	lbpb "github.com/qiyouForSql/grpcforunconflict/balancer/grpclb/grpc_lb_v1"
 	"github.com/qiyouForSql/grpcforunconflict/connectivity"
@@ -38,7 +39,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/keepalive"
 	"github.com/qiyouForSql/grpcforunconflict/metadata"
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
-	"google.golang.org/grpc"
 )
 
 // processServerList updates balancer's internal state, create/remove SubConns
@@ -209,7 +209,7 @@ func (lb *lbBalancer) refreshSubConns(backendAddrs []resolver.Address, fallback 
 }
 
 type remoteBalancerCCWrapper struct {
-	cc      *grpc.ClientConn
+	cc      *grpcforunconflict.ClientConn
 	lb      *lbBalancer
 	backoff backoff.Strategy
 	done    chan struct{}
@@ -222,27 +222,27 @@ type remoteBalancerCCWrapper struct {
 }
 
 func (lb *lbBalancer) newRemoteBalancerCCWrapper() {
-	var dopts []grpc.DialOption
+	var dopts []grpcforunconflict.DialOption
 	if creds := lb.opt.DialCreds; creds != nil {
-		dopts = append(dopts, grpc.WithTransportCredentials(creds))
+		dopts = append(dopts, grpcforunconflict.WithTransportCredentials(creds))
 	} else if bundle := lb.grpclbClientConnCreds; bundle != nil {
-		dopts = append(dopts, grpc.WithCredentialsBundle(bundle))
+		dopts = append(dopts, grpcforunconflict.WithCredentialsBundle(bundle))
 	} else {
-		dopts = append(dopts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		dopts = append(dopts, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	}
 	if lb.opt.Dialer != nil {
-		dopts = append(dopts, grpc.WithContextDialer(lb.opt.Dialer))
+		dopts = append(dopts, grpcforunconflict.WithContextDialer(lb.opt.Dialer))
 	}
 	if lb.opt.CustomUserAgent != "" {
-		dopts = append(dopts, grpc.WithUserAgent(lb.opt.CustomUserAgent))
+		dopts = append(dopts, grpcforunconflict.WithUserAgent(lb.opt.CustomUserAgent))
 	}
 	// Explicitly set pickfirst as the balancer.
-	dopts = append(dopts, grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy":"pick_first"}`))
-	dopts = append(dopts, grpc.WithResolvers(lb.manualResolver))
-	dopts = append(dopts, grpc.WithChannelzParentID(lb.opt.ChannelzParentID))
+	dopts = append(dopts, grpcforunconflict.WithDefaultServiceConfig(`{"loadBalancingPolicy":"pick_first"}`))
+	dopts = append(dopts, grpcforunconflict.WithResolvers(lb.manualResolver))
+	dopts = append(dopts, grpcforunconflict.WithChannelzParentID(lb.opt.ChannelzParentID))
 
 	// Enable Keepalive for grpclb client.
-	dopts = append(dopts, grpc.WithKeepaliveParams(keepalive.ClientParameters{
+	dopts = append(dopts, grpcforunconflict.WithKeepaliveParams(keepalive.ClientParameters{
 		Time:                20 * time.Second,
 		Timeout:             10 * time.Second,
 		PermitWithoutStream: true,
@@ -252,7 +252,7 @@ func (lb *lbBalancer) newRemoteBalancerCCWrapper() {
 	//
 	// The grpclb server addresses will set field ServerName, and creds will
 	// receive ServerName as authority.
-	cc, err := grpc.DialContext(context.Background(), lb.manualResolver.Scheme()+":///grpclb.subClientConn", dopts...)
+	cc, err := grpcforunconflict.DialContext(context.Background(), lb.manualResolver.Scheme()+":///grpclb.subClientConn", dopts...)
 	if err != nil {
 		logger.Fatalf("failed to dial: %v", err)
 	}
@@ -330,7 +330,7 @@ func (ccw *remoteBalancerCCWrapper) sendLoadReport(s *balanceLoadClientStream, i
 
 func (ccw *remoteBalancerCCWrapper) callRemoteBalancer(ctx context.Context) (backoff bool, _ error) {
 	lbClient := &loadBalancerClient{cc: ccw.cc}
-	stream, err := lbClient.BalanceLoad(ctx, grpc.WaitForReady(true))
+	stream, err := lbClient.BalanceLoad(ctx, grpcforunconflict.WaitForReady(true))
 	if err != nil {
 		return true, fmt.Errorf("grpclb: failed to perform RPC to the remote balancer: %v", err)
 	}

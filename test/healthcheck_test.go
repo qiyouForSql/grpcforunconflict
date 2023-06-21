@@ -27,6 +27,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/connectivity"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
@@ -37,11 +38,8 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"github.com/qiyouForSql/grpcforunconflict/resolver/manual"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
-	healthgrpc "github.com/qiyouForSql/grpcforunconflict/health/grpc_health_v1"
 	healthpb "github.com/qiyouForSql/grpcforunconflict/health/grpc_health_v1"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -60,7 +58,7 @@ func newTestHealthServerWithWatchFunc(f healthWatchFunc) *testHealthServer {
 }
 
 // defaultWatchFunc will send a HealthCheckResponse to the client whenever SetServingStatus is called.
-func defaultWatchFunc(s *testHealthServer, in *healthpb.HealthCheckRequest, stream healthgrpc.Health_WatchServer) error {
+func defaultWatchFunc(s *testHealthServer, in *healthpb.HealthCheckRequest, stream healthgrpcforunconflict.Health_WatchServer) error {
 	if in.Service != "foo" {
 		return status.Error(codes.FailedPrecondition,
 			"the defaultWatchFunc only handles request with service name to be \"foo\"")
@@ -85,10 +83,10 @@ func defaultWatchFunc(s *testHealthServer, in *healthpb.HealthCheckRequest, stre
 	return nil
 }
 
-type healthWatchFunc func(s *testHealthServer, in *healthpb.HealthCheckRequest, stream healthgrpc.Health_WatchServer) error
+type healthWatchFunc func(s *testHealthServer, in *healthpb.HealthCheckRequest, stream healthgrpcforunconflict.Health_WatchServer) error
 
 type testHealthServer struct {
-	healthgrpc.UnimplementedHealthServer
+	healthgrpcforunconflict.UnimplementedHealthServer
 	watchFunc healthWatchFunc
 	mu        sync.Mutex
 	status    map[string]healthpb.HealthCheckResponse_ServingStatus
@@ -101,7 +99,7 @@ func (s *testHealthServer) Check(ctx context.Context, in *healthpb.HealthCheckRe
 	}, nil
 }
 
-func (s *testHealthServer) Watch(in *healthpb.HealthCheckRequest, stream healthgrpc.Health_WatchServer) error {
+func (s *testHealthServer) Watch(in *healthpb.HealthCheckRequest, stream healthgrpcforunconflict.Health_WatchServer) error {
 	return s.watchFunc(s, in, stream)
 }
 
@@ -129,7 +127,7 @@ func setupHealthCheckWrapper() (hcEnterChan chan struct{}, hcExitChan chan struc
 	return
 }
 
-func setupServer(t *testing.T, watchFunc healthWatchFunc) (*grpc.Server, net.Listener, *testHealthServer) {
+func setupServer(t *testing.T, watchFunc healthWatchFunc) (*grpcforunconflict.Server, net.Listener, *testHealthServer) {
 	t.Helper()
 
 	lis, err := net.Listen("tcp", "localhost:0")
@@ -143,9 +141,9 @@ func setupServer(t *testing.T, watchFunc healthWatchFunc) (*grpc.Server, net.Lis
 	} else {
 		ts = newTestHealthServer()
 	}
-	s := grpc.NewServer()
-	healthgrpc.RegisterHealthServer(s, ts)
-	testgrpc.RegisterTestServiceServer(s, &testServer{})
+	s := grpcforunconflict.NewServer()
+	healthgrpcforunconflict.RegisterHealthServer(s, ts)
+	testgrpcforunconflict.RegisterTestServiceServer(s, &testServer{})
 	go s.Serve(lis)
 	t.Cleanup(func() { s.Stop() })
 	return s, lis, ts
@@ -154,30 +152,30 @@ func setupServer(t *testing.T, watchFunc healthWatchFunc) (*grpc.Server, net.Lis
 type clientConfig struct {
 	balancerName               string
 	testHealthCheckFuncWrapper internal.HealthChecker
-	extraDialOption            []grpc.DialOption
+	extraDialOption            []grpcforunconflict.DialOption
 }
 
-func setupClient(t *testing.T, c *clientConfig) (*grpc.ClientConn, *manual.Resolver) {
+func setupClient(t *testing.T, c *clientConfig) (*grpcforunconflict.ClientConn, *manual.Resolver) {
 	t.Helper()
 
 	r := manual.NewBuilderWithScheme("whatever")
-	opts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithResolvers(r),
+	opts := []grpcforunconflict.DialOption{
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithResolvers(r),
 	}
 	if c != nil {
 		if c.balancerName != "" {
-			opts = append(opts, grpc.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, c.balancerName)))
+			opts = append(opts, grpcforunconflict.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, c.balancerName)))
 		}
 		if c.testHealthCheckFuncWrapper != nil {
-			opts = append(opts, internal.WithHealthCheckFunc.(func(internal.HealthChecker) grpc.DialOption)(c.testHealthCheckFuncWrapper))
+			opts = append(opts, internal.WithHealthCheckFunc.(func(internal.HealthChecker) grpcforunconflict.DialOption)(c.testHealthCheckFuncWrapper))
 		}
 		opts = append(opts, c.extraDialOption...)
 	}
 
-	cc, err := grpc.Dial(r.Scheme()+":///test.server", opts...)
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.server", opts...)
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	t.Cleanup(func() { cc.Close() })
 	return cc, r
@@ -247,7 +245,7 @@ func (s) TestHealthCheckWatchStateChange(t *testing.T) {
 // If Watch returns Unimplemented, then the ClientConn should go into READY state.
 func (s) TestHealthCheckHealthServerNotRegistered(t *testing.T) {
 	grpctest.TLogger.ExpectError("Subchannel health check is unimplemented at server side, thus health check is disabled")
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 	lis, err := net.Listen("tcp", "localhost:0")
 	if err != nil {
 		t.Fatalf("failed to listen due to err: %v", err)
@@ -282,7 +280,7 @@ func (s) TestHealthCheckWithGoAway(t *testing.T) {
 
 	hcEnterChan, hcExitChan, testHealthCheckFuncWrapper := setupHealthCheckWrapper()
 	cc, r := setupClient(t, &clientConfig{testHealthCheckFuncWrapper: testHealthCheckFuncWrapper})
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	r.UpdateState(resolver.State{
 		Addresses: []resolver.Address{{Addr: lis.Addr().String()}},
 		ServiceConfig: parseServiceConfig(t, r, `{
@@ -305,7 +303,7 @@ func (s) TestHealthCheckWithGoAway(t *testing.T) {
 	}
 
 	// the stream rpc will persist through goaway event.
-	stream, err := tc.FullDuplexCall(ctx, grpc.WaitForReady(true))
+	stream, err := tc.FullDuplexCall(ctx, grpcforunconflict.WaitForReady(true))
 	if err != nil {
 		t.Fatalf("%v.FullDuplexCall(_) = _, %v, want <nil>", tc, err)
 	}
@@ -360,7 +358,7 @@ func (s) TestHealthCheckWithConnClose(t *testing.T) {
 
 	hcEnterChan, hcExitChan, testHealthCheckFuncWrapper := setupHealthCheckWrapper()
 	cc, r := setupClient(t, &clientConfig{testHealthCheckFuncWrapper: testHealthCheckFuncWrapper})
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	r.UpdateState(resolver.State{
 		Addresses: []resolver.Address{{Addr: lis.Addr().String()}},
 		ServiceConfig: parseServiceConfig(t, r, `{
@@ -410,7 +408,7 @@ func (s) TestHealthCheckWithAddrConnDrain(t *testing.T) {
 
 	hcEnterChan, hcExitChan, testHealthCheckFuncWrapper := setupHealthCheckWrapper()
 	cc, r := setupClient(t, &clientConfig{testHealthCheckFuncWrapper: testHealthCheckFuncWrapper})
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	sc := parseServiceConfig(t, r, `{
 	"healthCheckConfig": {
 		"serviceName": "foo"
@@ -435,7 +433,7 @@ func (s) TestHealthCheckWithAddrConnDrain(t *testing.T) {
 	}
 
 	// the stream rpc will persist through goaway event.
-	stream, err := tc.FullDuplexCall(ctx, grpc.WaitForReady(true))
+	stream, err := tc.FullDuplexCall(ctx, grpcforunconflict.WaitForReady(true))
 	if err != nil {
 		t.Fatalf("%v.FullDuplexCall(_) = _, %v, want <nil>", tc, err)
 	}
@@ -490,7 +488,7 @@ func (s) TestHealthCheckWithClientConnClose(t *testing.T) {
 
 	hcEnterChan, hcExitChan, testHealthCheckFuncWrapper := setupHealthCheckWrapper()
 	cc, r := setupClient(t, &clientConfig{testHealthCheckFuncWrapper: testHealthCheckFuncWrapper})
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	r.UpdateState(resolver.State{
 		Addresses: []resolver.Address{{Addr: lis.Addr().String()}},
 		ServiceConfig: parseServiceConfig(t, r, `{
@@ -537,7 +535,7 @@ func (s) TestHealthCheckWithClientConnClose(t *testing.T) {
 // closes the skipReset channel(since it has not been closed inside health check func) to unblock
 // onGoAway/onClose goroutine.
 func (s) TestHealthCheckWithoutSetConnectivityStateCalledAddrConnShutDown(t *testing.T) {
-	watchFunc := func(s *testHealthServer, in *healthpb.HealthCheckRequest, stream healthgrpc.Health_WatchServer) error {
+	watchFunc := func(s *testHealthServer, in *healthpb.HealthCheckRequest, stream healthgrpcforunconflict.Health_WatchServer) error {
 		if in.Service != "delay" {
 			return status.Error(codes.FailedPrecondition,
 				"this special Watch function only handles request with service name to be \"delay\"")
@@ -600,7 +598,7 @@ func (s) TestHealthCheckWithoutSetConnectivityStateCalledAddrConnShutDown(t *tes
 // closes the allowedToReset channel(since it has not been closed inside health check func) to unblock
 // onGoAway/onClose goroutine.
 func (s) TestHealthCheckWithoutSetConnectivityStateCalled(t *testing.T) {
-	watchFunc := func(s *testHealthServer, in *healthpb.HealthCheckRequest, stream healthgrpc.Health_WatchServer) error {
+	watchFunc := func(s *testHealthServer, in *healthpb.HealthCheckRequest, stream healthgrpcforunconflict.Health_WatchServer) error {
 		if in.Service != "delay" {
 			return status.Error(codes.FailedPrecondition,
 				"this special Watch function only handles request with service name to be \"delay\"")
@@ -661,9 +659,9 @@ func testHealthCheckDisableWithDialOption(t *testing.T, addr string) {
 	hcEnterChan, _, testHealthCheckFuncWrapper := setupHealthCheckWrapper()
 	cc, r := setupClient(t, &clientConfig{
 		testHealthCheckFuncWrapper: testHealthCheckFuncWrapper,
-		extraDialOption:            []grpc.DialOption{grpc.WithDisableHealthCheck()},
+		extraDialOption:            []grpcforunconflict.DialOption{grpcforunconflict.WithDisableHealthCheck()},
 	})
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	r.UpdateState(resolver.State{
 		Addresses: []resolver.Address{{Addr: addr}},
 		ServiceConfig: parseServiceConfig(t, r, `{
@@ -697,7 +695,7 @@ func testHealthCheckDisableWithBalancer(t *testing.T, addr string) {
 	cc, r := setupClient(t, &clientConfig{
 		testHealthCheckFuncWrapper: testHealthCheckFuncWrapper,
 	})
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	r.UpdateState(resolver.State{
 		Addresses: []resolver.Address{{Addr: addr}},
 		ServiceConfig: parseServiceConfig(t, r, `{
@@ -729,7 +727,7 @@ func testHealthCheckDisableWithBalancer(t *testing.T, addr string) {
 func testHealthCheckDisableWithServiceConfig(t *testing.T, addr string) {
 	hcEnterChan, _, testHealthCheckFuncWrapper := setupHealthCheckWrapper()
 	cc, r := setupClient(t, &clientConfig{testHealthCheckFuncWrapper: testHealthCheckFuncWrapper})
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	r.UpdateState(resolver.State{Addresses: []resolver.Address{{Addr: addr}}})
 
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
@@ -762,7 +760,7 @@ func (s) TestHealthCheckDisable(t *testing.T) {
 }
 
 func (s) TestHealthCheckChannelzCountingCallSuccess(t *testing.T) {
-	watchFunc := func(s *testHealthServer, in *healthpb.HealthCheckRequest, stream healthgrpc.Health_WatchServer) error {
+	watchFunc := func(s *testHealthServer, in *healthpb.HealthCheckRequest, stream healthgrpcforunconflict.Health_WatchServer) error {
 		if in.Service != "channelzSuccess" {
 			return status.Error(codes.FailedPrecondition,
 				"this special Watch function only handles request with service name to be \"channelzSuccess\"")
@@ -809,7 +807,7 @@ func (s) TestHealthCheckChannelzCountingCallSuccess(t *testing.T) {
 }
 
 func (s) TestHealthCheckChannelzCountingCallFailure(t *testing.T) {
-	watchFunc := func(s *testHealthServer, in *healthpb.HealthCheckRequest, stream healthgrpc.Health_WatchServer) error {
+	watchFunc := func(s *testHealthServer, in *healthpb.HealthCheckRequest, stream healthgrpcforunconflict.Health_WatchServer) error {
 		if in.Service != "channelzFailure" {
 			return status.Error(codes.FailedPrecondition,
 				"this special Watch function only handles request with service name to be \"channelzFailure\"")
@@ -857,16 +855,16 @@ func (s) TestHealthCheckChannelzCountingCallFailure(t *testing.T) {
 
 // healthCheck is a helper function to make a unary health check RPC and return
 // the response.
-func healthCheck(d time.Duration, cc *grpc.ClientConn, service string) (*healthpb.HealthCheckResponse, error) {
+func healthCheck(d time.Duration, cc *grpcforunconflict.ClientConn, service string) (*healthpb.HealthCheckResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), d)
 	defer cancel()
-	hc := healthgrpc.NewHealthClient(cc)
+	hc := healthgrpcforunconflict.NewHealthClient(cc)
 	return hc.Check(ctx, &healthpb.HealthCheckRequest{Service: service})
 }
 
 // verifyHealthCheckStatus is a helper function to verify that the current
 // health status of the service matches the one passed in 'wantStatus'.
-func verifyHealthCheckStatus(t *testing.T, d time.Duration, cc *grpc.ClientConn, service string, wantStatus healthpb.HealthCheckResponse_ServingStatus) {
+func verifyHealthCheckStatus(t *testing.T, d time.Duration, cc *grpcforunconflict.ClientConn, service string, wantStatus healthpb.HealthCheckResponse_ServingStatus) {
 	t.Helper()
 	resp, err := healthCheck(d, cc, service)
 	if err != nil {
@@ -879,7 +877,7 @@ func verifyHealthCheckStatus(t *testing.T, d time.Duration, cc *grpc.ClientConn,
 
 // verifyHealthCheckErrCode is a helper function to verify that a unary health
 // check RPC returns an error with a code set to 'wantCode'.
-func verifyHealthCheckErrCode(t *testing.T, d time.Duration, cc *grpc.ClientConn, service string, wantCode codes.Code) {
+func verifyHealthCheckErrCode(t *testing.T, d time.Duration, cc *grpcforunconflict.ClientConn, service string, wantCode codes.Code) {
 	t.Helper()
 	if _, err := healthCheck(d, cc, service); status.Code(err) != wantCode {
 		t.Fatalf("Health/Check() got errCode %v, want %v", status.Code(err), wantCode)
@@ -888,10 +886,10 @@ func verifyHealthCheckErrCode(t *testing.T, d time.Duration, cc *grpc.ClientConn
 
 // newHealthCheckStream is a helper function to start a health check streaming
 // RPC, and returns the stream.
-func newHealthCheckStream(t *testing.T, cc *grpc.ClientConn, service string) (healthgrpc.Health_WatchClient, context.CancelFunc) {
+func newHealthCheckStream(t *testing.T, cc *grpcforunconflict.ClientConn, service string) (healthgrpcforunconflict.Health_WatchClient, context.CancelFunc) {
 	t.Helper()
 	ctx, cancel := context.WithCancel(context.Background())
-	hc := healthgrpc.NewHealthClient(cc)
+	hc := healthgrpcforunconflict.NewHealthClient(cc)
 	stream, err := hc.Watch(ctx, &healthpb.HealthCheckRequest{Service: service})
 	if err != nil {
 		t.Fatalf("hc.Watch(_, %v) failed: %v", service, err)
@@ -901,7 +899,7 @@ func newHealthCheckStream(t *testing.T, cc *grpc.ClientConn, service string) (he
 
 // healthWatchChecker is a helper function to verify that the next health
 // status returned on the given stream matches the one passed in 'wantStatus'.
-func healthWatchChecker(t *testing.T, stream healthgrpc.Health_WatchClient, wantStatus healthpb.HealthCheckResponse_ServingStatus) {
+func healthWatchChecker(t *testing.T, stream healthgrpcforunconflict.Health_WatchClient, wantStatus healthpb.HealthCheckResponse_ServingStatus) {
 	t.Helper()
 	response, err := stream.Recv()
 	if err != nil {
@@ -1122,7 +1120,7 @@ func (s) TestUnknownHandler(t *testing.T) {
 	// An example unknownHandler that returns a different code and a different
 	// method, making sure that we do not expose what methods are implemented to
 	// a client that is not authenticated.
-	unknownHandler := func(srv interface{}, stream grpc.ServerStream) error {
+	unknownHandler := func(srv interface{}, streamgrpcforunconflict.ServerStream) error {
 		return status.Error(codes.Unauthenticated, "user unauthenticated")
 	}
 	for _, e := range listTestEnv() {
@@ -1134,7 +1132,7 @@ func (s) TestUnknownHandler(t *testing.T) {
 	}
 }
 
-func testUnknownHandler(t *testing.T, e env, unknownHandler grpc.StreamHandler) {
+func testUnknownHandler(t *testing.T, e env, unknownHandlergrpcforunconflict.StreamHandler) {
 	te := newTest(t, e)
 	te.unknownHandler = unknownHandler
 	te.startServer(&testServer{security: e.security})

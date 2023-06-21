@@ -24,7 +24,7 @@ Since Go contexts are immutable, the interceptor will have to create a new conte
 with updated metadata and pass it to the provided handler.
 
 ```go
-func SomeInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+func SomeInterceptor(ctx context.Context, req interface{}, info *grpcforunconflict.UnaryServerInfo, handlergrpcforunconflict.UnaryHandler) (interface{}, error) {
     // Get the incoming metadata from the RPC context, and add a new
     // key-value pair to it.
     md, ok := metadata.FromIncomingContext(ctx)
@@ -38,17 +38,17 @@ func SomeInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServe
 
 #### Streaming interceptor
 
-`grpc.ServerStream` does not provide a way to modify its RPC context. The streaming
-interceptor therefore needs to implement the `grpc.ServerStream` interface and return
+`grpcforunconflict.ServerStream` does not provide a way to modify its RPC context. The streaming
+interceptor therefore needs to implement the `grpcforunconflict.ServerStream` interface and return
 a context with updated metadata.
 
-The easiest way to do this would be to create a type which embeds the `grpc.ServerStream`
+The easiest way to do this would be to create a type which embeds the `grpcforunconflict.ServerStream`
 interface and overrides only the `Context()` method to return a context with updated
 metadata. The streaming interceptor would then pass this wrapped stream to the provided handler.
 
 ```go
 type wrappedStream struct {
-    grpc.ServerStream
+   grpcforunconflict.ServerStream
     ctx context.Context
 }
 
@@ -56,7 +56,7 @@ func (s *wrappedStream) Context() context.Context {
     return s.ctx
 }
 
-func SomeStreamInterceptor(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+func SomeStreamInterceptor(srv interface{}, ssgrpcforunconflict.ServerStream, info *grpcforunconflict.StreamServerInfo, handlergrpcforunconflict.StreamHandler) error {
     // Get the incoming metadata from the RPC context, and add a new 
     // key-value pair to it.
     md, ok := metadata.FromIncomingContext(ctx)

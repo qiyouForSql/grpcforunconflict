@@ -22,10 +22,10 @@ import (
 	"context"
 	"sync"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	grpcinternal "github.com/qiyouForSql/grpcforunconflict/internal"
 	"github.com/qiyouForSql/grpcforunconflict/metadata"
 	"github.com/qiyouForSql/grpcforunconflict/orca/internal"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -102,19 +102,19 @@ func (rw *recorderWrapper) setTrailerMetadata(ctx context.Context) {
 		logger.Warningf("Failed to marshal load report: %v", err)
 		return
 	}
-	if err := grpc.SetTrailer(ctx, metadata.Pairs(internal.TrailerMetadataKey, string(b))); err != nil {
+	if err := grpcforunconflict.SetTrailer(ctx, metadata.Pairs(internal.TrailerMetadataKey, string(b))); err != nil {
 		logger.Warningf("Failed to set trailer metadata: %v", err)
 	}
 }
 
-var joinServerOptions = grpcinternal.JoinServerOptions.(func(...grpc.ServerOption) grpc.ServerOption)
+var joinServerOptions = grpcinternal.JoinServerOptions.(func(...grpcforunconflict.ServerOption) grpcforunconflict.ServerOption)
 
 // CallMetricsServerOption returns a server option which enables the reporting
 // of per-RPC custom backend metrics for unary and streaming RPCs.
 //
 // Server applications interested in injecting custom backend metrics should
 // pass the server option returned from this function as the first argument to
-// grpc.NewServer().
+// grpcforunconflict.NewServer().
 //
 // Subsequently, server RPC handlers can retrieve a reference to the RPC
 // specific custom metrics recorder [CallMetricsRecorder] to be used, via a call
@@ -131,12 +131,12 @@ var joinServerOptions = grpcinternal.JoinServerOptions.(func(...grpc.ServerOptio
 // by calling NewServerMetricsRecorder.
 //
 // [ORCA LoadReport]: https://github.com/cncf/xds/blob/main/xds/data/orca/v3/orca_load_report.proto#L15
-func CallMetricsServerOption(smp ServerMetricsProvider) grpc.ServerOption {
-	return joinServerOptions(grpc.ChainUnaryInterceptor(unaryInt(smp)), grpc.ChainStreamInterceptor(streamInt(smp)))
+func CallMetricsServerOption(smp ServerMetricsProvider) grpcforunconflict.ServerOption {
+	return joinServerOptions(grpcforunconflict.ChainUnaryInterceptor(unaryInt(smp)), grpcforunconflict.ChainStreamInterceptor(streamInt(smp)))
 }
 
-func unaryInt(smp ServerMetricsProvider) func(ctx context.Context, req interface{}, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-	return func(ctx context.Context, req interface{}, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+func unaryInt(smp ServerMetricsProvider) func(ctx context.Context, req interface{}, _ *grpcforunconflict.UnaryServerInfo, handler grpcforunconflict.UnaryHandler) (interface{}, error) {
+	return func(ctx context.Context, req interface{}, _ *grpcforunconflict.UnaryServerInfo, handler grpcforunconflict.UnaryHandler) (interface{}, error) {
 		// We don't allocate the metric recorder here. It will be allocated the
 		// first time the user calls CallMetricsRecorderFromContext().
 		rw := &recorderWrapper{smp: smp}
@@ -155,8 +155,8 @@ func unaryInt(smp ServerMetricsProvider) func(ctx context.Context, req interface
 	}
 }
 
-func streamInt(smp ServerMetricsProvider) func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
-	return func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+func streamInt(smp ServerMetricsProvider) func(srv interface{}, ss grpcforunconflict.ServerStream, info *grpcforunconflict.StreamServerInfo, handler grpcforunconflict.StreamHandler) error {
+	return func(srv interface{}, ss grpcforunconflict.ServerStream, info *grpcforunconflict.StreamServerInfo, handler grpcforunconflict.StreamHandler) error {
 		// We don't allocate the metric recorder here. It will be allocated the
 		// first time the user calls CallMetricsRecorderFromContext().
 		rw := &recorderWrapper{smp: smp}
@@ -182,12 +182,12 @@ func newContextWithRecorderWrapper(ctx context.Context, r *recorderWrapper) cont
 	return context.WithValue(ctx, callMetricsRecorderCtxKey{}, r)
 }
 
-// wrappedStream wraps the grpc.ServerStream received by the streaming
+// wrappedStream wraps thegrpcforunconflict.ServerStream received by the streaming
 // interceptor. Overrides only the Context() method to return a context which
 // contains a reference to the CallMetricsRecorder corresponding to this
 // stream.
 type wrappedStream struct {
-	grpc.ServerStream
+	grpcforunconflict.ServerStream
 	ctx context.Context
 }
 

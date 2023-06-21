@@ -23,7 +23,6 @@ import (
 	v3corepb "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
 	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
 	xdstestutils "github.com/qiyouForSql/grpcforunconflict/xds/internal/testutils"
-	"google.golang.org/grpc"
 )
 
 type s struct {
@@ -37,9 +36,9 @@ func Test(t *testing.T) {
 func (s) TestNewWithGRPCDial(t *testing.T) {
 	// Override the dialer with a custom one.
 	customDialerCalled := false
-	customDialer := func(target string, opts ...grpc.DialOption) (*grpc.ClientConn, error) {
+	customDialer := func(target string, opts ...grpcforunconflict.DialOption) (*grpcforunconflict.ClientConn, error) {
 		customDialerCalled = true
-		return grpc.Dial(target, opts...)
+		returngrpcforunconflict.Dial(target, opts...)
 	}
 	oldDial := grpcDial
 	grpcDial = customDialer
@@ -66,7 +65,7 @@ func (s) TestNewWithGRPCDial(t *testing.T) {
 
 	// Reset the dialer, create a new transport and ensure that our custom
 	// dialer is no longer called.
-	grpcDial = grpc.Dial
+	grpcDial = grpcforunconflict.Dial
 	c, err = New(opts)
 	defer func() {
 		if c != nil {

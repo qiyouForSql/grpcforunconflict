@@ -86,7 +86,7 @@ var file_reflection_grpc_testing_proto2_ext_proto_extTypes = []protoimpl.Extensi
 		ExtendedType:  (*ToBeExtended)(nil),
 		ExtensionType: (*int32)(nil),
 		Field:         13,
-		Name:          "grpc.testing.foo",
+		Name:          "grpcforunconflict.testing.foo",
 		Tag:           "varint,13,opt,name=foo",
 		Filename:      "reflection/grpc_testing/proto2_ext.proto",
 	},
@@ -94,7 +94,7 @@ var file_reflection_grpc_testing_proto2_ext_proto_extTypes = []protoimpl.Extensi
 		ExtendedType:  (*ToBeExtended)(nil),
 		ExtensionType: (*Extension)(nil),
 		Field:         17,
-		Name:          "grpc.testing.bar",
+		Name:          "grpcforunconflict.testing.bar",
 		Tag:           "bytes,17,opt,name=bar",
 		Filename:      "reflection/grpc_testing/proto2_ext.proto",
 	},
@@ -102,7 +102,7 @@ var file_reflection_grpc_testing_proto2_ext_proto_extTypes = []protoimpl.Extensi
 		ExtendedType:  (*ToBeExtended)(nil),
 		ExtensionType: (*SearchRequest)(nil),
 		Field:         19,
-		Name:          "grpc.testing.baz",
+		Name:          "grpcforunconflict.testing.baz",
 		Tag:           "bytes,19,opt,name=baz",
 		Filename:      "reflection/grpc_testing/proto2_ext.proto",
 	},
@@ -112,9 +112,9 @@ var file_reflection_grpc_testing_proto2_ext_proto_extTypes = []protoimpl.Extensi
 var (
 	// optional int32 foo = 13;
 	E_Foo = &file_reflection_grpc_testing_proto2_ext_proto_extTypes[0]
-	// optional grpc.testing.Extension bar = 17;
+	// optionalgrpcforunconflict.testing.Extension bar = 17;
 	E_Bar = &file_reflection_grpc_testing_proto2_ext_proto_extTypes[1]
-	// optional grpc.testing.SearchRequest baz = 19;
+	// optionalgrpcforunconflict.testing.SearchRequest baz = 19;
 	E_Baz = &file_reflection_grpc_testing_proto2_ext_proto_extTypes[2]
 )
 
@@ -163,16 +163,16 @@ func file_reflection_grpc_testing_proto2_ext_proto_rawDescGZIP() []byte {
 
 var file_reflection_grpc_testing_proto2_ext_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_reflection_grpc_testing_proto2_ext_proto_goTypes = []interface{}{
-	(*Extension)(nil),     // 0: grpc.testing.Extension
-	(*ToBeExtended)(nil),  // 1: grpc.testing.ToBeExtended
-	(*SearchRequest)(nil), // 2: grpc.testing.SearchRequest
+	(*Extension)(nil),     // 0:grpcforunconflict.testing.Extension
+	(*ToBeExtended)(nil),  // 1:grpcforunconflict.testing.ToBeExtended
+	(*SearchRequest)(nil), // 2:grpcforunconflict.testing.SearchRequest
 }
 var file_reflection_grpc_testing_proto2_ext_proto_depIdxs = []int32{
-	1, // 0: grpc.testing.foo:extendee -> grpc.testing.ToBeExtended
-	1, // 1: grpc.testing.bar:extendee -> grpc.testing.ToBeExtended
-	1, // 2: grpc.testing.baz:extendee -> grpc.testing.ToBeExtended
-	0, // 3: grpc.testing.bar:type_name -> grpc.testing.Extension
-	2, // 4: grpc.testing.baz:type_name -> grpc.testing.SearchRequest
+	1, // 0:grpcforunconflict.testing.foo:extendee ->grpcforunconflict.testing.ToBeExtended
+	1, // 1:grpcforunconflict.testing.bar:extendee ->grpcforunconflict.testing.ToBeExtended
+	1, // 2:grpcforunconflict.testing.baz:extendee ->grpcforunconflict.testing.ToBeExtended
+	0, // 3:grpcforunconflict.testing.bar:type_name ->grpcforunconflict.testing.Extension
+	2, // 4:grpcforunconflict.testing.baz:type_name ->grpcforunconflict.testing.SearchRequest
 	5, // [5:5] is the sub-list for method output_type
 	5, // [5:5] is the sub-list for method input_type
 	3, // [3:5] is the sub-list for extension type_name

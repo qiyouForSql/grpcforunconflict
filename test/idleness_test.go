@@ -26,6 +26,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/connectivity"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
@@ -34,9 +35,7 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"github.com/qiyouForSql/grpcforunconflict/resolver/manual"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -90,15 +89,15 @@ func (s) TestChannelIdleness_Disabled_NoActivity(t *testing.T) {
 
 	// Create a ClientConn with idle_timeout set to 0.
 	r := manual.NewBuilderWithScheme("whatever")
-	dopts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithResolvers(r),
-		grpc.WithIdleTimeout(0), // Disable idleness.
-		grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"round_robin":{}}]}`),
+	dopts := []grpcforunconflict.DialOption{
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithResolvers(r),
+		grpcforunconflict.WithIdleTimeout(0), // Disable idleness.
+		grpcforunconflict.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"round_robin":{}}]}`),
 	}
-	cc, err := grpc.Dial(r.Scheme()+":///test.server", dopts...)
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.server", dopts...)
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	t.Cleanup(func() { cc.Close() })
 
@@ -135,15 +134,15 @@ func (s) TestChannelIdleness_Enabled_NoActivity(t *testing.T) {
 
 	// Create a ClientConn with a short idle_timeout.
 	r := manual.NewBuilderWithScheme("whatever")
-	dopts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithResolvers(r),
-		grpc.WithIdleTimeout(defaultTestShortIdleTimeout),
-		grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"round_robin":{}}]}`),
+	dopts := []grpcforunconflict.DialOption{
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithResolvers(r),
+		grpcforunconflict.WithIdleTimeout(defaultTestShortIdleTimeout),
+		grpcforunconflict.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"round_robin":{}}]}`),
 	}
-	cc, err := grpc.Dial(r.Scheme()+":///test.server", dopts...)
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.server", dopts...)
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	t.Cleanup(func() { cc.Close() })
 
@@ -175,15 +174,15 @@ func (s) TestChannelIdleness_Enabled_OngoingCall(t *testing.T) {
 
 	// Create a ClientConn with a short idle_timeout.
 	r := manual.NewBuilderWithScheme("whatever")
-	dopts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithResolvers(r),
-		grpc.WithIdleTimeout(defaultTestShortIdleTimeout),
-		grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"round_robin":{}}]}`),
+	dopts := []grpcforunconflict.DialOption{
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithResolvers(r),
+		grpcforunconflict.WithIdleTimeout(defaultTestShortIdleTimeout),
+		grpcforunconflict.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"round_robin":{}}]}`),
 	}
-	cc, err := grpc.Dial(r.Scheme()+":///test.server", dopts...)
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.server", dopts...)
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	t.Cleanup(func() { cc.Close() })
 
@@ -235,7 +234,7 @@ func (s) TestChannelIdleness_Enabled_OngoingCall(t *testing.T) {
 
 	// Make a unary RPC that blocks on the server, thereby ensuring that the
 	// count of active RPCs on the client is non-zero.
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	if _, err := client.EmptyCall(ctx, &testpb.Empty{}); err != nil {
 		t.Errorf("EmptyCall RPC failed: %v", err)
 	}
@@ -260,15 +259,15 @@ func (s) TestChannelIdleness_Enabled_ActiveSinceLastCheck(t *testing.T) {
 
 	// Create a ClientConn with a short idle_timeout.
 	r := manual.NewBuilderWithScheme("whatever")
-	dopts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithResolvers(r),
-		grpc.WithIdleTimeout(defaultTestShortIdleTimeout),
-		grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"round_robin":{}}]}`),
+	dopts := []grpcforunconflict.DialOption{
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithResolvers(r),
+		grpcforunconflict.WithIdleTimeout(defaultTestShortIdleTimeout),
+		grpcforunconflict.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"round_robin":{}}]}`),
 	}
-	cc, err := grpc.Dial(r.Scheme()+":///test.server", dopts...)
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.server", dopts...)
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	t.Cleanup(func() { cc.Close() })
 
@@ -289,7 +288,7 @@ func (s) TestChannelIdleness_Enabled_ActiveSinceLastCheck(t *testing.T) {
 	defer sCancel()
 	go func() {
 		for ; sCtx.Err() == nil; <-time.After(defaultTestShortIdleTimeout / 4) {
-			client := testgrpc.NewTestServiceClient(cc)
+			client := testgrpcforunconflict.NewTestServiceClient(cc)
 			if _, err := client.EmptyCall(sCtx, &testpb.Empty{}); err != nil {
 				// While iterating through this for loop, at some point in time,
 				// the context deadline will expire. It is safe to ignore that
@@ -331,15 +330,15 @@ func (s) TestChannelIdleness_Enabled_ExitIdleOnRPC(t *testing.T) {
 	r.InitialState(resolver.State{Addresses: []resolver.Address{{Addr: backend.Address}}})
 
 	// Create a ClientConn with a short idle_timeout.
-	dopts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithResolvers(r),
-		grpc.WithIdleTimeout(defaultTestShortIdleTimeout),
-		grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"round_robin":{}}]}`),
+	dopts := []grpcforunconflict.DialOption{
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithResolvers(r),
+		grpcforunconflict.WithIdleTimeout(defaultTestShortIdleTimeout),
+		grpcforunconflict.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"round_robin":{}}]}`),
 	}
-	cc, err := grpc.Dial(r.Scheme()+":///test.server", dopts...)
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.server", dopts...)
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	t.Cleanup(func() { cc.Close() })
 
@@ -358,7 +357,7 @@ func (s) TestChannelIdleness_Enabled_ExitIdleOnRPC(t *testing.T) {
 
 	// Make an RPC and ensure that it succeeds and moves the channel back to
 	// READY.
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	if _, err := client.EmptyCall(ctx, &testpb.Empty{}); err != nil {
 		t.Fatalf("EmptyCall RPC failed: %v", err)
 	}
@@ -393,15 +392,15 @@ func (s) TestChannelIdleness_Enabled_IdleTimeoutRacesWithRPCs(t *testing.T) {
 	r.InitialState(resolver.State{Addresses: []resolver.Address{{Addr: backend.Address}}})
 
 	// Create a ClientConn with a short idle_timeout.
-	dopts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithResolvers(r),
-		grpc.WithIdleTimeout(defaultTestShortTimeout),
-		grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"round_robin":{}}]}`),
+	dopts := []grpcforunconflict.DialOption{
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithResolvers(r),
+		grpcforunconflict.WithIdleTimeout(defaultTestShortTimeout),
+		grpcforunconflict.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"round_robin":{}}]}`),
 	}
-	cc, err := grpc.Dial(r.Scheme()+":///test.server", dopts...)
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.server", dopts...)
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	t.Cleanup(func() { cc.Close() })
 
@@ -413,7 +412,7 @@ func (s) TestChannelIdleness_Enabled_IdleTimeoutRacesWithRPCs(t *testing.T) {
 	// Make an RPC every defaultTestShortTimeout duration so as to race with the
 	// idle timeout. Whether the idle timeout wins the race or the RPC wins the
 	// race, RPCs must succeed.
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	for i := 0; i < 20; i++ {
 		<-time.After(defaultTestShortTimeout)
 		if _, err := client.EmptyCall(ctx, &testpb.Empty{}); err != nil {
@@ -433,15 +432,15 @@ func (s) TestChannelIdleness_Connect(t *testing.T) {
 	r.InitialState(resolver.State{Addresses: []resolver.Address{{Addr: backend.Address}}})
 
 	// Create a ClientConn with a short idle_timeout.
-	dopts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithResolvers(r),
-		grpc.WithIdleTimeout(defaultTestShortIdleTimeout),
-		grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"round_robin":{}}]}`),
+	dopts := []grpcforunconflict.DialOption{
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithResolvers(r),
+		grpcforunconflict.WithIdleTimeout(defaultTestShortIdleTimeout),
+		grpcforunconflict.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"round_robin":{}}]}`),
 	}
-	cc, err := grpc.Dial(r.Scheme()+":///test.server", dopts...)
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.server", dopts...)
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	t.Cleanup(func() { cc.Close() })
 

@@ -21,6 +21,6 @@
 /*
 Package grpc implements an RPC system called gRPC.
 
-See grpc.io for more information about gRPC.
+Seegrpcforunconflict.io for more information about gRPC.
 */
-package grpcforunconflict // import "google.golang.org/grpc"
+package grpcforunconflict // import "github.com/qiyouForSql/grpcforunconflict"

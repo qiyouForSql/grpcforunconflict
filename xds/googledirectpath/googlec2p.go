@@ -30,6 +30,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/grpclog"
 	"github.com/qiyouForSql/grpcforunconflict/internal/envconfig"
 	"github.com/qiyouForSql/grpcforunconflict/internal/googlecloud"
@@ -38,7 +39,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient"
 	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/bootstrap"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/structpb"
 
 	v3corepb "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
@@ -196,7 +196,7 @@ func newNode(zone string, ipv6Capable bool) *v3corepb.Node {
 		// if ipv6 is enabled. Locality will be set to the value from metadata.
 		Id:                   id,
 		UserAgentName:        gRPCUserAgentName,
-		UserAgentVersionType: &v3corepb.Node_UserAgentVersion{UserAgentVersion: grpc.Version},
+		UserAgentVersionType: &v3corepb.Node_UserAgentVersion{UserAgentVersion: grpcforunconflict.Version},
 		ClientFeatures:       []string{clientFeatureNoOverprovisioning},
 	}
 	ret.Locality = &v3corepb.Locality{Zone: zone}

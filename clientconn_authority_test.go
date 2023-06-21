@@ -130,6 +130,6 @@ func (s) TestClientConnAuthority_CredsAndDialOptionMismatch(t *testing.T) {
 	opts := []DialOption{WithTransportCredentials(creds), WithAuthority("authority-override")}
 	if cc, err := Dial("Non-Existent.Server:8000", opts...); err == nil {
 		cc.Close()
-		t.Fatal("grpc.Dial() succeeded when expected to fail")
+		t.Fatal("grpcforunconflict.Dial() succeeded when expected to fail")
 	}
 }

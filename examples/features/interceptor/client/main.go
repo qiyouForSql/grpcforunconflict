@@ -44,17 +44,17 @@ func logger(format string, a ...interface{}) {
 }
 
 // unaryInterceptor is an example unary interceptor.
-func unaryInterceptor(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+func unaryInterceptor(ctx context.Context, method string, req, reply interface{}, cc *grpcforunconflict.ClientConn, invokergrpcforunconflict.UnaryInvoker, opts ...grpcforunconflict.CallOption) error {
 	var credsConfigured bool
 	for _, o := range opts {
-		_, ok := o.(grpc.PerRPCCredsCallOption)
+		_, ok := o.(grpcforunconflict.PerRPCCredsCallOption)
 		if ok {
 			credsConfigured = true
 			break
 		}
 	}
 	if !credsConfigured {
-		opts = append(opts, grpc.PerRPCCredentials(oauth.TokenSource{
+		opts = append(opts, grpcforunconflict.PerRPCCredentials(oauth.TokenSource{
 			TokenSource: oauth2.StaticTokenSource(&oauth2.Token{AccessToken: fallbackToken}),
 		}))
 	}
@@ -65,10 +65,10 @@ func unaryInterceptor(ctx context.Context, method string, req, reply interface{}
 	return err
 }
 
-// wrappedStream  wraps around the embedded grpc.ClientStream, and intercepts the RecvMsg and
+// wrappedStream  wraps around the embeddedgrpcforunconflict.ClientStream, and intercepts the RecvMsg and
 // SendMsg method call.
 type wrappedStream struct {
-	grpc.ClientStream
+	grpcforunconflict.ClientStream
 }
 
 func (w *wrappedStream) RecvMsg(m interface{}) error {
@@ -81,22 +81,22 @@ func (w *wrappedStream) SendMsg(m interface{}) error {
 	return w.ClientStream.SendMsg(m)
 }
 
-func newWrappedStream(s grpc.ClientStream) grpc.ClientStream {
+func newWrappedStream(sgrpcforunconflict.ClientStream) grpcforunconflict.ClientStream {
 	return &wrappedStream{s}
 }
 
 // streamInterceptor is an example stream interceptor.
-func streamInterceptor(ctx context.Context, desc *grpc.StreamDesc, cc *grpc.ClientConn, method string, streamer grpc.Streamer, opts ...grpc.CallOption) (grpc.ClientStream, error) {
+func streamInterceptor(ctx context.Context, desc *grpcforunconflict.StreamDesc, cc *grpcforunconflict.ClientConn, method string, streamergrpcforunconflict.Streamer, opts ...grpcforunconflict.CallOption) (grpcforunconflict.ClientStream, error) {
 	var credsConfigured bool
 	for _, o := range opts {
-		_, ok := o.(*grpc.PerRPCCredsCallOption)
+		_, ok := o.(*grpcforunconflict.PerRPCCredsCallOption)
 		if ok {
 			credsConfigured = true
 			break
 		}
 	}
 	if !credsConfigured {
-		opts = append(opts, grpc.PerRPCCredentials(oauth.TokenSource{
+		opts = append(opts, grpcforunconflict.PerRPCCredentials(oauth.TokenSource{
 			TokenSource: oauth2.StaticTokenSource(&oauth2.Token{AccessToken: fallbackToken}),
 		}))
 	}
@@ -152,7 +152,7 @@ func main() {
 	}
 
 	// Set up a connection to the server.
-	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(creds), grpc.WithUnaryInterceptor(unaryInterceptor), grpc.WithStreamInterceptor(streamInterceptor))
+	conn, err := grpcforunconflict.Dial(*addr, grpcforunconflict.WithTransportCredentials(creds), grpcforunconflict.WithUnaryInterceptor(unaryInterceptor), grpcforunconflict.WithStreamInterceptor(streamInterceptor))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}

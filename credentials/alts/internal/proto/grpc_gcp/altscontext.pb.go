@@ -47,7 +47,7 @@ type AltsContext struct {
 	// The record protocol negotiated for this connection.
 	RecordProtocol string `protobuf:"bytes,2,opt,name=record_protocol,json=recordProtocol,proto3" json:"record_protocol,omitempty"`
 	// The security level of the created secure channel.
-	SecurityLevel SecurityLevel `protobuf:"varint,3,opt,name=security_level,json=securityLevel,proto3,enum=grpc.gcp.SecurityLevel" json:"security_level,omitempty"`
+	SecurityLevel SecurityLevel `protobuf:"varint,3,opt,name=security_level,json=securityLevel,proto3,enum=grpcforunconflict.gcp.SecurityLevel" json:"security_level,omitempty"`
 	// The peer service account.
 	PeerServiceAccount string `protobuf:"bytes,4,opt,name=peer_service_account,json=peerServiceAccount,proto3" json:"peer_service_account,omitempty"`
 	// The local service account.
@@ -202,15 +202,15 @@ func file_grpc_gcp_altscontext_proto_rawDescGZIP() []byte {
 
 var file_grpc_gcp_altscontext_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_grpc_gcp_altscontext_proto_goTypes = []interface{}{
-	(*AltsContext)(nil),         // 0: grpc.gcp.AltsContext
-	nil,                         // 1: grpc.gcp.AltsContext.PeerAttributesEntry
-	(SecurityLevel)(0),          // 2: grpc.gcp.SecurityLevel
-	(*RpcProtocolVersions)(nil), // 3: grpc.gcp.RpcProtocolVersions
+	(*AltsContext)(nil),         // 0:grpcforunconflict.gcp.AltsContext
+	nil,                         // 1:grpcforunconflict.gcp.AltsContext.PeerAttributesEntry
+	(SecurityLevel)(0),          // 2:grpcforunconflict.gcp.SecurityLevel
+	(*RpcProtocolVersions)(nil), // 3:grpcforunconflict.gcp.RpcProtocolVersions
 }
 var file_grpc_gcp_altscontext_proto_depIdxs = []int32{
-	2, // 0: grpc.gcp.AltsContext.security_level:type_name -> grpc.gcp.SecurityLevel
-	3, // 1: grpc.gcp.AltsContext.peer_rpc_versions:type_name -> grpc.gcp.RpcProtocolVersions
-	1, // 2: grpc.gcp.AltsContext.peer_attributes:type_name -> grpc.gcp.AltsContext.PeerAttributesEntry
+	2, // 0:grpcforunconflict.gcp.AltsContext.security_level:type_name ->grpcforunconflict.gcp.SecurityLevel
+	3, // 1:grpcforunconflict.gcp.AltsContext.peer_rpc_versions:type_name ->grpcforunconflict.gcp.RpcProtocolVersions
+	1, // 2:grpcforunconflict.gcp.AltsContext.peer_attributes:type_name ->grpcforunconflict.gcp.AltsContext.PeerAttributesEntry
 	3, // [3:3] is the sub-list for method output_type
 	3, // [3:3] is the sub-list for method input_type
 	3, // [3:3] is the sub-list for extension type_name

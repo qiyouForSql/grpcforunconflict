@@ -21,10 +21,9 @@ package health_test
 import (
 	"testing"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/health"
-	healthgrpc "github.com/qiyouForSql/grpcforunconflict/health/grpc_health_v1"
 	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
-	"google.golang.org/grpc"
 )
 
 type s struct {
@@ -37,7 +36,7 @@ func Test(t *testing.T) {
 
 // Make sure the service implementation complies with the proto definition.
 func (s) TestRegister(t *testing.T) {
-	s := grpc.NewServer()
-	healthgrpc.RegisterHealthServer(s, health.NewServer())
+	s := grpcforunconflict.NewServer()
+	healthgrpcforunconflict.RegisterHealthServer(s, health.NewServer())
 	s.Stop()
 }

@@ -33,7 +33,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
-	"google.golang.org/grpc"
 )
 
 const (
@@ -647,7 +646,7 @@ func (s) TestBalancerGracefulSwitch(t *testing.T) {
 type wrappedPickFirstBalancerBuilder struct{}
 
 func (wrappedPickFirstBalancerBuilder) Build(cc balancer.ClientConn, opts balancer.BuildOptions) balancer.Balancer {
-	builder := balancer.Get(grpc.PickFirstBalancerName)
+	builder := balancer.Get(grpcforunconflict.PickFirstBalancerName)
 	wpfb := &wrappedPickFirstBalancer{
 		ClientConn: cc,
 	}

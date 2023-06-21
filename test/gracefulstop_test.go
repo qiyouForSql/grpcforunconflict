@@ -26,14 +26,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
 	"github.com/qiyouForSql/grpcforunconflict/status"
 	"golang.org/x/net/http2"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -113,7 +112,7 @@ func (s) TestGracefulStop(t *testing.T) {
 	d := func(ctx context.Context, _ string) (net.Conn, error) { return dlis.Dial(ctx) }
 
 	ss := &stubserver.StubServer{
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			_, err := stream.Recv()
 			if err != nil {
 				return err
@@ -121,8 +120,8 @@ func (s) TestGracefulStop(t *testing.T) {
 			return stream.Send(&testpb.StreamingOutputCallResponse{})
 		},
 	}
-	s := grpc.NewServer()
-	testgrpc.RegisterTestServiceServer(s, ss)
+	s := grpcforunconflict.NewServer()
+	testgrpcforunconflict.RegisterTestServiceServer(s, ss)
 
 	// 1. Start Server
 	wg := sync.WaitGroup{}
@@ -150,11 +149,11 @@ func (s) TestGracefulStop(t *testing.T) {
 	// even though GracefulStop has closed the listener.
 	ctx, dialCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer dialCancel()
-	cc, err := grpc.DialContext(ctx, "", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithContextDialer(d))
+	cc, err := grpcforunconflict.DialContext(ctx, "", grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithContextDialer(d))
 	if err != nil {
-		t.Fatalf("grpc.DialContext(_, %q, _) = %v", lis.Addr().String(), err)
+		t.Fatalf("grpcforunconflict.DialContext(_, %q, _) = %v", lis.Addr().String(), err)
 	}
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	defer cc.Close()
 
 	// 4. Send an RPC on the new connection.
@@ -175,7 +174,7 @@ func (s) TestGracefulStopClosesConnAfterLastStream(t *testing.T) {
 	handlerCalled := make(chan struct{})
 	gracefulStopCalled := make(chan struct{})
 
-	ts := &funcServer{streamingInputCall: func(stream testgrpc.TestService_StreamingInputCallServer) error {
+	ts := &funcServer{streamingInputCall: func(stream testgrpcforunconflict.TestService_StreamingInputCallServer) error {
 		close(handlerCalled) // Initiate call to GracefulStop.
 		<-gracefulStopCalled // Wait for GOAWAYs to be received by the client.
 		return nil
@@ -186,7 +185,7 @@ func (s) TestGracefulStopClosesConnAfterLastStream(t *testing.T) {
 	defer te.tearDown()
 
 	te.withServerTester(func(st *serverTester) {
-		st.writeHeadersGRPC(1, "/grpc.testing.TestService/StreamingInputCall", false)
+		st.writeHeadersGRPC(1, "/grpcforunconflict.testing.TestService/StreamingInputCall", false)
 
 		<-handlerCalled // Wait for the server to invoke its handler.
 

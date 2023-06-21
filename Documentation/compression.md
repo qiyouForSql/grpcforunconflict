@@ -34,8 +34,8 @@ API.
 There are two legacy functions and one new function to configure compression:
 
 ```go
-func WithCompressor(grpc.Compressor) DialOption {}
-func WithDecompressor(grpc.Decompressor) DialOption {}
+func WithCompressor(grpcforunconflict.Compressor) DialOption {}
+func WithDecompressor(grpcforunconflict.Decompressor) DialOption {}
 func UseCompressor(name) CallOption {}
 ```
 
@@ -61,8 +61,8 @@ For incoming responses, the following rules are applied in order:
 
 There are two legacy functions to configure compression:
 ```go
-func RPCCompressor(grpc.Compressor) ServerOption {}
-func RPCDecompressor(grpc.Decompressor) ServerOption {}
+func RPCCompressor(grpcforunconflict.Compressor) ServerOption {}
+func RPCDecompressor(grpcforunconflict.Decompressor) ServerOption {}
 ```
 
 For incoming requests, the following rules are applied in order:

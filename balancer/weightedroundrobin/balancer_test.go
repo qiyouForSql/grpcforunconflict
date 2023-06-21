@@ -27,6 +27,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/internal"
 	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
 	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
@@ -34,12 +35,10 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/orca"
 	"github.com/qiyouForSql/grpcforunconflict/peer"
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
-	"google.golang.org/grpc"
 
 	wrr "github.com/qiyouForSql/grpcforunconflict/balancer/weightedroundrobin"
 	iwrr "github.com/qiyouForSql/grpcforunconflict/balancer/weightedroundrobin/internal"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -118,7 +117,7 @@ func startServer(t *testing.T, r reportType) *testServer {
 		},
 	}
 
-	var sopts []grpc.ServerOption
+	var sopts []grpcforunconflict.ServerOption
 	if r == reportCall || r == reportBoth {
 		sopts = append(sopts, orca.CallMetricsServerOption(nil))
 	}
@@ -129,7 +128,7 @@ func startServer(t *testing.T, r reportType) *testServer {
 			MinReportingInterval:  10 * time.Millisecond,
 		}
 		internal.ORCAAllowAnyMinReportingInterval.(func(so *orca.ServiceOptions))(&oso)
-		sopts = append(sopts, stubserver.RegisterServiceServerOption(func(s *grpc.Server) {
+		sopts = append(sopts, stubserver.RegisterServiceServerOption(func(s *grpcforunconflict.Server) {
 			if err := orca.Register(s, oso); err != nil {
 				t.Fatalf("Failed to register orca service: %v", err)
 			}
@@ -179,7 +178,7 @@ func (s) TestBalancer_OneAddress(t *testing.T) {
 			srv := startServer(t, tc.rt)
 
 			sc := svcConfig(t, tc.cfg)
-			if err := srv.StartClient(grpc.WithDefaultServiceConfig(sc)); err != nil {
+			if err := srv.StartClient(grpcforunconflict.WithDefaultServiceConfig(sc)); err != nil {
 				t.Fatalf("Error starting client: %v", err)
 			}
 
@@ -206,7 +205,7 @@ func (s) TestBalancer_TwoAddresses_ReportingDisabled(t *testing.T) {
 	srv2 := startServer(t, reportNone)
 
 	sc := svcConfig(t, perCallConfig)
-	if err := srv1.StartClient(grpc.WithDefaultServiceConfig(sc)); err != nil {
+	if err := srv1.StartClient(grpcforunconflict.WithDefaultServiceConfig(sc)); err != nil {
 		t.Fatalf("Error starting client: %v", err)
 	}
 	addrs := []resolver.Address{{Addr: srv1.Address}, {Addr: srv2.Address}}
@@ -236,7 +235,7 @@ func (s) TestBalancer_TwoAddresses_ReportingEnabledPerCall(t *testing.T) {
 	srv2.callMetrics.SetApplicationUtilization(.1)
 
 	sc := svcConfig(t, perCallConfig)
-	if err := srv1.StartClient(grpc.WithDefaultServiceConfig(sc)); err != nil {
+	if err := srv1.StartClient(grpcforunconflict.WithDefaultServiceConfig(sc)); err != nil {
 		t.Fatalf("Error starting client: %v", err)
 	}
 	addrs := []resolver.Address{{Addr: srv1.Address}, {Addr: srv2.Address}}
@@ -291,7 +290,7 @@ func (s) TestBalancer_TwoAddresses_ReportingEnabledOOB(t *testing.T) {
 			tc.utilSetter(srv2.oobMetrics, 0.1)
 
 			sc := svcConfig(t, oobConfig)
-			if err := srv1.StartClient(grpc.WithDefaultServiceConfig(sc)); err != nil {
+			if err := srv1.StartClient(grpcforunconflict.WithDefaultServiceConfig(sc)); err != nil {
 				t.Fatalf("Error starting client: %v", err)
 			}
 			addrs := []resolver.Address{{Addr: srv1.Address}, {Addr: srv2.Address}}
@@ -326,7 +325,7 @@ func (s) TestBalancer_TwoAddresses_UpdateLoads(t *testing.T) {
 	srv2.oobMetrics.SetApplicationUtilization(.1)
 
 	sc := svcConfig(t, oobConfig)
-	if err := srv1.StartClient(grpc.WithDefaultServiceConfig(sc)); err != nil {
+	if err := srv1.StartClient(grpcforunconflict.WithDefaultServiceConfig(sc)); err != nil {
 		t.Fatalf("Error starting client: %v", err)
 	}
 	addrs := []resolver.Address{{Addr: srv1.Address}, {Addr: srv2.Address}}
@@ -380,7 +379,7 @@ func (s) TestBalancer_TwoAddresses_OOBThenPerCall(t *testing.T) {
 	srv2.callMetrics.SetApplicationUtilization(1.0)
 
 	sc := svcConfig(t, oobConfig)
-	if err := srv1.StartClient(grpc.WithDefaultServiceConfig(sc)); err != nil {
+	if err := srv1.StartClient(grpcforunconflict.WithDefaultServiceConfig(sc)); err != nil {
 		t.Fatalf("Error starting client: %v", err)
 	}
 	addrs := []resolver.Address{{Addr: srv1.Address}, {Addr: srv2.Address}}
@@ -433,7 +432,7 @@ func (s) TestBalancer_TwoAddresses_ErrorPenalty(t *testing.T) {
 	// srv2 weight after:  10.0 / 1.0 = 10.0
 
 	sc := svcConfig(t, oobConfig)
-	if err := srv1.StartClient(grpc.WithDefaultServiceConfig(sc)); err != nil {
+	if err := srv1.StartClient(grpcforunconflict.WithDefaultServiceConfig(sc)); err != nil {
 		t.Fatalf("Error starting client: %v", err)
 	}
 	addrs := []resolver.Address{{Addr: srv1.Address}, {Addr: srv2.Address}}
@@ -509,7 +508,7 @@ func (s) TestBalancer_TwoAddresses_BlackoutPeriod(t *testing.T) {
 		cfg := oobConfig
 		cfg.BlackoutPeriod = tc.blackoutPeriodCfg
 		sc := svcConfig(t, cfg)
-		if err := srv1.StartClient(grpc.WithDefaultServiceConfig(sc)); err != nil {
+		if err := srv1.StartClient(grpcforunconflict.WithDefaultServiceConfig(sc)); err != nil {
 			t.Fatalf("Error starting client: %v", err)
 		}
 		addrs := []resolver.Address{{Addr: srv1.Address}, {Addr: srv2.Address}}
@@ -577,7 +576,7 @@ func (s) TestBalancer_TwoAddresses_WeightExpiration(t *testing.T) {
 	cfg := oobConfig
 	cfg.OOBReportingPeriod = stringp("60s")
 	sc := svcConfig(t, cfg)
-	if err := srv1.StartClient(grpc.WithDefaultServiceConfig(sc)); err != nil {
+	if err := srv1.StartClient(grpcforunconflict.WithDefaultServiceConfig(sc)); err != nil {
 		t.Fatalf("Error starting client: %v", err)
 	}
 	addrs := []resolver.Address{{Addr: srv1.Address}, {Addr: srv2.Address}}
@@ -631,7 +630,7 @@ func (s) TestBalancer_AddressesChanging(t *testing.T) {
 	srv4.oobMetrics.SetApplicationUtilization(.1)
 
 	sc := svcConfig(t, oobConfig)
-	if err := srv1.StartClient(grpc.WithDefaultServiceConfig(sc)); err != nil {
+	if err := srv1.StartClient(grpcforunconflict.WithDefaultServiceConfig(sc)); err != nil {
 		t.Fatalf("Error starting client: %v", err)
 	}
 	srv2.Client = srv1.Client
@@ -673,12 +672,12 @@ func (s) TestBalancer_AddressesChanging(t *testing.T) {
 	checkWeights(ctx, t, srvWeight{srv2, 10}, srvWeight{srv4, 20})
 }
 
-func ensureReached(ctx context.Context, t *testing.T, c testgrpc.TestServiceClient, n int) {
+func ensureReached(ctx context.Context, t *testing.T, c testgrpcforunconflict.TestServiceClient, n int) {
 	t.Helper()
 	reached := make(map[string]struct{})
 	for len(reached) != n {
 		var peer peer.Peer
-		if _, err := c.EmptyCall(ctx, &testpb.Empty{}, grpc.Peer(&peer)); err != nil {
+		if _, err := c.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Peer(&peer)); err != nil {
 			t.Fatalf("Error from EmptyCall: %v", err)
 		}
 		reached[peer.Addr.String()] = struct{}{}
@@ -714,7 +713,7 @@ func checkWeights(ctx context.Context, t *testing.T, sws ...srvWeight) {
 		serverCounts := make(map[string]int)
 		for i := 0; i < rrIterations; i++ {
 			var peer peer.Peer
-			if _, err := c.EmptyCall(ctx, &testpb.Empty{}, grpc.Peer(&peer)); err != nil {
+			if _, err := c.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Peer(&peer)); err != nil {
 				t.Fatalf("Error from EmptyCall: %v; timed out waiting for weighted RR behavior?", err)
 			}
 			serverCounts[peer.Addr.String()]++

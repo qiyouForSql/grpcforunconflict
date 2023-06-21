@@ -21,14 +21,14 @@ package grpclb
 import (
 	"encoding/json"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/balancer/roundrobin"
 	"github.com/qiyouForSql/grpcforunconflict/serviceconfig"
-	"google.golang.org/grpc"
 )
 
 const (
 	roundRobinName = roundrobin.Name
-	pickFirstName  = grpc.PickFirstBalancerName
+	pickFirstName  = grpcforunconflict.PickFirstBalancerName
 )
 
 type grpclbServiceConfig struct {

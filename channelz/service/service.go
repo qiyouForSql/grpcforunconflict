@@ -25,7 +25,6 @@ import (
 
 	"github.com/golang/protobuf/ptypes"
 	wrpb "github.com/golang/protobuf/ptypes/wrappers"
-	channelzgrpc "github.com/qiyouForSql/grpcforunconflict/channelz/grpc_channelz_v1"
 	channelzpb "github.com/qiyouForSql/grpcforunconflict/channelz/grpc_channelz_v1"
 
 	"github.com/qiyouForSql/grpcforunconflict/codes"
@@ -34,7 +33,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/grpclog"
 	"github.com/qiyouForSql/grpcforunconflict/internal/channelz"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/protoadapt"
 	"google.golang.org/protobuf/types/known/anypb"
 )
@@ -50,16 +48,16 @@ var logger = grpclog.Component("channelz")
 // Note: it is preferred to use the admin API
 // (https://pkg.go.dev/google.golang.org/grpc/admin#Register) instead to
 // register Channelz and other administrative services.
-func RegisterChannelzServiceToServer(s grpc.ServiceRegistrar) {
-	channelzgrpc.RegisterChannelzServer(s, newCZServer())
+func RegisterChannelzServiceToServer(sgrpcforunconflict.ServiceRegistrar) {
+	channelzgrpcforunconflict.RegisterChannelzServer(s, newCZServer())
 }
 
-func newCZServer() channelzgrpc.ChannelzServer {
+func newCZServer() channelzgrpcforunconflict.ChannelzServer {
 	return &serverImpl{}
 }
 
 type serverImpl struct {
-	channelzgrpc.UnimplementedChannelzServer
+	channelzgrpcforunconflict.UnimplementedChannelzServer
 }
 
 func connectivityStateToProto(s connectivity.State) *channelzpb.ChannelConnectivityState {

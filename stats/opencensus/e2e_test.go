@@ -37,7 +37,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/internal/leakcheck"
 	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -280,7 +279,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 				Body: make([]byte, 10000),
 			}}, nil
 		},
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			for {
 				_, err := stream.Recv()
 				if err == io.EOF {
@@ -289,7 +288,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 			}
 		},
 	}
-	if err := ss.Start([]grpc.ServerOption{ServerOption(TraceOptions{})}, DialOption(TraceOptions{})); err != nil {
+	if err := ss.Start([]grpcforunconflict.ServerOption{ServerOption(TraceOptions{})}, DialOption(TraceOptions{})); err != nil {
 		t.Fatalf("Error starting endpoint server: %v", err)
 	}
 	defer ss.Stop()
@@ -299,7 +298,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 	// certain metrics to be emitted.
 	if _, err := ss.Client.UnaryCall(ctx, &testpb.SimpleRequest{Payload: &testpb.Payload{
 		Body: make([]byte, 10000),
-	}}, grpc.UseCompressor(gzip.Name)); err != nil {
+	}}, grpcforunconflict.UseCompressor(gzip.Name)); err != nil {
 		t.Fatalf("Unexpected error from UnaryCall: %v", err)
 	}
 	stream, err := ss.Client.FullDuplexCall(ctx)
@@ -336,7 +335,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   cmtk,
-								Value: "grpc.testing.TestService/UnaryCall",
+								Value: "grpcforunconflict.testing.TestService/UnaryCall",
 							},
 						},
 						Data: &view.CountData{
@@ -347,7 +346,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   cmtk,
-								Value: "grpc.testing.TestService/FullDuplexCall",
+								Value: "grpcforunconflict.testing.TestService/FullDuplexCall",
 							},
 						},
 						Data: &view.CountData{
@@ -371,7 +370,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   smtk,
-								Value: "grpc.testing.TestService/UnaryCall",
+								Value: "grpcforunconflict.testing.TestService/UnaryCall",
 							},
 						},
 						Data: &view.CountData{
@@ -382,7 +381,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   smtk,
-								Value: "grpc.testing.TestService/FullDuplexCall",
+								Value: "grpcforunconflict.testing.TestService/FullDuplexCall",
 							},
 						},
 						Data: &view.CountData{
@@ -407,7 +406,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   cmtk,
-								Value: "grpc.testing.TestService/UnaryCall",
+								Value: "grpcforunconflict.testing.TestService/UnaryCall",
 							},
 							{
 								Key:   cstk,
@@ -422,7 +421,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   cmtk,
-								Value: "grpc.testing.TestService/FullDuplexCall",
+								Value: "grpcforunconflict.testing.TestService/FullDuplexCall",
 							},
 							{
 								Key:   cstk,
@@ -451,7 +450,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   smtk,
-								Value: "grpc.testing.TestService/UnaryCall",
+								Value: "grpcforunconflict.testing.TestService/UnaryCall",
 							},
 							{
 								Key:   sstk,
@@ -466,7 +465,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   smtk,
-								Value: "grpc.testing.TestService/FullDuplexCall",
+								Value: "grpcforunconflict.testing.TestService/FullDuplexCall",
 							},
 							{
 								Key:   sstk,
@@ -494,7 +493,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   cmtk,
-								Value: "grpc.testing.TestService/UnaryCall",
+								Value: "grpcforunconflict.testing.TestService/UnaryCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -506,7 +505,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   cmtk,
-								Value: "grpc.testing.TestService/FullDuplexCall",
+								Value: "grpcforunconflict.testing.TestService/FullDuplexCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -531,7 +530,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   cmtk,
-								Value: "grpc.testing.TestService/UnaryCall",
+								Value: "grpcforunconflict.testing.TestService/UnaryCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -543,7 +542,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   cmtk,
-								Value: "grpc.testing.TestService/FullDuplexCall",
+								Value: "grpcforunconflict.testing.TestService/FullDuplexCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -568,7 +567,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   smtk,
-								Value: "grpc.testing.TestService/UnaryCall",
+								Value: "grpcforunconflict.testing.TestService/UnaryCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -580,7 +579,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   smtk,
-								Value: "grpc.testing.TestService/FullDuplexCall",
+								Value: "grpcforunconflict.testing.TestService/FullDuplexCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -605,7 +604,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   smtk,
-								Value: "grpc.testing.TestService/UnaryCall",
+								Value: "grpcforunconflict.testing.TestService/UnaryCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -617,7 +616,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   smtk,
-								Value: "grpc.testing.TestService/FullDuplexCall",
+								Value: "grpcforunconflict.testing.TestService/FullDuplexCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -642,7 +641,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   cmtk,
-								Value: "grpc.testing.TestService/UnaryCall",
+								Value: "grpcforunconflict.testing.TestService/UnaryCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -654,7 +653,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   cmtk,
-								Value: "grpc.testing.TestService/FullDuplexCall",
+								Value: "grpcforunconflict.testing.TestService/FullDuplexCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -679,7 +678,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   cmtk,
-								Value: "grpc.testing.TestService/UnaryCall",
+								Value: "grpcforunconflict.testing.TestService/UnaryCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -691,7 +690,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   cmtk,
-								Value: "grpc.testing.TestService/FullDuplexCall",
+								Value: "grpcforunconflict.testing.TestService/FullDuplexCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -716,7 +715,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   smtk,
-								Value: "grpc.testing.TestService/UnaryCall",
+								Value: "grpcforunconflict.testing.TestService/UnaryCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -728,7 +727,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   smtk,
-								Value: "grpc.testing.TestService/FullDuplexCall",
+								Value: "grpcforunconflict.testing.TestService/FullDuplexCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -753,7 +752,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   smtk,
-								Value: "grpc.testing.TestService/UnaryCall",
+								Value: "grpcforunconflict.testing.TestService/UnaryCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -765,7 +764,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   smtk,
-								Value: "grpc.testing.TestService/FullDuplexCall",
+								Value: "grpcforunconflict.testing.TestService/FullDuplexCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -790,7 +789,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   cmtk,
-								Value: "grpc.testing.TestService/UnaryCall",
+								Value: "grpcforunconflict.testing.TestService/UnaryCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -802,7 +801,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   cmtk,
-								Value: "grpc.testing.TestService/FullDuplexCall",
+								Value: "grpcforunconflict.testing.TestService/FullDuplexCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -827,7 +826,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   smtk,
-								Value: "grpc.testing.TestService/UnaryCall",
+								Value: "grpcforunconflict.testing.TestService/UnaryCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -839,7 +838,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   smtk,
-								Value: "grpc.testing.TestService/FullDuplexCall",
+								Value: "grpcforunconflict.testing.TestService/FullDuplexCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -864,7 +863,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   cmtk,
-								Value: "grpc.testing.TestService/UnaryCall",
+								Value: "grpcforunconflict.testing.TestService/UnaryCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -876,7 +875,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   cmtk,
-								Value: "grpc.testing.TestService/FullDuplexCall",
+								Value: "grpcforunconflict.testing.TestService/FullDuplexCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -901,7 +900,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   smtk,
-								Value: "grpc.testing.TestService/UnaryCall",
+								Value: "grpcforunconflict.testing.TestService/UnaryCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -913,7 +912,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 						Tags: []tag.Tag{
 							{
 								Key:   smtk,
-								Value: "grpc.testing.TestService/FullDuplexCall",
+								Value: "grpcforunconflict.testing.TestService/FullDuplexCall",
 							},
 						},
 						Data: &view.DistributionData{
@@ -930,13 +929,13 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 				{
 					{
 						Key:   cmtk,
-						Value: "grpc.testing.TestService/UnaryCall",
+						Value: "grpcforunconflict.testing.TestService/UnaryCall",
 					},
 				},
 				{
 					{
 						Key:   cmtk,
-						Value: "grpc.testing.TestService/FullDuplexCall",
+						Value: "grpcforunconflict.testing.TestService/FullDuplexCall",
 					},
 				},
 			},
@@ -947,13 +946,13 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 				{
 					{
 						Key:   smtk,
-						Value: "grpc.testing.TestService/UnaryCall",
+						Value: "grpcforunconflict.testing.TestService/UnaryCall",
 					},
 				},
 				{
 					{
 						Key:   smtk,
-						Value: "grpc.testing.TestService/FullDuplexCall",
+						Value: "grpcforunconflict.testing.TestService/FullDuplexCall",
 					},
 				},
 			},
@@ -965,7 +964,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 				{
 					{
 						Key:   cmtk,
-						Value: "grpc.testing.TestService/UnaryCall",
+						Value: "grpcforunconflict.testing.TestService/UnaryCall",
 					},
 					{
 						Key:   cstk,
@@ -975,7 +974,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 				{
 					{
 						Key:   cmtk,
-						Value: "grpc.testing.TestService/FullDuplexCall",
+						Value: "grpcforunconflict.testing.TestService/FullDuplexCall",
 					},
 					{
 						Key:   cstk,
@@ -1004,7 +1003,7 @@ func (s) TestAllMetricsOneFunction(t *testing.T) {
 		// declare the exact data you want, make sure the latency
 		// measurement points for the two RPCs above fall within buckets
 		// that fall into less than 5 seconds, which is the rpc timeout.
-		if metricName == "grpc.io/client/roundtrip_latency" || metricName == "grpc.io/server/server_latency" || metricName == "grpc.io/client/api_latency" {
+		if metricName == "grpcforunconflict.io/client/roundtrip_latency" || metricName == "grpcforunconflict.io/server/server_latency" || metricName == "grpcforunconflict.io/client/api_latency" {
 			// RPCs have a context timeout of 5s, so all the recorded
 			// measurements (one per RPC - two total) should fall within 5
 			// second buckets.
@@ -1048,7 +1047,7 @@ func (s) TestOpenCensusTags(t *testing.T) {
 			return &testpb.SimpleResponse{}, nil
 		},
 	}
-	if err := ss.Start([]grpc.ServerOption{ServerOption(TraceOptions{})}, DialOption(TraceOptions{})); err != nil {
+	if err := ss.Start([]grpcforunconflict.ServerOption{ServerOption(TraceOptions{})}, DialOption(TraceOptions{})); err != nil {
 		t.Fatalf("Error starting endpoint server: %v", err)
 	}
 	defer ss.Stop()
@@ -1061,7 +1060,7 @@ func (s) TestOpenCensusTags(t *testing.T) {
 	// server application code.
 	go func() {
 		defer wg.Done()
-		unaryCallMethodName := "grpc.testing.TestService/UnaryCall"
+		unaryCallMethodName := "grpcforunconflict.testing.TestService/UnaryCall"
 		ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 		defer cancel()
 		// Attempt to receive the tag map from the first RPC.
@@ -1372,7 +1371,7 @@ func (s) TestSpan(t *testing.T) {
 		UnaryCallF: func(ctx context.Context, in *testpb.SimpleRequest) (*testpb.SimpleResponse, error) {
 			return &testpb.SimpleResponse{}, nil
 		},
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			for {
 				_, err := stream.Recv()
 				if err == io.EOF {
@@ -1381,7 +1380,7 @@ func (s) TestSpan(t *testing.T) {
 			}
 		},
 	}
-	if err := ss.Start([]grpc.ServerOption{ServerOption(so)}, DialOption(so)); err != nil {
+	if err := ss.Start([]grpcforunconflict.ServerOption{ServerOption(so)}, DialOption(so)); err != nil {
 		t.Fatalf("Error starting endpoint server: %v", err)
 	}
 	defer ss.Stop()
@@ -1399,7 +1398,7 @@ func (s) TestSpan(t *testing.T) {
 			sc: trace.SpanContext{
 				TraceOptions: 1,
 			},
-			name: "Attempt.grpc.testing.TestService.UnaryCall",
+			name: "Attempt.grpcforunconflict.testing.TestService.UnaryCall",
 			messageEvents: []trace.MessageEvent{
 				{
 					EventType:            trace.MessageEventTypeSent,
@@ -1422,7 +1421,7 @@ func (s) TestSpan(t *testing.T) {
 				TraceOptions: 1,
 			},
 			spanKind: trace.SpanKindServer,
-			name:     "grpc.testing.TestService.UnaryCall",
+			name:     "grpcforunconflict.testing.TestService.UnaryCall",
 			// message id - "must be calculated as two different counters
 			// starting from 1 one for sent messages and one for received
 			// message. This way we guarantee that the values will be consistent
@@ -1456,7 +1455,7 @@ func (s) TestSpan(t *testing.T) {
 				TraceOptions: 1,
 			},
 			spanKind:        trace.SpanKindClient,
-			name:            "grpc.testing.TestService.UnaryCall",
+			name:            "grpcforunconflict.testing.TestService.UnaryCall",
 			hasRemoteParent: false,
 			childSpanCount:  1,
 		},
@@ -1515,7 +1514,7 @@ func (s) TestSpan(t *testing.T) {
 			sc: trace.SpanContext{
 				TraceOptions: 1,
 			},
-			name: "Attempt.grpc.testing.TestService.FullDuplexCall",
+			name: "Attempt.grpcforunconflict.testing.TestService.FullDuplexCall",
 			messageEvents: []trace.MessageEvent{
 				{
 					EventType: trace.MessageEventTypeSent,
@@ -1533,7 +1532,7 @@ func (s) TestSpan(t *testing.T) {
 				TraceOptions: 1,
 			},
 			spanKind: trace.SpanKindServer,
-			name:     "grpc.testing.TestService.FullDuplexCall",
+			name:     "grpcforunconflict.testing.TestService.FullDuplexCall",
 			links: []trace.Link{
 				{
 					Type: trace.LinkTypeChild,
@@ -1556,7 +1555,7 @@ func (s) TestSpan(t *testing.T) {
 				TraceOptions: 1,
 			},
 			spanKind:        trace.SpanKindClient,
-			name:            "grpc.testing.TestService.FullDuplexCall",
+			name:            "grpcforunconflict.testing.TestService.FullDuplexCall",
 			hasRemoteParent: false,
 			childSpanCount:  1,
 		},

@@ -29,18 +29,14 @@ import (
 
 	"github.com/qiyouForSql/grpcforunconflict/admin"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
+	xdscreds "github.com/qiyouForSql/grpcforunconflict/credentials/xds"
 	"github.com/qiyouForSql/grpcforunconflict/grpclog"
 	"github.com/qiyouForSql/grpcforunconflict/health"
+	healthpb "github.com/qiyouForSql/grpcforunconflict/health/grpc_health_v1"
+	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	"github.com/qiyouForSql/grpcforunconflict/metadata"
 	"github.com/qiyouForSql/grpcforunconflict/reflection"
 	"github.com/qiyouForSql/grpcforunconflict/xds"
-	"google.golang.org/grpc"
-
-	xdscreds "github.com/qiyouForSql/grpcforunconflict/credentials/xds"
-	healthgrpc "github.com/qiyouForSql/grpcforunconflict/health/grpc_health_v1"
-	healthpb "github.com/qiyouForSql/grpcforunconflict/health/grpc_health_v1"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
-	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 var (
@@ -65,27 +61,27 @@ func getHostname() string {
 }
 
 // testServiceImpl provides an implementation of the TestService defined in
-// grpc.testing package.
+// grpcforunconflict.testing package.
 type testServiceImpl struct {
-	testgrpc.UnimplementedTestServiceServer
+	testgrpcforunconflict.UnimplementedTestServiceServer
 	hostname string
 	serverID string
 }
 
 func (s *testServiceImpl) EmptyCall(ctx context.Context, _ *testpb.Empty) (*testpb.Empty, error) {
-	grpc.SetHeader(ctx, metadata.Pairs("hostname", s.hostname))
+	grpcforunconflict.SetHeader(ctx, metadata.Pairs("hostname", s.hostname))
 	return &testpb.Empty{}, nil
 }
 
 func (s *testServiceImpl) UnaryCall(ctx context.Context, in *testpb.SimpleRequest) (*testpb.SimpleResponse, error) {
-	grpc.SetHeader(ctx, metadata.Pairs("hostname", s.hostname))
+	grpcforunconflict.SetHeader(ctx, metadata.Pairs("hostname", s.hostname))
 	return &testpb.SimpleResponse{ServerId: s.serverID, Hostname: s.hostname}, nil
 }
 
 // xdsUpdateHealthServiceImpl provides an implementation of the
-// XdsUpdateHealthService defined in grpc.testing package.
+// XdsUpdateHealthService defined ingrpcforunconflict.testing package.
 type xdsUpdateHealthServiceImpl struct {
-	testgrpc.UnimplementedXdsUpdateHealthServiceServer
+	testgrpcforunconflict.UnimplementedXdsUpdateHealthServiceServer
 	healthServer *health.Server
 }
 
@@ -124,11 +120,11 @@ func main() {
 			logger.Fatalf("net.Listen(%s) failed: %v", addr, err)
 		}
 
-		server := grpc.NewServer()
-		testgrpc.RegisterTestServiceServer(server, testService)
+		server := grpcforunconflict.NewServer()
+		testgrpcforunconflict.RegisterTestServiceServer(server, testService)
 		healthServer.SetServingStatus("", healthpb.HealthCheckResponse_SERVING)
-		healthgrpc.RegisterHealthServer(server, healthServer)
-		testgrpc.RegisterXdsUpdateHealthServiceServer(server, updateHealthService)
+		healthgrpcforunconflict.RegisterHealthServer(server, healthServer)
+		testgrpcforunconflict.RegisterXdsUpdateHealthServiceServer(server, updateHealthService)
 		reflection.Register(server)
 		cleanup, err := admin.Register(server)
 		if err != nil {
@@ -156,8 +152,8 @@ func main() {
 
 	// Create an xDS enabled gRPC server, register the test service
 	// implementation and start serving.
-	testServer := xds.NewGRPCServer(grpc.Creds(creds), xds.ServingModeCallback(xdsServingModeCallback))
-	testgrpc.RegisterTestServiceServer(testServer, testService)
+	testServer := xds.NewGRPCServer(grpcforunconflict.Creds(creds), xds.ServingModeCallback(xdsServingModeCallback))
+	testgrpcforunconflict.RegisterTestServiceServer(testServer, testService)
 	go func() {
 		if err := testServer.Serve(testLis); err != nil {
 			logger.Errorf("test server Serve() failed: %v", err)
@@ -174,10 +170,10 @@ func main() {
 
 	// Create a regular gRPC server and register the maintenance services on
 	// it and start serving.
-	maintenanceServer := grpc.NewServer()
+	maintenanceServer := grpcforunconflict.NewServer()
 	healthServer.SetServingStatus("", healthpb.HealthCheckResponse_SERVING)
-	healthgrpc.RegisterHealthServer(maintenanceServer, healthServer)
-	testgrpc.RegisterXdsUpdateHealthServiceServer(maintenanceServer, updateHealthService)
+	healthgrpcforunconflict.RegisterHealthServer(maintenanceServer, healthServer)
+	testgrpcforunconflict.RegisterXdsUpdateHealthServiceServer(maintenanceServer, updateHealthService)
 	reflection.Register(maintenanceServer)
 	cleanup, err := admin.Register(maintenanceServer)
 	if err != nil {

@@ -27,12 +27,9 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
+	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"github.com/qiyouForSql/grpcforunconflict/resolver/manual"
-	"google.golang.org/grpc"
-
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
-	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 
 	_ "github.com/qiyouForSql/grpcforunconflict/xds/internal/balancer/ringhash" // Register the ring_hash_experimental LB policy.
 )
@@ -51,7 +48,7 @@ const (
 )
 
 type testService struct {
-	testgrpc.TestServiceServer
+	testgrpcforunconflict.TestServiceServer
 }
 
 func (*testService) EmptyCall(context.Context, *testpb.Empty) (*testpb.Empty, error) {
@@ -71,9 +68,9 @@ func (s) TestRingHash_ReconnectToMoveOutOfTransientFailure(t *testing.T) {
 	lis := testutils.NewRestartableListener(l)
 
 	// Start a server backend exposing the test service.
-	server := grpc.NewServer()
+	server := grpcforunconflict.NewServer()
 	defer server.Stop()
-	testgrpc.RegisterTestServiceServer(server, &testService{})
+	testgrpcforunconflict.RegisterTestServiceServer(server, &testService{})
 	go func() {
 		if err := server.Serve(lis); err != nil {
 			t.Errorf("Serve() failed: %v", err)
@@ -85,12 +82,12 @@ func (s) TestRingHash_ReconnectToMoveOutOfTransientFailure(t *testing.T) {
 	// the use of the ring_hash_experimental LB policy.
 	const ringHashServiceConfig = `{"loadBalancingConfig": [{"ring_hash_experimental":{}}]}`
 	r := manual.NewBuilderWithScheme("whatever")
-	dopts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithResolvers(r),
-		grpc.WithDefaultServiceConfig(ringHashServiceConfig),
+	dopts := []grpcforunconflict.DialOption{
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithResolvers(r),
+		grpcforunconflict.WithDefaultServiceConfig(ringHashServiceConfig),
 	}
-	cc, err := grpc.Dial(r.Scheme()+":///test.server", dopts...)
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.server", dopts...)
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
@@ -101,7 +98,7 @@ func (s) TestRingHash_ReconnectToMoveOutOfTransientFailure(t *testing.T) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	if _, err := client.EmptyCall(ctx, &testpb.Empty{}); err != nil {
 		t.Fatalf("rpc EmptyCall() failed: %v", err)
 	}

@@ -34,14 +34,14 @@ An empty string (`""`) typically indicates the overall health of a server should
 import _ "github.com/qiyouForSql/grpcforunconflict/health"
 
 // set up appropriate service config
-serviceConfig := grpc.WithDefaultServiceConfig(`{
+serviceConfig :=grpcforunconflict.WithDefaultServiceConfig(`{
   "loadBalancingPolicy": "round_robin",
   "healthCheckConfig": {
     "serviceName": ""
   }
 }`)
 
-conn, err := grpc.Dial(..., serviceConfig)
+conn, err :=grpcforunconflict.Dial(..., serviceConfig)
 ```
 
 See [A17 - Client-Side Health Checking](https://github.com/grpc/proposal/blob/master/A17-client-side-health-checking.md) for more details.

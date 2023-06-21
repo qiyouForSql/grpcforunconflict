@@ -89,9 +89,9 @@ func main() {
 	}
 
 	// Make a connection using the credentials.
-	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(clientTLSCreds))
+	conn, err := grpcforunconflict.Dial(address, grpcforunconflict.WithTransportCredentials(clientTLSCreds))
 	if err != nil {
-		log.Fatalf("grpc.DialContext to %s failed: %v", address, err)
+		log.Fatalf("grpcforunconflict.DialContext to %s failed: %v", address, err)
 	}
 	client := pb.NewGreeterClient(conn)
 
@@ -100,7 +100,7 @@ func main() {
 	// since the bash script is expected to close the client goroutine.
 	for {
 		ctx, cancel := context.WithTimeout(context.Background(), defaultTimeout)
-		_, err = client.SayHello(ctx, &pb.HelloRequest{Name: "gRPC"}, grpc.WaitForReady(true))
+		_, err = client.SayHello(ctx, &pb.HelloRequest{Name: "gRPC"}, grpcforunconflict.WaitForReady(true))
 		if err != nil {
 			log.Fatalf("client.SayHello failed: %v", err)
 		}

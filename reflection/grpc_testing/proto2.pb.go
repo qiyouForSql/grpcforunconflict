@@ -110,7 +110,7 @@ func file_reflection_grpc_testing_proto2_proto_rawDescGZIP() []byte {
 
 var file_reflection_grpc_testing_proto2_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_reflection_grpc_testing_proto2_proto_goTypes = []interface{}{
-	(*ToBeExtended)(nil), // 0: grpc.testing.ToBeExtended
+	(*ToBeExtended)(nil), // 0:grpcforunconflict.testing.ToBeExtended
 }
 var file_reflection_grpc_testing_proto2_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type

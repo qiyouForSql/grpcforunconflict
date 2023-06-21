@@ -31,6 +31,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
@@ -38,9 +39,7 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"github.com/qiyouForSql/grpcforunconflict/resolver/manual"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -76,9 +75,9 @@ func runUnixTest(t *testing.T, address, target, expectedAuthority string, dialer
 		Address: address,
 		Target:  target,
 	}
-	opts := []grpc.DialOption{}
+	opts := []grpcforunconflict.DialOption{}
 	if dialer != nil {
-		opts = append(opts, grpc.WithContextDialer(dialer))
+		opts = append(opts, grpcforunconflict.WithContextDialer(dialer))
 	}
 	if err := ss.Start(nil, opts...); err != nil {
 		t.Fatalf("Error starting endpoint server: %v", err)
@@ -166,7 +165,7 @@ func (s) TestUnixCustomDialer(t *testing.T) {
 	}
 }
 
-// TestColonPortAuthority does an end to end test with the target for grpc.Dial
+// TestColonPortAuthority does an end to end test with the target forgrpcforunconflict.Dial
 // being ":[port]". Ensures authority is "localhost:[port]".
 func (s) TestColonPortAuthority(t *testing.T) {
 	expectedAuthority := ""
@@ -195,16 +194,16 @@ func (s) TestColonPortAuthority(t *testing.T) {
 	//
 	// Append "localhost" before calling net.Dial, in case net.Dial on certain
 	// platforms doesn't work well for address without the IP.
-	cc, err := grpc.Dial(":"+port, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithContextDialer(func(ctx context.Context, addr string) (net.Conn, error) {
+	cc, err := grpcforunconflict.Dial(":"+port, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithContextDialer(func(ctx context.Context, addr string) (net.Conn, error) {
 		return (&net.Dialer{}).DialContext(ctx, "tcp", "localhost"+addr)
 	}))
 	if err != nil {
-		t.Fatalf("grpc.Dial(%q) = %v", ss.Target, err)
+		t.Fatalf("grpcforunconflict.Dial(%q) = %v", ss.Target, err)
 	}
 	defer cc.Close()
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	_, err = testgrpc.NewTestServiceClient(cc).EmptyCall(ctx, &testpb.Empty{})
+	_, err = testgrpcforunconflict.NewTestServiceClient(cc).EmptyCall(ctx, &testpb.Empty{})
 	if err != nil {
 		t.Errorf("us.client.EmptyCall(_, _) = _, %v; want _, nil", err)
 	}
@@ -229,15 +228,15 @@ func (s) TestAuthorityReplacedWithResolverAddress(t *testing.T) {
 
 	r := manual.NewBuilderWithScheme("whatever")
 	r.InitialState(resolver.State{Addresses: []resolver.Address{{Addr: ss.Address, ServerName: expectedAuthority}}})
-	cc, err := grpc.Dial(r.Scheme()+":///whatever", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(r))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///whatever", grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(r))
 	if err != nil {
-		t.Fatalf("grpc.Dial(%q) = %v", ss.Address, err)
+		t.Fatalf("grpcforunconflict.Dial(%q) = %v", ss.Address, err)
 	}
 	defer cc.Close()
 
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	if _, err = testgrpc.NewTestServiceClient(cc).EmptyCall(ctx, &testpb.Empty{}); err != nil {
+	if _, err = testgrpcforunconflict.NewTestServiceClient(cc).EmptyCall(ctx, &testpb.Empty{}); err != nil {
 		t.Fatalf("EmptyCall() rpc failed: %v", err)
 	}
 }

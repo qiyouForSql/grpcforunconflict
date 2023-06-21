@@ -30,6 +30,7 @@ import (
 	"time"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/qiyouForSql/grpcforunconflict"
 	_ "github.com/qiyouForSql/grpcforunconflict/balancer/grpclb"
 	"github.com/qiyouForSql/grpcforunconflict/balancer/roundrobin"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
@@ -44,9 +45,7 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/status"
 	"github.com/qiyouForSql/grpcforunconflict/testdata"
 	"golang.org/x/net/http2"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -160,7 +159,7 @@ func (s) TestCZTopChannelRegistrationAndDeletion(t *testing.T) {
 		defer czCleanupWrapper(czCleanup, t)
 		e := tcpClearRREnv
 		te := newTest(t, e)
-		var ccs []*grpc.ClientConn
+		var ccs []*grpcforunconflict.ClientConn
 		for i := 0; i < c.total; i++ {
 			cc := te.clientConn()
 			te.cc = nil
@@ -197,7 +196,7 @@ func (s) TestCZTopChannelRegistrationAndDeletionWhenDialFail(t *testing.T) {
 	czCleanup := channelz.NewChannelzStorageForTesting()
 	defer czCleanupWrapper(czCleanup, t)
 	// Make dial fails (due to no transport security specified)
-	_, err := grpc.Dial("fake.addr")
+	_, err := grpcforunconflict.Dial("fake.addr")
 	if err == nil {
 		t.Fatal("expecting dial to fail")
 	}
@@ -217,7 +216,7 @@ func (s) TestCZNestedChannelRegistrationAndDeletion(t *testing.T) {
 	resolvedAddrs := []resolver.Address{{Addr: "127.0.0.1:0", Type: resolver.GRPCLB, ServerName: "grpclb.server"}}
 	r.InitialState(resolver.State{Addresses: resolvedAddrs})
 	te.resolverScheme = r.Scheme()
-	te.clientConn(grpc.WithResolvers(r))
+	te.clientConn(grpcforunconflict.WithResolvers(r))
 	defer te.tearDown()
 
 	if err := verifyResultWithDelay(func() (bool, error) {
@@ -267,7 +266,7 @@ func (s) TestCZClientSubChannelSocketRegistrationAndDeletion(t *testing.T) {
 	}
 	r.InitialState(resolver.State{Addresses: svrAddrs})
 	te.resolverScheme = r.Scheme()
-	te.clientConn(grpc.WithResolvers(r))
+	te.clientConn(grpcforunconflict.WithResolvers(r))
 	defer te.tearDown()
 	// Here, we just wait for all sockets to be up. In the future, if we implement
 	// IDLE, we may need to make several rpc calls to create the sockets.
@@ -347,7 +346,7 @@ func (s) TestCZServerSocketRegistrationAndDeletion(t *testing.T) {
 		e := tcpClearRREnv
 		te := newTest(t, e)
 		te.startServer(&testServer{security: e.security})
-		var ccs []*grpc.ClientConn
+		var ccs []*grpcforunconflict.ClientConn
 		for i := 0; i < c.total; i++ {
 			cc := te.clientConn()
 			te.cc = nil
@@ -404,7 +403,7 @@ func (s) TestCZServerSocketRegistrationAndDeletion(t *testing.T) {
 func (s) TestCZServerListenSocketDeletion(t *testing.T) {
 	czCleanup := channelz.NewChannelzStorageForTesting()
 	defer czCleanupWrapper(czCleanup, t)
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 	lis, err := net.Listen("tcp", "localhost:0")
 	if err != nil {
 		t.Fatalf("failed to listen: %v", err)
@@ -518,9 +517,9 @@ func (s) TestCZChannelMetrics(t *testing.T) {
 	}
 	r.InitialState(resolver.State{Addresses: svrAddrs})
 	te.resolverScheme = r.Scheme()
-	cc := te.clientConn(grpc.WithResolvers(r))
+	cc := te.clientConn(grpcforunconflict.WithResolvers(r))
 	defer te.tearDown()
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	if _, err := tc.EmptyCall(context.Background(), &testpb.Empty{}); err != nil {
 		t.Fatalf("TestService/EmptyCall(_, _) = _, %v, want _, <nil>", err)
 	}
@@ -600,7 +599,7 @@ func (s) TestCZServerMetrics(t *testing.T) {
 	te.startServer(&testServer{security: e.security})
 	defer te.tearDown()
 	cc := te.clientConn()
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	if _, err := tc.EmptyCall(context.Background(), &testpb.Empty{}); err != nil {
 		t.Fatalf("TestService/EmptyCall(_, _) = _, %v, want _, <nil>", err)
 	}
@@ -648,7 +647,7 @@ func (s) TestCZServerMetrics(t *testing.T) {
 }
 
 type testServiceClientWrapper struct {
-	testgrpc.TestServiceClient
+	testgrpcforunconflict.TestServiceClient
 	mu             sync.RWMutex
 	streamsCreated int
 }
@@ -659,49 +658,49 @@ func (t *testServiceClientWrapper) getCurrentStreamID() uint32 {
 	return uint32(2*t.streamsCreated - 1)
 }
 
-func (t *testServiceClientWrapper) EmptyCall(ctx context.Context, in *testpb.Empty, opts ...grpc.CallOption) (*testpb.Empty, error) {
+func (t *testServiceClientWrapper) EmptyCall(ctx context.Context, in *testpb.Empty, opts ...grpcforunconflict.CallOption) (*testpb.Empty, error) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	t.streamsCreated++
 	return t.TestServiceClient.EmptyCall(ctx, in, opts...)
 }
 
-func (t *testServiceClientWrapper) UnaryCall(ctx context.Context, in *testpb.SimpleRequest, opts ...grpc.CallOption) (*testpb.SimpleResponse, error) {
+func (t *testServiceClientWrapper) UnaryCall(ctx context.Context, in *testpb.SimpleRequest, opts ...grpcforunconflict.CallOption) (*testpb.SimpleResponse, error) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	t.streamsCreated++
 	return t.TestServiceClient.UnaryCall(ctx, in, opts...)
 }
 
-func (t *testServiceClientWrapper) StreamingOutputCall(ctx context.Context, in *testpb.StreamingOutputCallRequest, opts ...grpc.CallOption) (testgrpc.TestService_StreamingOutputCallClient, error) {
+func (t *testServiceClientWrapper) StreamingOutputCall(ctx context.Context, in *testpb.StreamingOutputCallRequest, opts ...grpcforunconflict.CallOption) (testgrpcforunconflict.TestService_StreamingOutputCallClient, error) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	t.streamsCreated++
 	return t.TestServiceClient.StreamingOutputCall(ctx, in, opts...)
 }
 
-func (t *testServiceClientWrapper) StreamingInputCall(ctx context.Context, opts ...grpc.CallOption) (testgrpc.TestService_StreamingInputCallClient, error) {
+func (t *testServiceClientWrapper) StreamingInputCall(ctx context.Context, opts ...grpcforunconflict.CallOption) (testgrpcforunconflict.TestService_StreamingInputCallClient, error) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	t.streamsCreated++
 	return t.TestServiceClient.StreamingInputCall(ctx, opts...)
 }
 
-func (t *testServiceClientWrapper) FullDuplexCall(ctx context.Context, opts ...grpc.CallOption) (testgrpc.TestService_FullDuplexCallClient, error) {
+func (t *testServiceClientWrapper) FullDuplexCall(ctx context.Context, opts ...grpcforunconflict.CallOption) (testgrpcforunconflict.TestService_FullDuplexCallClient, error) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	t.streamsCreated++
 	return t.TestServiceClient.FullDuplexCall(ctx, opts...)
 }
 
-func (t *testServiceClientWrapper) HalfDuplexCall(ctx context.Context, opts ...grpc.CallOption) (testgrpc.TestService_HalfDuplexCallClient, error) {
+func (t *testServiceClientWrapper) HalfDuplexCall(ctx context.Context, opts ...grpcforunconflict.CallOption) (testgrpcforunconflict.TestService_HalfDuplexCallClient, error) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	t.streamsCreated++
 	return t.TestServiceClient.HalfDuplexCall(ctx, opts...)
 }
 
-func doSuccessfulUnaryCall(tc testgrpc.TestServiceClient, t *testing.T) {
+func doSuccessfulUnaryCall(tc testgrpcforunconflict.TestServiceClient, t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
 	if _, err := tc.EmptyCall(ctx, &testpb.Empty{}); err != nil {
@@ -709,7 +708,7 @@ func doSuccessfulUnaryCall(tc testgrpc.TestServiceClient, t *testing.T) {
 	}
 }
 
-func doStreamingInputCallWithLargePayload(tc testgrpc.TestServiceClient, t *testing.T) {
+func doStreamingInputCallWithLargePayload(tc testgrpcforunconflict.TestServiceClient, t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
 	s, err := tc.StreamingInputCall(ctx)
@@ -723,7 +722,7 @@ func doStreamingInputCallWithLargePayload(tc testgrpc.TestServiceClient, t *test
 	s.Send(&testpb.StreamingInputCallRequest{Payload: payload})
 }
 
-func doServerSideFailedUnaryCall(tc testgrpc.TestServiceClient, t *testing.T) {
+func doServerSideFailedUnaryCall(tc testgrpcforunconflict.TestServiceClient, t *testing.T) {
 	const smallSize = 1
 	const largeSize = 2000
 
@@ -743,7 +742,7 @@ func doServerSideFailedUnaryCall(tc testgrpc.TestServiceClient, t *testing.T) {
 	}
 }
 
-func doClientSideInitiatedFailedStream(tc testgrpc.TestServiceClient, t *testing.T) {
+func doClientSideInitiatedFailedStream(tc testgrpcforunconflict.TestServiceClient, t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	stream, err := tc.FullDuplexCall(ctx)
 	if err != nil {
@@ -776,7 +775,7 @@ func doClientSideInitiatedFailedStream(tc testgrpc.TestServiceClient, t *testing
 }
 
 // This func is to be used to test client side counting of failed streams.
-func doServerSideInitiatedFailedStreamWithRSTStream(tc testgrpc.TestServiceClient, t *testing.T, l *listenerWrapper) {
+func doServerSideInitiatedFailedStreamWithRSTStream(tc testgrpcforunconflict.TestServiceClient, t *testing.T, l *listenerWrapper) {
 	stream, err := tc.FullDuplexCall(context.Background())
 	if err != nil {
 		t.Fatalf("TestService/FullDuplexCall(_) = _, %v, want <nil>", err)
@@ -814,7 +813,7 @@ func doServerSideInitiatedFailedStreamWithRSTStream(tc testgrpc.TestServiceClien
 }
 
 // this func is to be used to test client side counting of failed streams.
-func doServerSideInitiatedFailedStreamWithGoAway(tc testgrpc.TestServiceClient, t *testing.T, l *listenerWrapper) {
+func doServerSideInitiatedFailedStreamWithGoAway(tc testgrpcforunconflict.TestServiceClient, t *testing.T, l *listenerWrapper) {
 	// This call is just to keep the transport from shutting down (socket will be deleted
 	// in this case, and we will not be able to get metrics).
 	s, err := tc.FullDuplexCall(context.Background())
@@ -856,7 +855,7 @@ func doServerSideInitiatedFailedStreamWithGoAway(tc testgrpc.TestServiceClient, 
 	}
 }
 
-func doIdleCallToInvokeKeepAlive(tc testgrpc.TestServiceClient, t *testing.T) {
+func doIdleCallToInvokeKeepAlive(tc testgrpcforunconflict.TestServiceClient, t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	_, err := tc.FullDuplexCall(ctx)
 	if err != nil {
@@ -877,7 +876,7 @@ func (s) TestCZClientSocketMetricsStreamsAndMessagesCount(t *testing.T) {
 	rcw := te.startServerWithConnControl(&testServer{security: e.security})
 	defer te.tearDown()
 	cc := te.clientConn()
-	tc := &testServiceClientWrapper{TestServiceClient: testgrpc.NewTestServiceClient(cc)}
+	tc := &testServiceClientWrapper{TestServiceClient: testgrpcforunconflict.NewTestServiceClient(cc)}
 
 	doSuccessfulUnaryCall(tc, t)
 	var scID, skID int64
@@ -976,7 +975,7 @@ func (s) TestCZClientAndServerSocketMetricsStreamsCountFlowControlRSTStream(t *t
 	// Avoid overflowing connection level flow control window, which will lead to
 	// transport being closed.
 	te.serverInitialConnWindowSize = 65536 * 2
-	ts := &stubserver.StubServer{FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+	ts := &stubserver.StubServer{FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 		stream.Send(&testpb.StreamingOutputCallResponse{})
 		<-stream.Context().Done()
 		return status.Errorf(codes.DeadlineExceeded, "deadline exceeded or cancelled")
@@ -984,7 +983,7 @@ func (s) TestCZClientAndServerSocketMetricsStreamsCountFlowControlRSTStream(t *t
 	te.startServer(ts)
 	defer te.tearDown()
 	cc, dw := te.clientConnWithConnControl()
-	tc := &testServiceClientWrapper{TestServiceClient: testgrpc.NewTestServiceClient(cc)}
+	tc := &testServiceClientWrapper{TestServiceClient: testgrpcforunconflict.NewTestServiceClient(cc)}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	stream, err := tc.FullDuplexCall(ctx)
@@ -1064,7 +1063,7 @@ func (s) TestCZClientAndServerSocketMetricsFlowControl(t *testing.T) {
 	te.startServer(&testServer{security: e.security})
 	defer te.tearDown()
 	cc := te.clientConn()
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 
 	for i := 0; i < 10; i++ {
 		doSuccessfulUnaryCall(tc, t)
@@ -1171,13 +1170,13 @@ func (s) TestCZClientSocketMetricsKeepAlive(t *testing.T) {
 	internal.KeepaliveMinPingTime = time.Second
 	e := tcpClearRREnv
 	te := newTest(t, e)
-	te.customDialOptions = append(te.customDialOptions, grpc.WithKeepaliveParams(
+	te.customDialOptions = append(te.customDialOptions, grpcforunconflict.WithKeepaliveParams(
 		keepalive.ClientParameters{
 			Time:                time.Second,
 			Timeout:             500 * time.Millisecond,
 			PermitWithoutStream: true,
 		}))
-	te.customServerOptions = append(te.customServerOptions, grpc.KeepaliveEnforcementPolicy(
+	te.customServerOptions = append(te.customServerOptions, grpcforunconflict.KeepaliveEnforcementPolicy(
 		keepalive.EnforcementPolicy{
 			MinTime:             500 * time.Millisecond,
 			PermitWithoutStream: true,
@@ -1227,7 +1226,7 @@ func (s) TestCZServerSocketMetricsStreamsAndMessagesCount(t *testing.T) {
 	te.startServer(&testServer{security: e.security})
 	defer te.tearDown()
 	cc, _ := te.clientConnWithConnControl()
-	tc := &testServiceClientWrapper{TestServiceClient: testgrpc.NewTestServiceClient(cc)}
+	tc := &testServiceClientWrapper{TestServiceClient: testgrpcforunconflict.NewTestServiceClient(cc)}
 
 	var svrID int64
 	if err := verifyResultWithDelay(func() (bool, error) {
@@ -1290,7 +1289,7 @@ func (s) TestCZServerSocketMetricsKeepAlive(t *testing.T) {
 	// [Time] period, and since Timeout is configured to a low value here, we
 	// should be able to verify that the fix works with the above mentioned
 	// logic.
-	kpOption := grpc.KeepaliveParams(keepalive.ServerParameters{
+	kpOption := grpcforunconflict.KeepaliveParams(keepalive.ServerParameters{
 		Time:    time.Second,
 		Timeout: 100 * time.Millisecond,
 	})
@@ -1298,7 +1297,7 @@ func (s) TestCZServerSocketMetricsKeepAlive(t *testing.T) {
 	te.startServer(&testServer{security: e.security})
 	defer te.tearDown()
 	cc := te.clientConn()
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	start := time.Now()
 	doIdleCallToInvokeKeepAlive(tc, t)
 
@@ -1412,7 +1411,7 @@ func (s) TestCZChannelTraceCreationDeletion(t *testing.T) {
 	resolvedAddrs := []resolver.Address{{Addr: "127.0.0.1:0", Type: resolver.GRPCLB, ServerName: "grpclb.server"}}
 	r.InitialState(resolver.State{Addresses: resolvedAddrs})
 	te.resolverScheme = r.Scheme()
-	te.clientConn(grpc.WithResolvers(r))
+	te.clientConn(grpcforunconflict.WithResolvers(r))
 	defer te.tearDown()
 
 	var nestedConn int64
@@ -1491,7 +1490,7 @@ func (s) TestCZSubChannelTraceCreationDeletion(t *testing.T) {
 	r := manual.NewBuilderWithScheme("whatever")
 	r.InitialState(resolver.State{Addresses: []resolver.Address{{Addr: te.srvAddr}}})
 	te.resolverScheme = r.Scheme()
-	te.clientConn(grpc.WithResolvers(r))
+	te.clientConn(grpcforunconflict.WithResolvers(r))
 	defer te.tearDown()
 	var subConn int64
 	// Here, we just wait for all sockets to be up. In the future, if we implement
@@ -1578,7 +1577,7 @@ func (s) TestCZChannelAddressResolutionChange(t *testing.T) {
 	addrs := []resolver.Address{{Addr: te.srvAddr}}
 	r.InitialState(resolver.State{Addresses: addrs})
 	te.resolverScheme = r.Scheme()
-	te.clientConn(grpc.WithResolvers(r))
+	te.clientConn(grpcforunconflict.WithResolvers(r))
 	defer te.tearDown()
 	var cid int64
 	// Here, we just wait for all sockets to be up. In the future, if we implement
@@ -1626,7 +1625,7 @@ func (s) TestCZChannelAddressResolutionChange(t *testing.T) {
         {
             "name": [
                 {
-                    "service": "grpc.testing.TestService",
+                    "service": "grpcforunconflict.testing.TestService",
                     "method": "EmptyCall"
                 }
             ],
@@ -1687,9 +1686,9 @@ func (s) TestCZSubChannelPickedNewAddress(t *testing.T) {
 	}
 	r.InitialState(resolver.State{Addresses: svrAddrs})
 	te.resolverScheme = r.Scheme()
-	cc := te.clientConn(grpc.WithResolvers(r))
+	cc := te.clientConn(grpcforunconflict.WithResolvers(r))
 	defer te.tearDown()
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	// make sure the connection is up
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -1756,9 +1755,9 @@ func (s) TestCZSubChannelConnectivityState(t *testing.T) {
 	r := manual.NewBuilderWithScheme("whatever")
 	r.InitialState(resolver.State{Addresses: []resolver.Address{{Addr: te.srvAddr}}})
 	te.resolverScheme = r.Scheme()
-	cc := te.clientConn(grpc.WithResolvers(r))
+	cc := te.clientConn(grpcforunconflict.WithResolvers(r))
 	defer te.tearDown()
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	// make sure the connection is up
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -1855,9 +1854,9 @@ func (s) TestCZChannelConnectivityState(t *testing.T) {
 	r := manual.NewBuilderWithScheme("whatever")
 	r.InitialState(resolver.State{Addresses: []resolver.Address{{Addr: te.srvAddr}}})
 	te.resolverScheme = r.Scheme()
-	cc := te.clientConn(grpc.WithResolvers(r))
+	cc := te.clientConn(grpcforunconflict.WithResolvers(r))
 	defer te.tearDown()
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	// make sure the connection is up
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -1917,7 +1916,7 @@ func (s) TestCZTraceOverwriteChannelDeletion(t *testing.T) {
 	resolvedAddrs := []resolver.Address{{Addr: "127.0.0.1:0", Type: resolver.GRPCLB, ServerName: "grpclb.server"}}
 	r.InitialState(resolver.State{Addresses: resolvedAddrs})
 	te.resolverScheme = r.Scheme()
-	te.clientConn(grpc.WithResolvers(r))
+	te.clientConn(grpcforunconflict.WithResolvers(r))
 	defer te.tearDown()
 	var nestedConn int64
 	if err := verifyResultWithDelay(func() (bool, error) {
@@ -1985,7 +1984,7 @@ func (s) TestCZTraceOverwriteSubChannelDeletion(t *testing.T) {
 	r := manual.NewBuilderWithScheme("whatever")
 	r.InitialState(resolver.State{Addresses: []resolver.Address{{Addr: te.srvAddr}}})
 	te.resolverScheme = r.Scheme()
-	te.clientConn(grpc.WithResolvers(r))
+	te.clientConn(grpcforunconflict.WithResolvers(r))
 	defer te.tearDown()
 	var subConn int64
 	// Here, we just wait for all sockets to be up. In the future, if we implement
@@ -2033,7 +2032,7 @@ func (s) TestCZTraceTopChannelDeletionTraceClear(t *testing.T) {
 	r := manual.NewBuilderWithScheme("whatever")
 	r.InitialState(resolver.State{Addresses: []resolver.Address{{Addr: te.srvAddr}}})
 	te.resolverScheme = r.Scheme()
-	te.clientConn(grpc.WithResolvers(r))
+	te.clientConn(grpcforunconflict.WithResolvers(r))
 	var subConn int64
 	// Here, we just wait for all sockets to be up. In the future, if we implement
 	// IDLE, we may need to make several rpc calls to create the sockets.

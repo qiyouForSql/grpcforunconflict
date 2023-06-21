@@ -23,20 +23,19 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/encoding/gzip"
 	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
 	"github.com/qiyouForSql/grpcforunconflict/metadata"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 func (s) TestContextCanceled(t *testing.T) {
 	ss := &stubserver.StubServer{
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			stream.SetTrailer(metadata.New(map[string]string{"a": "b"}))
 			return status.Error(codes.PermissionDenied, "perm denied")
 		},
@@ -125,7 +124,7 @@ func (s) TestContextCanceled(t *testing.T) {
 // will be inconsistent, and it causes internal error.
 func (s) TestCancelWhileRecvingWithCompression(t *testing.T) {
 	ss := &stubserver.StubServer{
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			for {
 				if err := stream.Send(&testpb.StreamingOutputCallResponse{
 					Payload: nil,
@@ -142,7 +141,7 @@ func (s) TestCancelWhileRecvingWithCompression(t *testing.T) {
 
 	for i := 0; i < 10; i++ {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second*5)
-		s, err := ss.Client.FullDuplexCall(ctx, grpc.UseCompressor(gzip.Name))
+		s, err := ss.Client.FullDuplexCall(ctx, grpcforunconflict.UseCompressor(gzip.Name))
 		if err != nil {
 			t.Fatalf("failed to start bidi streaming RPC: %v", err)
 		}

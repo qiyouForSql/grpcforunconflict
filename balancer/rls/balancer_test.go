@@ -28,6 +28,7 @@ import (
 	"time"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/balancer"
 	"github.com/qiyouForSql/grpcforunconflict/balancer/rls/internal/test/e2e"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
@@ -44,7 +45,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/resolver/manual"
 	"github.com/qiyouForSql/grpcforunconflict/serviceconfig"
 	"github.com/qiyouForSql/grpcforunconflict/testdata"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
@@ -77,9 +77,9 @@ func (s) TestConfigUpdate_ControlChannel(t *testing.T) {
 	// Register a manual resolver and push the RLS service config through it.
 	r := startManualResolverWithConfig(t, rlsConfig)
 
-	cc, err := grpc.Dial(r.Scheme()+":///", grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	defer cc.Close()
 
@@ -142,7 +142,7 @@ func (s) TestConfigUpdate_ControlChannelWithCreds(t *testing.T) {
 
 	// Start an RLS server with the wrapped listener and credentials.
 	lis := testutils.NewListenerWrapper(t, nil)
-	rlsServer, rlsReqCh := rlstest.SetupFakeRLSServer(t, lis, grpc.Creds(serverCreds))
+	rlsServer, rlsReqCh := rlstest.SetupFakeRLSServer(t, lis, grpcforunconflict.Creds(serverCreds))
 	overrideAdaptiveThrottler(t, neverThrottlingThrottler())
 
 	// Build RLS service config.
@@ -151,7 +151,7 @@ func (s) TestConfigUpdate_ControlChannelWithCreds(t *testing.T) {
 	// Start a test backend which uses the same credentials as the RLS server,
 	// and set up the fake RLS server to return this as the target in the RLS
 	// response.
-	backendCh, backendAddress := startBackend(t, grpc.Creds(serverCreds))
+	backendCh, backendAddress := startBackend(t, grpcforunconflict.Creds(serverCreds))
 	rlsServer.SetResponseCallback(func(_ context.Context, req *rlspb.RouteLookupRequest) *rlstest.RouteLookupResponse {
 		return &rlstest.RouteLookupResponse{Resp: &rlspb.RouteLookupResponse{Targets: []string{backendAddress}}}
 	})
@@ -163,9 +163,9 @@ func (s) TestConfigUpdate_ControlChannelWithCreds(t *testing.T) {
 	// server certificate used for the RLS server and the backend specifies a
 	// DNS SAN of "*.test.example.com". Hence we use a dial target which is a
 	// subdomain of the same here.
-	cc, err := grpc.Dial(r.Scheme()+":///rls.test.example.com", grpc.WithResolvers(r), grpc.WithTransportCredentials(clientCreds))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///rls.test.example.com", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(clientCreds))
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	defer cc.Close()
 
@@ -223,9 +223,9 @@ func (s) TestConfigUpdate_ControlChannelServiceConfig(t *testing.T) {
 	// Register a manual resolver and push the RLS service config through it.
 	r := startManualResolverWithConfig(t, rlsConfig)
 
-	cc, err := grpc.Dial(r.Scheme()+":///rls.test.example.com", grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///rls.test.example.com", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	defer cc.Close()
 
@@ -260,9 +260,9 @@ func (s) TestConfigUpdate_DefaultTarget(t *testing.T) {
 	// Register a manual resolver and push the RLS service config through it.
 	r := startManualResolverWithConfig(t, rlsConfig)
 
-	cc, err := grpc.Dial(r.Scheme()+":///", grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	defer cc.Close()
 
@@ -330,9 +330,9 @@ func (s) TestConfigUpdate_ChildPolicyConfigs(t *testing.T) {
 	// Register a manual resolver and push the RLS service config through it.
 	r := startManualResolverWithConfig(t, rlsConfig)
 
-	cc, err := grpc.Dial(r.Scheme()+":///", grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	defer cc.Close()
 
@@ -445,9 +445,9 @@ func (s) TestConfigUpdate_ChildPolicyChange(t *testing.T) {
 	// Register a manual resolver and push the RLS service config through it.
 	r := startManualResolverWithConfig(t, rlsConfig)
 
-	cc, err := grpc.Dial(r.Scheme()+":///", grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	defer cc.Close()
 
@@ -534,9 +534,9 @@ func (s) TestConfigUpdate_BadChildPolicyConfigs(t *testing.T) {
 	// Register a manual resolver and push the RLS service config through it.
 	r := startManualResolverWithConfig(t, rlsConfig)
 
-	cc, err := grpc.Dial(r.Scheme()+":///", grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	defer cc.Close()
 
@@ -600,9 +600,9 @@ func (s) TestConfigUpdate_DataCacheSizeDecrease(t *testing.T) {
 	// Register a manual resolver and push the RLS service config through it.
 	r := startManualResolverWithConfig(t, rlsConfig)
 
-	cc, err := grpc.Dial(r.Scheme()+":///", grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	defer cc.Close()
 
@@ -690,9 +690,9 @@ func (s) TestDataCachePurging(t *testing.T) {
 	// Register a manual resolver and push the RLS service config through it.
 	r := startManualResolverWithConfig(t, rlsConfig)
 
-	cc, err := grpc.Dial(r.Scheme()+":///", grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	defer cc.Close()
 
@@ -781,9 +781,9 @@ func (s) TestControlChannelConnectivityStateMonitoring(t *testing.T) {
 	// Register a manual resolver and push the RLS service config through it.
 	r := startManualResolverWithConfig(t, rlsConfig)
 
-	cc, err := grpc.Dial(r.Scheme()+":///", grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	defer cc.Close()
 
@@ -896,7 +896,7 @@ func (w *wrappingTopLevelBalancer) getStates() []balancer.State {
 type wrappedPickFirstBalancerBuilder struct{}
 
 func (wrappedPickFirstBalancerBuilder) Build(cc balancer.ClientConn, opts balancer.BuildOptions) balancer.Balancer {
-	builder := balancer.Get(grpc.PickFirstBalancerName)
+	builder := balancer.Get(grpcforunconflict.PickFirstBalancerName)
 	wpfb := &wrappedPickFirstBalancer{
 		ClientConn: cc,
 	}
@@ -998,7 +998,7 @@ func (s) TestUpdateStatePauses(t *testing.T) {
       "%s": {
 		"routeLookupConfig": {
 			"grpcKeybuilders": [{
-				"names": [{"service": "grpc.testing.TestService"}]
+				"names": [{"service": "grpcforunconflict.testing.TestService"}]
 			}],
 			"lookupService": "%s",
 			"cacheSizeBytes": 1000
@@ -1012,9 +1012,9 @@ func (s) TestUpdateStatePauses(t *testing.T) {
 	sc := internal.ParseServiceConfig.(func(string) *serviceconfig.ParseResult)(scJSON)
 	r.InitialState(resolver.State{ServiceConfig: sc})
 
-	cc, err := grpc.Dial(r.Scheme()+":///", grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	defer cc.Close()
 
@@ -1101,8 +1101,8 @@ func (s) TestUpdateStatePauses(t *testing.T) {
 		"routeLookupConfig": {
 			"grpcKeybuilders": [{
 				"names": [
-					{"service": "grpc.testing.TestService"},
-					{"service": "grpc.health.v1.Health"}
+					{"service": "grpcforunconflict.testing.TestService"},
+					{"service": "grpcforunconflict.health.v1.Health"}
 				]
 			}],
 			"lookupService": "%s",

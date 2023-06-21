@@ -26,6 +26,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/backoff"
 	"github.com/qiyouForSql/grpcforunconflict/balancer"
 	"github.com/qiyouForSql/grpcforunconflict/connectivity"
@@ -34,7 +35,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"github.com/qiyouForSql/grpcforunconflict/resolver/manual"
 	"golang.org/x/net/http2"
-	"google.golang.org/grpc"
 )
 
 const stateRecordingBalancerName = "state_recording_balancer"
@@ -157,11 +157,11 @@ func testStateTransitionSingleAddress(t *testing.T, want []connectivity.State, s
 		connMu.Unlock()
 	}()
 
-	client, err := grpc.Dial("",
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, stateRecordingBalancerName)),
-		grpc.WithDialer(pl.Dialer()),
-		grpc.WithConnectParams(grpc.ConnectParams{
+	client, err := grpcforunconflict.Dial("",
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, stateRecordingBalancerName)),
+		grpcforunconflict.WithDialer(pl.Dialer()),
+		grpcforunconflict.WithConnectParams(grpcforunconflict.ConnectParams{
 			Backoff:           backoff.Config{},
 			MinConnectTimeout: 100 * time.Millisecond,
 		}))
@@ -229,9 +229,9 @@ func (s) TestStateTransitions_ReadyToConnecting(t *testing.T) {
 		conn.Close()
 	}()
 
-	client, err := grpc.Dial(lis.Addr().String(),
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, stateRecordingBalancerName)))
+	client, err := grpcforunconflict.Dial(lis.Addr().String(),
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, stateRecordingBalancerName)))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -317,10 +317,10 @@ func (s) TestStateTransitions_TriesAllAddrsBeforeTransientFailure(t *testing.T) 
 		{Addr: lis1.Addr().String()},
 		{Addr: lis2.Addr().String()},
 	}})
-	client, err := grpc.Dial("whatever:///this-gets-overwritten",
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, stateRecordingBalancerName)),
-		grpc.WithResolvers(rb))
+	client, err := grpcforunconflict.Dial("whatever:///this-gets-overwritten",
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, stateRecordingBalancerName)),
+		grpcforunconflict.WithResolvers(rb))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -403,10 +403,10 @@ func (s) TestStateTransitions_MultipleAddrsEntersReady(t *testing.T) {
 		{Addr: lis1.Addr().String()},
 		{Addr: lis2.Addr().String()},
 	}})
-	client, err := grpc.Dial("whatever:///this-gets-overwritten",
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, stateRecordingBalancerName)),
-		grpc.WithResolvers(rb))
+	client, err := grpcforunconflict.Dial("whatever:///this-gets-overwritten",
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, stateRecordingBalancerName)),
+		grpcforunconflict.WithResolvers(rb))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -505,7 +505,7 @@ func keepReading(conn net.Conn) {
 
 // stayConnected makes cc stay connected by repeatedly calling cc.Connect()
 // until the state becomes Shutdown or until ithe context expires.
-func stayConnected(ctx context.Context, cc *grpc.ClientConn) {
+func stayConnected(ctx context.Context, cc *grpcforunconflict.ClientConn) {
 	for {
 		state := cc.GetState()
 		switch state {
@@ -520,7 +520,7 @@ func stayConnected(ctx context.Context, cc *grpc.ClientConn) {
 	}
 }
 
-func awaitState(ctx context.Context, t *testing.T, cc *grpc.ClientConn, stateWant connectivity.State) {
+func awaitState(ctx context.Context, t *testing.T, cc *grpcforunconflict.ClientConn, stateWant connectivity.State) {
 	t.Helper()
 	for state := cc.GetState(); state != stateWant; state = cc.GetState() {
 		if !cc.WaitForStateChange(ctx, state) {
@@ -529,7 +529,7 @@ func awaitState(ctx context.Context, t *testing.T, cc *grpc.ClientConn, stateWan
 	}
 }
 
-func awaitNotState(ctx context.Context, t *testing.T, cc *grpc.ClientConn, stateDoNotWant connectivity.State) {
+func awaitNotState(ctx context.Context, t *testing.T, cc *grpcforunconflict.ClientConn, stateDoNotWant connectivity.State) {
 	t.Helper()
 	for state := cc.GetState(); state == stateDoNotWant; state = cc.GetState() {
 		if !cc.WaitForStateChange(ctx, state) {
@@ -538,7 +538,7 @@ func awaitNotState(ctx context.Context, t *testing.T, cc *grpc.ClientConn, state
 	}
 }
 
-func awaitNoStateChange(ctx context.Context, t *testing.T, cc *grpc.ClientConn, currState connectivity.State) {
+func awaitNoStateChange(ctx context.Context, t *testing.T, cc *grpcforunconflict.ClientConn, currState connectivity.State) {
 	t.Helper()
 	if cc.WaitForStateChange(ctx, currState) {
 		t.Fatalf("State changed from %q to %q when no state change was expected", currState, cc.GetState())

@@ -64,16 +64,16 @@ func main() {
 
 	address := fmt.Sprintf("%s:///unused", r.Scheme())
 
-	options := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithBlock(),
-		grpc.WithResolvers(r),
-		grpc.WithDefaultServiceConfig(serviceConfig),
+	options := []grpcforunconflict.DialOption{
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithBlock(),
+		grpcforunconflict.WithResolvers(r),
+		grpcforunconflict.WithDefaultServiceConfig(serviceConfig),
 	}
 
-	conn, err := grpc.Dial(address, options...)
+	conn, err := grpcforunconflict.Dial(address, options...)
 	if err != nil {
-		log.Fatalf("grpc.Dial(%q): %v", address, err)
+		log.Fatalf("grpcforunconflict.Dial(%q): %v", address, err)
 	}
 	defer conn.Close()
 

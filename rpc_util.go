@@ -506,7 +506,7 @@ func (o ForceCodecCallOption) before(c *callInfo) error {
 }
 func (o ForceCodecCallOption) after(c *callInfo, attempt *csAttempt) {}
 
-// CallCustomCodec behaves like ForceCodec, but accepts a grpc.Codec instead of
+// CallCustomCodec behaves like ForceCodec, but accepts a grpcforunconflict.Codec instead of
 // an encoding.Codec.
 //
 // Deprecated: use ForceCodec instead.
@@ -623,7 +623,7 @@ func (p *parser) recvMsg(maxReceiveMessageSize int) (pf payloadFormat, msg []byt
 }
 
 // encode serializes msg and returns a buffer containing the message, or an
-// error if it is too large to be transmitted by grpc.  If msg is nil, it
+// error if it is too large to be transmitted by grpcforunconflict.  If msg is nil, it
 // generates an empty message.
 func encode(c baseCodec, msg interface{}) ([]byte, error) {
 	if msg == nil { // NOTE: typed nils will not be caught by this check
@@ -897,7 +897,7 @@ func setCallInfoCodec(c *callInfo) error {
 		// codec was already set by a CallOption; use it, but set the content
 		// subtype if it is not set.
 		if c.contentSubtype == "" {
-			// c.codec is a baseCodec to hide the difference between grpc.Codec and
+			// c.codec is a baseCodec to hide the difference between grpcforunconflict.Codec and
 			// encoding.Codec (Name vs. String method name).  We only support
 			// setting content subtype from encoding.Codec to avoid a behavior
 			// change with the deprecated version.

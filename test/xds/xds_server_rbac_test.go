@@ -27,6 +27,7 @@ import (
 	"testing"
 
 	v3routerpb "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/http/router/v3"
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal"
@@ -34,7 +35,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/xds/e2e"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/anypb"
 
 	v3corepb "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
@@ -45,7 +45,6 @@ import (
 	v3httppb "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/network/http_connection_manager/v3"
 	v3matcherpb "github.com/envoyproxy/go-control-plane/envoy/type/matcher/v3"
 	wrapperspb "github.com/golang/protobuf/ptypes/wrappers"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -102,7 +101,7 @@ func (s) TestServerSideXDS_RouteConfiguration(t *testing.T) {
 				// A routing rule that can be selectively triggered based on properties about incoming RPC.
 				{
 					Match: &v3routepb.RouteMatch{
-						PathSpecifier: &v3routepb.RouteMatch_Prefix{Prefix: "/grpc.testing.TestService/EmptyCall"},
+						PathSpecifier: &v3routepb.RouteMatch_Prefix{Prefix: "/grpcforunconflict.testing.TestService/EmptyCall"},
 						// "Fully-qualified RPC method name with leading slash. Same as :path header".
 					},
 					// Correct Action, so RPC's that match this route should proceed to interceptor processing.
@@ -115,7 +114,7 @@ func (s) TestServerSideXDS_RouteConfiguration(t *testing.T) {
 				// through this route slice is deterministic).
 				{
 					Match: &v3routepb.RouteMatch{
-						PathSpecifier: &v3routepb.RouteMatch_Prefix{Prefix: "/grpc.testing.TestService/EmptyCall"},
+						PathSpecifier: &v3routepb.RouteMatch_Prefix{Prefix: "/grpcforunconflict.testing.TestService/EmptyCall"},
 						// "Fully-qualified RPC method name with leading slash. Same as :path header".
 					},
 					// Incorrect Action, so RPC's that match this route should get denied.
@@ -126,7 +125,7 @@ func (s) TestServerSideXDS_RouteConfiguration(t *testing.T) {
 				// Another routing rule that can be selectively triggered based on incoming RPC.
 				{
 					Match: &v3routepb.RouteMatch{
-						PathSpecifier: &v3routepb.RouteMatch_Prefix{Prefix: "/grpc.testing.TestService/UnaryCall"},
+						PathSpecifier: &v3routepb.RouteMatch_Prefix{Prefix: "/grpcforunconflict.testing.TestService/UnaryCall"},
 					},
 					// Wrong action (!Non_Forwarding_Action) so RPC's that match this route should get denied.
 					Action: &v3routepb.Route_Route{
@@ -136,7 +135,7 @@ func (s) TestServerSideXDS_RouteConfiguration(t *testing.T) {
 				// Another routing rule that can be selectively triggered based on incoming RPC.
 				{
 					Match: &v3routepb.RouteMatch{
-						PathSpecifier: &v3routepb.RouteMatch_Prefix{Prefix: "/grpc.testing.TestService/StreamingInputCall"},
+						PathSpecifier: &v3routepb.RouteMatch_Prefix{Prefix: "/grpcforunconflict.testing.TestService/StreamingInputCall"},
 					},
 					// Wrong action (!Non_Forwarding_Action) so RPC's that match this route should get denied.
 					Action: &v3routepb.Route_Route{
@@ -246,20 +245,20 @@ func (s) TestServerSideXDS_RouteConfiguration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	cc, err := grpc.DialContext(ctx, fmt.Sprintf("xds:///%s", serviceName), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(resolver))
+	cc, err := grpcforunconflict.DialContext(ctx, fmt.Sprintf("xds:///%s", serviceName), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(resolver))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
 	defer cc.Close()
 
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 
 	// This Empty Call should match to a route with a correct action
 	// (NonForwardingAction). Thus, this RPC should proceed as normal. There is
 	// a routing rule that this RPC would match to that has an incorrect action,
 	// but the server should only use the first route matched to with the
 	// correct action.
-	if _, err = client.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); err != nil {
+	if _, err = client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); err != nil {
 		t.Fatalf("rpc EmptyCall() failed: %v", err)
 	}
 
@@ -450,7 +449,7 @@ func (s) TestRBACHTTPFilter(t *testing.T) {
 					Policies: map[string]*v3rbacpb.Policy{
 						"certain-path": {
 							Permissions: []*v3rbacpb.Permission{
-								{Rule: &v3rbacpb.Permission_UrlPath{UrlPath: &v3matcherpb.PathMatcher{Rule: &v3matcherpb.PathMatcher_Path{Path: &v3matcherpb.StringMatcher{MatchPattern: &v3matcherpb.StringMatcher_Exact{Exact: "/grpc.testing.TestService/UnaryCall"}}}}}},
+								{Rule: &v3rbacpb.Permission_UrlPath{UrlPath: &v3matcherpb.PathMatcher{Rule: &v3matcherpb.PathMatcher_Path{Path: &v3matcherpb.StringMatcher{MatchPattern: &v3matcherpb.StringMatcher_Exact{Exact: "/grpcforunconflict.testing.TestService/UnaryCall"}}}}}},
 							},
 							Principals: []*v3rbacpb.Principal{
 								{Identifier: &v3rbacpb.Principal_Any{Any: true}},
@@ -633,15 +632,15 @@ func (s) TestRBACHTTPFilter(t *testing.T) {
 					t.Fatal(err)
 				}
 
-				cc, err := grpc.DialContext(ctx, fmt.Sprintf("xds:///%s", serviceName), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(resolver))
+				cc, err := grpcforunconflict.DialContext(ctx, fmt.Sprintf("xds:///%s", serviceName), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(resolver))
 				if err != nil {
 					t.Fatalf("failed to dial local test server: %v", err)
 				}
 				defer cc.Close()
 
-				client := testgrpc.NewTestServiceClient(cc)
+				client := testgrpcforunconflict.NewTestServiceClient(cc)
 
-				if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); status.Code(err) != test.wantStatusEmptyCall {
+				if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); status.Code(err) != test.wantStatusEmptyCall {
 					t.Fatalf("EmptyCall() returned err with status: %v, wantStatusEmptyCall: %v", status.Code(err), test.wantStatusEmptyCall)
 				}
 
@@ -824,13 +823,13 @@ func (s) TestRBACToggledOn_WithBadRouteConfiguration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	cc, err := grpc.DialContext(ctx, fmt.Sprintf("xds:///%s", serviceName), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(resolver))
+	cc, err := grpcforunconflict.DialContext(ctx, fmt.Sprintf("xds:///%s", serviceName), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(resolver))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
 	defer cc.Close()
 
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	if _, err := client.EmptyCall(ctx, &testpb.Empty{}); status.Code(err) != codes.Unavailable {
 		t.Fatalf("EmptyCall() returned err with status: %v, if RBAC is disabled all RPC's should proceed as normal", status.Code(err))
 	}
@@ -881,13 +880,13 @@ func (s) TestRBACToggledOff_WithBadRouteConfiguration(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	cc, err := grpc.DialContext(ctx, fmt.Sprintf("xds:///%s", serviceName), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(resolver))
+	cc, err := grpcforunconflict.DialContext(ctx, fmt.Sprintf("xds:///%s", serviceName), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(resolver))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
 	defer cc.Close()
 
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	if _, err := client.EmptyCall(ctx, &testpb.Empty{}); status.Code(err) != codes.OK {
 		t.Fatalf("EmptyCall() returned err with status: %v, if RBAC is disabled all RPC's should proceed as normal", status.Code(err))
 	}

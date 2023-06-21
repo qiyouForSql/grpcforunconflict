@@ -63,7 +63,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	defer lis.Close()
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 	service.RegisterChannelzServiceToServer(s)
 	go s.Serve(lis)
 	defer s.Stop()
@@ -75,7 +75,7 @@ func main() {
 			log.Fatalf("failed to listen: %v", err)
 		}
 		defer lis.Close()
-		s := grpc.NewServer()
+		s := grpcforunconflict.NewServer()
 		if i == 2 {
 			pb.RegisterGreeterServer(s, &slowServer{})
 		} else {

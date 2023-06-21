@@ -240,16 +240,16 @@ func file_reflection_grpc_testing_test_proto_rawDescGZIP() []byte {
 
 var file_reflection_grpc_testing_test_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_reflection_grpc_testing_test_proto_goTypes = []interface{}{
-	(*SearchResponse)(nil),        // 0: grpc.testing.SearchResponse
-	(*SearchRequest)(nil),         // 1: grpc.testing.SearchRequest
-	(*SearchResponse_Result)(nil), // 2: grpc.testing.SearchResponse.Result
+	(*SearchResponse)(nil),        // 0:grpcforunconflict.testing.SearchResponse
+	(*SearchRequest)(nil),         // 1:grpcforunconflict.testing.SearchRequest
+	(*SearchResponse_Result)(nil), // 2:grpcforunconflict.testing.SearchResponse.Result
 }
 var file_reflection_grpc_testing_test_proto_depIdxs = []int32{
-	2, // 0: grpc.testing.SearchResponse.results:type_name -> grpc.testing.SearchResponse.Result
-	1, // 1: grpc.testing.SearchService.Search:input_type -> grpc.testing.SearchRequest
-	1, // 2: grpc.testing.SearchService.StreamingSearch:input_type -> grpc.testing.SearchRequest
-	0, // 3: grpc.testing.SearchService.Search:output_type -> grpc.testing.SearchResponse
-	0, // 4: grpc.testing.SearchService.StreamingSearch:output_type -> grpc.testing.SearchResponse
+	2, // 0:grpcforunconflict.testing.SearchResponse.results:type_name ->grpcforunconflict.testing.SearchResponse.Result
+	1, // 1:grpcforunconflict.testing.SearchService.Search:input_type ->grpcforunconflict.testing.SearchRequest
+	1, // 2:grpcforunconflict.testing.SearchService.StreamingSearch:input_type ->grpcforunconflict.testing.SearchRequest
+	0, // 3:grpcforunconflict.testing.SearchService.Search:output_type ->grpcforunconflict.testing.SearchResponse
+	0, // 4:grpcforunconflict.testing.SearchService.StreamingSearch:output_type ->grpcforunconflict.testing.SearchResponse
 	3, // [3:5] is the sub-list for method output_type
 	1, // [1:3] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name

@@ -37,7 +37,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/metadata"
 	"github.com/qiyouForSql/grpcforunconflict/peer"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 )
 
 var logger = grpclog.Component("rbac")
@@ -212,9 +211,9 @@ func newRPCData(ctx context.Context) (*rpcData, error) {
 	}
 
 	// The methodName will be available in the passed in ctx from a unary or streaming
-	// interceptor, as grpc.Server pipes in a transport stream which contains the methodName
+	// interceptor, asgrpcforunconflict.Server pipes in a transport stream which contains the methodName
 	// into contexts available in both unary or streaming interceptors.
-	mn, ok := grpc.Method(ctx)
+	mn, ok := grpcforunconflict.Method(ctx)
 	if !ok {
 		return nil, errors.New("missing method in incoming context")
 	}
@@ -313,5 +312,5 @@ func (e *engine) doAuditLogging(rpcData *rpcData, rule string, authorized bool) 
 }
 
 // This is used when converting a custom config from raw JSON to a TypedStruct.
-// The TypeURL of the TypeStruct will be "grpc.authz.audit_logging/<name>".
-const typeURLPrefix = "grpc.authz.audit_logging/"
+// The TypeURL of the TypeStruct will be "grpcforunconflict.authz.audit_logging/<name>".
+const typeURLPrefix = "grpcforunconflict.authz.audit_logging/"

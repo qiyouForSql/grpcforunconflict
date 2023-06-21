@@ -26,6 +26,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/connectivity"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
@@ -39,9 +40,7 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/resolver/manual"
 	"github.com/qiyouForSql/grpcforunconflict/status"
 	"golang.org/x/net/http2"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -62,9 +61,9 @@ func (s) TestGracefulClientOnGoAway(t *testing.T) {
 		},
 	}
 
-	s := grpc.NewServer(grpc.KeepaliveParams(keepalive.ServerParameters{MaxConnectionAge: maxConnAge}))
+	s := grpcforunconflict.NewServer(grpcforunconflict.KeepaliveParams(keepalive.ServerParameters{MaxConnectionAge: maxConnAge}))
 	defer s.Stop()
-	testgrpc.RegisterTestServiceServer(s, ss)
+	testgrpcforunconflict.RegisterTestServiceServer(s, ss)
 
 	lis, err := net.Listen("tcp", "localhost:0")
 	if err != nil {
@@ -72,12 +71,12 @@ func (s) TestGracefulClientOnGoAway(t *testing.T) {
 	}
 	go s.Serve(lis)
 
-	cc, err := grpc.Dial(lis.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(lis.Addr().String(), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("Failed to dial server: %v", err)
 	}
 	defer cc.Close()
-	c := testgrpc.NewTestServiceClient(cc)
+	c := testgrpcforunconflict.NewTestServiceClient(cc)
 
 	endTime := time.Now().Add(testTime)
 	for time.Now().Before(endTime) {
@@ -92,13 +91,13 @@ func (s) TestGracefulClientOnGoAway(t *testing.T) {
 func (s) TestDetailedGoAwayErrorOnGracefulClosePropagatesToRPCError(t *testing.T) {
 	rpcDoneOnClient := make(chan struct{})
 	ss := &stubserver.StubServer{
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			<-rpcDoneOnClient
 			return status.Error(codes.Internal, "arbitrary status")
 		},
 	}
-	sopts := []grpc.ServerOption{
-		grpc.KeepaliveParams(keepalive.ServerParameters{
+	sopts := []grpcforunconflict.ServerOption{
+		grpcforunconflict.KeepaliveParams(keepalive.ServerParameters{
 			MaxConnectionAge:      time.Millisecond * 100,
 			MaxConnectionAgeGrace: time.Nanosecond, // ~instantaneously, but non-zero to avoid default
 		}),
@@ -132,18 +131,18 @@ func (s) TestDetailedGoAwayErrorOnAbruptClosePropagatesToRPCError(t *testing.T) 
 
 	rpcDoneOnClient := make(chan struct{})
 	ss := &stubserver.StubServer{
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			<-rpcDoneOnClient
 			return status.Error(codes.Internal, "arbitrary status")
 		},
 	}
-	sopts := []grpc.ServerOption{
-		grpc.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
+	sopts := []grpcforunconflict.ServerOption{
+		grpcforunconflict.KeepaliveEnforcementPolicy(keepalive.EnforcementPolicy{
 			MinTime: time.Second * 1000, /* arbitrary, large value */
 		}),
 	}
-	dopts := []grpc.DialOption{
-		grpc.WithKeepaliveParams(keepalive.ClientParameters{
+	dopts := []grpcforunconflict.DialOption{
+		grpcforunconflict.WithKeepaliveParams(keepalive.ClientParameters{
 			Time:                time.Millisecond,   /* should trigger "too many pings" error quickly */
 			Timeout:             time.Second * 1000, /* arbitrary, large value */
 			PermitWithoutStream: false,
@@ -182,7 +181,7 @@ func testClientConnCloseAfterGoAwayWithActiveStream(t *testing.T, e env) {
 	te.startServer(&testServer{security: e.security})
 	defer te.tearDown()
 	cc := te.clientConn()
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -220,11 +219,11 @@ func testServerGoAway(t *testing.T, e env) {
 	defer te.tearDown()
 
 	cc := te.clientConn()
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	// Finish an RPC to make sure the connection is good.
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); err != nil {
+	if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); err != nil {
 		t.Fatalf("TestService/EmptyCall(_, _) = _, %v, want _, <nil>", err)
 	}
 	ch := make(chan struct{})
@@ -272,14 +271,14 @@ func testServerGoAwayPendingRPC(t *testing.T, e env) {
 	defer te.tearDown()
 
 	cc := te.clientConn()
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	stream, err := tc.FullDuplexCall(ctx, grpc.WaitForReady(true))
+	stream, err := tc.FullDuplexCall(ctx, grpcforunconflict.WaitForReady(true))
 	if err != nil {
 		t.Fatalf("%v.FullDuplexCall(_) = _, %v, want <nil>", tc, err)
 	}
 	// Finish an RPC to make sure the connection is good.
-	if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); err != nil {
+	if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); err != nil {
 		t.Fatalf("%v.EmptyCall(_, _, _) = _, %v, want _, <nil>", tc, err)
 	}
 	ch := make(chan struct{})
@@ -292,7 +291,7 @@ func testServerGoAwayPendingRPC(t *testing.T, e env) {
 	errored := false
 	for time.Since(start) < time.Second {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
-		_, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true))
+		_, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true))
 		cancel()
 		if err != nil {
 			errored = true
@@ -346,14 +345,14 @@ func testServerMultipleGoAwayPendingRPC(t *testing.T, e env) {
 	defer te.tearDown()
 
 	cc := te.clientConn()
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	ctx, cancel := context.WithCancel(context.Background())
-	stream, err := tc.FullDuplexCall(ctx, grpc.WaitForReady(true))
+	stream, err := tc.FullDuplexCall(ctx, grpcforunconflict.WaitForReady(true))
 	if err != nil {
 		t.Fatalf("%v.FullDuplexCall(_) = _, %v, want <nil>", tc, err)
 	}
 	// Finish an RPC to make sure the connection is good.
-	if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); err != nil {
+	if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); err != nil {
 		t.Fatalf("%v.EmptyCall(_, _, _) = _, %v, want _, <nil>", tc, err)
 	}
 	ch1 := make(chan struct{})
@@ -370,7 +369,7 @@ func testServerMultipleGoAwayPendingRPC(t *testing.T, e env) {
 
 	for {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
-		if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); err != nil {
+		if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); err != nil {
 			cancel()
 			break
 		}
@@ -435,10 +434,10 @@ func testConcurrentClientConnCloseAndServerGoAway(t *testing.T, e env) {
 	defer te.tearDown()
 
 	cc := te.clientConn()
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); err != nil {
+	if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); err != nil {
 		t.Fatalf("%v.EmptyCall(_, _, _) = _, %v, want _, <nil>", tc, err)
 	}
 	ch := make(chan struct{})
@@ -474,16 +473,16 @@ func testConcurrentServerStopAndGoAway(t *testing.T, e env) {
 	defer te.tearDown()
 
 	cc := te.clientConn()
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	stream, err := tc.FullDuplexCall(ctx, grpc.WaitForReady(true))
+	stream, err := tc.FullDuplexCall(ctx, grpcforunconflict.WaitForReady(true))
 	if err != nil {
 		t.Fatalf("%v.FullDuplexCall(_) = _, %v, want <nil>", tc, err)
 	}
 
 	// Finish an RPC to make sure the connection is good.
-	if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); err != nil {
+	if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); err != nil {
 		t.Fatalf("%v.EmptyCall(_, _, _) = _, %v, want _, <nil>", tc, err)
 	}
 
@@ -495,7 +494,7 @@ func testConcurrentServerStopAndGoAway(t *testing.T, e env) {
 	// Loop until the server side GoAway signal is propagated to the client.
 	for {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
-		if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); err != nil {
+		if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); err != nil {
 			cancel()
 			break
 		}
@@ -549,13 +548,13 @@ func (s) TestGoAwayThenClose(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error while listening. Err: %v", err)
 	}
-	s1 := grpc.NewServer()
+	s1 := grpcforunconflict.NewServer()
 	defer s1.Stop()
 	ts := &funcServer{
 		unaryCall: func(ctx context.Context, in *testpb.SimpleRequest) (*testpb.SimpleResponse, error) {
 			return &testpb.SimpleResponse{}, nil
 		},
-		fullDuplexCall: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		fullDuplexCall: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			if err := stream.Send(&testpb.StreamingOutputCallResponse{}); err != nil {
 				t.Errorf("unexpected error from send: %v", err)
 				return err
@@ -568,7 +567,7 @@ func (s) TestGoAwayThenClose(t *testing.T) {
 			return err
 		},
 	}
-	testgrpc.RegisterTestServiceServer(s1, ts)
+	testgrpcforunconflict.RegisterTestServiceServer(s1, ts)
 	go s1.Serve(lis1)
 
 	conn2Established := grpcsync.NewEvent()
@@ -576,22 +575,22 @@ func (s) TestGoAwayThenClose(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error while listening. Err: %v", err)
 	}
-	s2 := grpc.NewServer()
+	s2 := grpcforunconflict.NewServer()
 	defer s2.Stop()
-	testgrpc.RegisterTestServiceServer(s2, ts)
+	testgrpcforunconflict.RegisterTestServiceServer(s2, ts)
 
 	r := manual.NewBuilderWithScheme("whatever")
 	r.InitialState(resolver.State{Addresses: []resolver.Address{
 		{Addr: lis1.Addr().String()},
 		{Addr: lis2.Addr().String()},
 	}})
-	cc, err := grpc.DialContext(ctx, r.Scheme()+":///", grpc.WithResolvers(r), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.DialContext(ctx, r.Scheme()+":///", grpcforunconflict.WithResolvers(r), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("Error creating client: %v", err)
 	}
 	defer cc.Close()
 
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 
 	t.Log("Waiting for the ClientConn to enter READY state.")
 	awaitState(ctx, t, cc, connectivity.Ready)
@@ -670,7 +669,7 @@ func (s) TestGoAwayStreamIDSmallerThanCreatedStreams(t *testing.T) {
 		ctCh.Send(ct)
 	}()
 
-	cc, err := grpc.Dial(lis.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(lis.Addr().String(), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("error dialing: %v", err)
 	}
@@ -685,7 +684,7 @@ func (s) TestGoAwayStreamIDSmallerThanCreatedStreams(t *testing.T) {
 	}
 	ct := val.(*clientTester)
 
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	someStreamsCreated := grpcsync.NewEvent()
 	goAwayWritten := grpcsync.NewEvent()
 	go func() {
@@ -714,7 +713,7 @@ func (s) TestTwoGoAwayPingFrames(t *testing.T) {
 		t.Fatalf("Failed to listen: %v", err)
 	}
 	defer lis.Close()
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 	defer s.Stop()
 	go s.Serve(lis)
 

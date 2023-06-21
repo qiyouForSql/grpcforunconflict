@@ -27,7 +27,6 @@ import (
 	"net"
 	"time"
 
-	echogrpc "github.com/qiyouForSql/grpcforunconflict/examples/features/proto/echo"
 	echopb "github.com/qiyouForSql/grpcforunconflict/examples/features/proto/echo"
 	"github.com/qiyouForSql/grpcforunconflict/examples/features/stats_monitoring/statshandler"
 )
@@ -35,7 +34,7 @@ import (
 var port = flag.Int("port", 50051, "the port to serve on")
 
 type server struct {
-	echogrpc.UnimplementedEchoServer
+	echogrpcforunconflict.UnimplementedEchoServer
 }
 
 func (s *server) UnaryEcho(ctx context.Context, req *echopb.EchoRequest) (*echopb.EchoResponse, error) {
@@ -51,8 +50,8 @@ func main() {
 	}
 	log.Printf("server listening at %v\n", lis.Addr())
 
-	s := grpc.NewServer(grpc.StatsHandler(statshandler.New()))
-	echogrpc.RegisterEchoServer(s, &server{})
+	s := grpcforunconflict.NewServer(grpcforunconflict.StatsHandler(statshandler.New()))
+	echogrpcforunconflict.RegisterEchoServer(s, &server{})
 
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)

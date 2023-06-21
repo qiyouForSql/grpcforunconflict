@@ -52,15 +52,15 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to load key pair: %s", err)
 	}
-	opts := []grpc.ServerOption{
-		// The following grpc.ServerOption adds an interceptor for all unary
+	opts := []grpcforunconflict.ServerOption{
+		// The followinggrpcforunconflict.ServerOption adds an interceptor for all unary
 		// RPCs. To configure an interceptor for streaming RPCs, see:
 		// https://godoc.org/google.golang.org/grpc#StreamInterceptor
-		grpc.UnaryInterceptor(ensureValidToken),
+		grpcforunconflict.UnaryInterceptor(ensureValidToken),
 		// Enable TLS for all incoming connections.
-		grpc.Creds(credentials.NewServerTLSFromCert(&cert)),
+		grpcforunconflict.Creds(credentials.NewServerTLSFromCert(&cert)),
 	}
-	s := grpc.NewServer(opts...)
+	s := grpcforunconflict.NewServer(opts...)
 	pb.RegisterEchoServer(s, &ecServer{})
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
 	if err != nil {
@@ -95,7 +95,7 @@ func valid(authorization []string) bool {
 // the token is missing or invalid, the interceptor blocks execution of the
 // handler and returns an error. Otherwise, the interceptor invokes the unary
 // handler.
-func ensureValidToken(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+func ensureValidToken(ctx context.Context, req interface{}, info *grpcforunconflict.UnaryServerInfo, handlergrpcforunconflict.UnaryHandler) (interface{}, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return nil, errMissingMetadata

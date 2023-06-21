@@ -25,18 +25,17 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal"
 	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
 	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	"github.com/qiyouForSql/grpcforunconflict/metadata"
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"github.com/qiyouForSql/grpcforunconflict/resolver/manual"
 	"github.com/qiyouForSql/grpcforunconflict/serviceconfig"
-	"google.golang.org/grpc"
 )
 
 var defaultTestTimeout = 5 * time.Second
@@ -105,14 +104,14 @@ func (s) TestCustomLB(t *testing.T) {
 		ServiceConfig: sc,
 	})
 
-	cc, err := grpc.Dial(mr.Scheme()+":///", grpc.WithResolvers(mr), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(mr.Scheme()+":///", grpcforunconflict.WithResolvers(mr), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		t.Fatalf("grpc.Dial() failed: %v", err)
+		t.Fatalf("grpcforunconflict.Dial() failed: %v", err)
 	}
 	defer cc.Close()
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	testServiceClient := testgrpc.NewTestServiceClient(cc)
+	testServiceClient := testgrpcforunconflict.NewTestServiceClient(cc)
 
 	// Make a Unary RPC. This RPC should be successful due to the round_robin
 	// leaf balancer. Also, the custom load balancer should inject the

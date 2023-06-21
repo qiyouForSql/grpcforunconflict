@@ -67,7 +67,7 @@ func LocalityIDFromString(s string) (ret LocalityID, _ error) {
 
 type localityKeyType string
 
-const localityKey = localityKeyType("grpc.xds.internal.address.locality")
+const localityKey = localityKeyType("grpcforunconflict.xds.internal.address.locality")
 
 // GetLocalityID returns the locality ID of addr.
 func GetLocalityID(addr resolver.Address) LocalityID {

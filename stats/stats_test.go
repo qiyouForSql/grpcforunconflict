@@ -29,14 +29,13 @@ import (
 	"time"
 
 	"github.com/golang/protobuf/proto"
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
 	"github.com/qiyouForSql/grpcforunconflict/metadata"
 	"github.com/qiyouForSql/grpcforunconflict/stats"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -51,7 +50,7 @@ func Test(t *testing.T) {
 }
 
 func init() {
-	grpc.EnableTracing = false
+	grpcforunconflict.EnableTracing = false
 }
 
 type connCtxKey struct{}
@@ -62,7 +61,7 @@ var (
 	testMetadata = metadata.MD{
 		"key1":       []string{"value1"},
 		"key2":       []string{"value2"},
-		"user-agent": []string{fmt.Sprintf("test/0.0.1 grpc-go/%s", grpc.Version)},
+		"user-agent": []string{fmt.Sprintf("test/0.0.1 grpc-go/%s", grpcforunconflict.Version)},
 	}
 	// For headers sent from server:
 	testHeaderMetadata = metadata.MD{
@@ -90,15 +89,15 @@ func payloadToID(p *testpb.Payload) int32 {
 }
 
 type testServer struct {
-	testgrpc.UnimplementedTestServiceServer
+	testgrpcforunconflict.UnimplementedTestServiceServer
 }
 
 func (s *testServer) UnaryCall(ctx context.Context, in *testpb.SimpleRequest) (*testpb.SimpleResponse, error) {
-	if err := grpc.SendHeader(ctx, testHeaderMetadata); err != nil {
-		return nil, status.Errorf(status.Code(err), "grpc.SendHeader(_, %v) = %v, want <nil>", testHeaderMetadata, err)
+	if err := grpcforunconflict.SendHeader(ctx, testHeaderMetadata); err != nil {
+		return nil, status.Errorf(status.Code(err), "grpcforunconflict.SendHeader(_, %v) = %v, want <nil>", testHeaderMetadata, err)
 	}
-	if err := grpc.SetTrailer(ctx, testTrailerMetadata); err != nil {
-		return nil, status.Errorf(status.Code(err), "grpc.SetTrailer(_, %v) = %v, want <nil>", testTrailerMetadata, err)
+	if err := grpcforunconflict.SetTrailer(ctx, testTrailerMetadata); err != nil {
+		return nil, status.Errorf(status.Code(err), "grpcforunconflict.SetTrailer(_, %v) = %v, want <nil>", testTrailerMetadata, err)
 	}
 
 	if id := payloadToID(in.Payload); id == errorID {
@@ -108,7 +107,7 @@ func (s *testServer) UnaryCall(ctx context.Context, in *testpb.SimpleRequest) (*
 	return &testpb.SimpleResponse{Payload: in.Payload}, nil
 }
 
-func (s *testServer) FullDuplexCall(stream testgrpc.TestService_FullDuplexCallServer) error {
+func (s *testServer) FullDuplexCall(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 	if err := stream.SendHeader(testHeaderMetadata); err != nil {
 		return status.Errorf(status.Code(err), "%v.SendHeader(%v) = %v, want %v", stream, testHeaderMetadata, err, nil)
 	}
@@ -133,7 +132,7 @@ func (s *testServer) FullDuplexCall(stream testgrpc.TestService_FullDuplexCallSe
 	}
 }
 
-func (s *testServer) StreamingInputCall(stream testgrpc.TestService_StreamingInputCallServer) error {
+func (s *testServer) StreamingInputCall(stream testgrpcforunconflict.TestService_StreamingInputCallServer) error {
 	if err := stream.SendHeader(testHeaderMetadata); err != nil {
 		return status.Errorf(status.Code(err), "%v.SendHeader(%v) = %v, want %v", stream, testHeaderMetadata, err, nil)
 	}
@@ -154,7 +153,7 @@ func (s *testServer) StreamingInputCall(stream testgrpc.TestService_StreamingInp
 	}
 }
 
-func (s *testServer) StreamingOutputCall(in *testpb.StreamingOutputCallRequest, stream testgrpc.TestService_StreamingOutputCallServer) error {
+func (s *testServer) StreamingOutputCall(in *testpb.StreamingOutputCallRequest, stream testgrpcforunconflict.TestService_StreamingOutputCallServer) error {
 	if err := stream.SendHeader(testHeaderMetadata); err != nil {
 		return status.Errorf(status.Code(err), "%v.SendHeader(%v) = %v, want %v", stream, testHeaderMetadata, err, nil)
 	}
@@ -181,12 +180,12 @@ type test struct {
 	clientStatsHandlers []stats.Handler
 	serverStatsHandlers []stats.Handler
 
-	testServer testgrpc.TestServiceServer // nil means none
+	testServer testgrpcforunconflict.TestServiceServer // nil means none
 	// srv and srvAddr are set once startServer is called.
-	srv     *grpc.Server
+	srv     *grpcforunconflict.Server
 	srvAddr string
 
-	cc *grpc.ClientConn // nil until requested via clientConn
+	cc *grpcforunconflict.ClientConn // nil until requested via clientConn
 }
 
 func (te *test) tearDown() {
@@ -216,53 +215,53 @@ func newTest(t *testing.T, tc *testConfig, chs []stats.Handler, shs []stats.Hand
 
 // startServer starts a gRPC server listening. Callers should defer a
 // call to te.tearDown to clean up.
-func (te *test) startServer(ts testgrpc.TestServiceServer) {
+func (te *test) startServer(ts testgrpcforunconflict.TestServiceServer) {
 	te.testServer = ts
 	lis, err := net.Listen("tcp", "localhost:0")
 	if err != nil {
 		te.t.Fatalf("Failed to listen: %v", err)
 	}
-	var opts []grpc.ServerOption
+	var opts []grpcforunconflict.ServerOption
 	if te.compress == "gzip" {
 		opts = append(opts,
-			grpc.RPCCompressor(grpc.NewGZIPCompressor()),
-			grpc.RPCDecompressor(grpc.NewGZIPDecompressor()),
+			grpcforunconflict.RPCCompressor(grpcforunconflict.NewGZIPCompressor()),
+			grpcforunconflict.RPCDecompressor(grpcforunconflict.NewGZIPDecompressor()),
 		)
 	}
 	for _, sh := range te.serverStatsHandlers {
-		opts = append(opts, grpc.StatsHandler(sh))
+		opts = append(opts, grpcforunconflict.StatsHandler(sh))
 	}
-	s := grpc.NewServer(opts...)
+	s := grpcforunconflict.NewServer(opts...)
 	te.srv = s
 	if te.testServer != nil {
-		testgrpc.RegisterTestServiceServer(s, te.testServer)
+		testgrpcforunconflict.RegisterTestServiceServer(s, te.testServer)
 	}
 
 	go s.Serve(lis)
 	te.srvAddr = lis.Addr().String()
 }
 
-func (te *test) clientConn() *grpc.ClientConn {
+func (te *test) clientConn() *grpcforunconflict.ClientConn {
 	if te.cc != nil {
 		return te.cc
 	}
-	opts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithBlock(),
-		grpc.WithUserAgent("test/0.0.1"),
+	opts := []grpcforunconflict.DialOption{
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithBlock(),
+		grpcforunconflict.WithUserAgent("test/0.0.1"),
 	}
 	if te.compress == "gzip" {
 		opts = append(opts,
-			grpc.WithCompressor(grpc.NewGZIPCompressor()),
-			grpc.WithDecompressor(grpc.NewGZIPDecompressor()),
+			grpcforunconflict.WithCompressor(grpcforunconflict.NewGZIPCompressor()),
+			grpcforunconflict.WithDecompressor(grpcforunconflict.NewGZIPDecompressor()),
 		)
 	}
 	for _, sh := range te.clientStatsHandlers {
-		opts = append(opts, grpc.WithStatsHandler(sh))
+		opts = append(opts, grpcforunconflict.WithStatsHandler(sh))
 	}
 
 	var err error
-	te.cc, err = grpc.Dial(te.srvAddr, opts...)
+	te.cc, err = grpcforunconflict.Dial(te.srvAddr, opts...)
 	if err != nil {
 		te.t.Fatalf("Dial(%q) = %v", te.srvAddr, err)
 	}
@@ -291,7 +290,7 @@ func (te *test) doUnaryCall(c *rpcConfig) (*testpb.SimpleRequest, *testpb.Simple
 		req  *testpb.SimpleRequest
 		err  error
 	)
-	tc := testgrpc.NewTestServiceClient(te.clientConn())
+	tc := testgrpcforunconflict.NewTestServiceClient(te.clientConn())
 	if c.success {
 		req = &testpb.SimpleRequest{Payload: idToPayload(errorID + 1)}
 	} else {
@@ -300,7 +299,7 @@ func (te *test) doUnaryCall(c *rpcConfig) (*testpb.SimpleRequest, *testpb.Simple
 
 	tCtx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	resp, err = tc.UnaryCall(metadata.NewOutgoingContext(tCtx, testMetadata), req, grpc.WaitForReady(!c.failfast))
+	resp, err = tc.UnaryCall(metadata.NewOutgoingContext(tCtx, testMetadata), req, grpcforunconflict.WaitForReady(!c.failfast))
 	return req, resp, err
 }
 
@@ -310,10 +309,10 @@ func (te *test) doFullDuplexCallRoundtrip(c *rpcConfig) ([]proto.Message, []prot
 		resps []proto.Message
 		err   error
 	)
-	tc := testgrpc.NewTestServiceClient(te.clientConn())
+	tc := testgrpcforunconflict.NewTestServiceClient(te.clientConn())
 	tCtx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	stream, err := tc.FullDuplexCall(metadata.NewOutgoingContext(tCtx, testMetadata), grpc.WaitForReady(!c.failfast))
+	stream, err := tc.FullDuplexCall(metadata.NewOutgoingContext(tCtx, testMetadata), grpcforunconflict.WaitForReady(!c.failfast))
 	if err != nil {
 		return reqs, resps, err
 	}
@@ -351,10 +350,10 @@ func (te *test) doClientStreamCall(c *rpcConfig) ([]proto.Message, *testpb.Strea
 		resp *testpb.StreamingInputCallResponse
 		err  error
 	)
-	tc := testgrpc.NewTestServiceClient(te.clientConn())
+	tc := testgrpcforunconflict.NewTestServiceClient(te.clientConn())
 	tCtx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	stream, err := tc.StreamingInputCall(metadata.NewOutgoingContext(tCtx, testMetadata), grpc.WaitForReady(!c.failfast))
+	stream, err := tc.StreamingInputCall(metadata.NewOutgoingContext(tCtx, testMetadata), grpcforunconflict.WaitForReady(!c.failfast))
 	if err != nil {
 		return reqs, resp, err
 	}
@@ -382,7 +381,7 @@ func (te *test) doServerStreamCall(c *rpcConfig) (*testpb.StreamingOutputCallReq
 		err   error
 	)
 
-	tc := testgrpc.NewTestServiceClient(te.clientConn())
+	tc := testgrpcforunconflict.NewTestServiceClient(te.clientConn())
 
 	var startID int32
 	if !c.success {
@@ -391,7 +390,7 @@ func (te *test) doServerStreamCall(c *rpcConfig) (*testpb.StreamingOutputCallReq
 	req = &testpb.StreamingOutputCallRequest{Payload: idToPayload(startID)}
 	tCtx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	stream, err := tc.StreamingOutputCall(metadata.NewOutgoingContext(tCtx, testMetadata), req, grpc.WaitForReady(!c.failfast))
+	stream, err := tc.StreamingOutputCall(metadata.NewOutgoingContext(tCtx, testMetadata), req, grpcforunconflict.WaitForReady(!c.failfast))
 	if err != nil {
 		return req, resps, err
 	}
@@ -866,25 +865,25 @@ func testServerStats(t *testing.T, tc *testConfig, cc *rpcConfig, checkFuncs []f
 
 	switch cc.callType {
 	case unaryRPC:
-		method = "/grpc.testing.TestService/UnaryCall"
+		method = "/grpcforunconflict.testing.TestService/UnaryCall"
 		req, resp, e = te.doUnaryCall(cc)
 		reqs = []proto.Message{req}
 		resps = []proto.Message{resp}
 		err = e
 	case clientStreamRPC:
-		method = "/grpc.testing.TestService/StreamingInputCall"
+		method = "/grpcforunconflict.testing.TestService/StreamingInputCall"
 		reqs, resp, e = te.doClientStreamCall(cc)
 		resps = []proto.Message{resp}
 		err = e
 		isClientStream = true
 	case serverStreamRPC:
-		method = "/grpc.testing.TestService/StreamingOutputCall"
+		method = "/grpcforunconflict.testing.TestService/StreamingOutputCall"
 		req, resps, e = te.doServerStreamCall(cc)
 		reqs = []proto.Message{req}
 		err = e
 		isServerStream = true
 	case fullDuplexStreamRPC:
-		method = "/grpc.testing.TestService/FullDuplexCall"
+		method = "/grpcforunconflict.testing.TestService/FullDuplexCall"
 		reqs, resps, err = te.doFullDuplexCallRoundtrip(cc)
 		isClientStream = true
 		isServerStream = true
@@ -1165,25 +1164,25 @@ func testClientStats(t *testing.T, tc *testConfig, cc *rpcConfig, checkFuncs map
 	)
 	switch cc.callType {
 	case unaryRPC:
-		method = "/grpc.testing.TestService/UnaryCall"
+		method = "/grpcforunconflict.testing.TestService/UnaryCall"
 		req, resp, e = te.doUnaryCall(cc)
 		reqs = []proto.Message{req}
 		resps = []proto.Message{resp}
 		err = e
 	case clientStreamRPC:
-		method = "/grpc.testing.TestService/StreamingInputCall"
+		method = "/grpcforunconflict.testing.TestService/StreamingInputCall"
 		reqs, resp, e = te.doClientStreamCall(cc)
 		resps = []proto.Message{resp}
 		err = e
 		isClientStream = true
 	case serverStreamRPC:
-		method = "/grpc.testing.TestService/StreamingOutputCall"
+		method = "/grpcforunconflict.testing.TestService/StreamingOutputCall"
 		req, resps, e = te.doServerStreamCall(cc)
 		reqs = []proto.Message{req}
 		err = e
 		isServerStream = true
 	case fullDuplexStreamRPC:
-		method = "/grpc.testing.TestService/FullDuplexCall"
+		method = "/grpcforunconflict.testing.TestService/FullDuplexCall"
 		reqs, resps, err = te.doFullDuplexCallRoundtrip(cc)
 		isClientStream = true
 		isServerStream = true

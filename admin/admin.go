@@ -32,13 +32,12 @@ package admin
 import (
 	channelzservice "github.com/qiyouForSql/grpcforunconflict/channelz/service"
 	internaladmin "github.com/qiyouForSql/grpcforunconflict/internal/admin"
-	"google.golang.org/grpc"
 )
 
 func init() {
 	// Add a list of default services to admin here. Optional services, like
 	// CSDS, will be added by other packages.
-	internaladmin.AddService(func(registrar grpc.ServiceRegistrar) (func(), error) {
+	internaladmin.AddService(func(registrargrpcforunconflict.ServiceRegistrar) (func(), error) {
 		channelzservice.RegisterChannelzServiceToServer(registrar)
 		return nil, nil
 	})
@@ -49,10 +48,10 @@ func init() {
 // The returned cleanup function should be called to clean up the resources
 // allocated for the service handlers after the server is stopped.
 //
-// Note that if `s` is not a *grpc.Server or a *xds.GRPCServer, CSDS will not be
+// Note that if `s` is not a *grpcforunconflict.Server or a *xds.GRPCServer, CSDS will not be
 // registered because CSDS generated code is old and doesn't support interface
-// `grpc.ServiceRegistrar`.
+// `grpcforunconflict.ServiceRegistrar`.
 // https://github.com/envoyproxy/go-control-plane/issues/403
-func Register(s grpc.ServiceRegistrar) (cleanup func(), _ error) {
+func Register(sgrpcforunconflict.ServiceRegistrar) (cleanup func(), _ error) {
 	return internaladmin.Register(s)
 }

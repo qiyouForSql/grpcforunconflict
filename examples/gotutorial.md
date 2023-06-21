@@ -33,7 +33,7 @@ You also should have the relevant tools installed to generate the server and cli
 
 ## Defining the service
 
-Our first step (as you'll know from the [quick start](https://grpc.io/docs/#quick-start)) is to define the gRPC *service* and the method *request* and *response* types using [protocol buffers](https://developers.google.com/protocol-buffers/docs/overview). You can see the complete `.proto` file in [examples/route_guide/routeguide/route_guide.proto](https://github.com/grpc/grpc-go/tree/master/examples/route_guide/routeguide/route_guide.proto).
+Our first step (as you'll know from the [quick start](https://grpcforunconflict.io/docs/#quick-start)) is to define the gRPC *service* and the method *request* and *response* types using [protocol buffers](https://developers.google.com/protocol-buffers/docs/overview). You can see the complete `.proto` file in [examples/route_guide/routeguide/route_guide.proto](https://github.com/grpc/grpc-go/tree/master/examples/route_guide/routeguide/route_guide.proto).
 
 To define a service, you specify a named `service` in your `.proto` file:
 
@@ -267,7 +267,7 @@ lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", *port))
 if err != nil {
         log.Fatalf("failed to listen: %v", err)
 }
-grpcServer := grpc.NewServer()
+grpcServer :=grpcforunconflict.NewServer()
 pb.RegisterRouteGuideServer(grpcServer, &routeGuideServer{})
 ... // determine whether to use TLS
 grpcServer.Serve(lis)
@@ -275,7 +275,7 @@ grpcServer.Serve(lis)
 To build and start a server, we:
 
 1. Specify the port we want to use to listen for client requests using `lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", *port))`.
-2. Create an instance of the gRPC server using `grpc.NewServer()`.
+2. Create an instance of the gRPC server using `grpcforunconflict.NewServer()`.
 3. Register our service implementation with the gRPC server.
 4. Call `Serve()` on the server with our port details to do a blocking wait until the process is killed or `Stop()` is called.
 
@@ -286,17 +286,17 @@ In this section, we'll look at creating a Go client for our `RouteGuide` service
 
 ### Creating a stub
 
-To call service methods, we first need to create a gRPC *channel* to communicate with the server. We create this by passing the server address and port number to `grpc.Dial()` as follows:
+To call service methods, we first need to create a gRPC *channel* to communicate with the server. We create this by passing the server address and port number to `grpcforunconflict.Dial()` as follows:
 
 ```go
-conn, err := grpc.Dial(*serverAddr)
+conn, err :=grpcforunconflict.Dial(*serverAddr)
 if err != nil {
     ...
 }
 defer conn.Close()
 ```
 
-You can use `DialOptions` to set the auth credentials (e.g., TLS, GCE credentials, JWT credentials) in `grpc.Dial` if the service you request requires that - however, we don't need to do this for our `RouteGuide` service.
+You can use `DialOptions` to set the auth credentials (e.g., TLS, GCE credentials, JWT credentials) in `grpcforunconflict.Dial` if the service you request requires that - however, we don't need to do this for our `RouteGuide` service.
 
 Once the gRPC *channel* is setup, we need a client *stub* to perform RPCs. We get this using the `NewRouteGuideClient` method provided in the `pb` package we generated from our `.proto` file.
 

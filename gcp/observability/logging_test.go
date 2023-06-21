@@ -36,7 +36,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/metadata"
 
 	binlogpb "github.com/qiyouForSql/grpcforunconflict/binarylog/grpc_binarylog_v1"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -160,7 +159,7 @@ func (s) TestClientRPCEventsLogAll(t *testing.T) {
 		UnaryCallF: func(ctx context.Context, in *testpb.SimpleRequest) (*testpb.SimpleResponse, error) {
 			return &testpb.SimpleResponse{}, nil
 		},
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			if _, err := stream.Recv(); err != nil {
 				return err
 			}
@@ -188,7 +187,7 @@ func (s) TestClientRPCEventsLogAll(t *testing.T) {
 		{
 			Type:        eventTypeClientHeader,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			Authority:   ss.Address,
 			SequenceID:  1,
@@ -199,7 +198,7 @@ func (s) TestClientRPCEventsLogAll(t *testing.T) {
 		{
 			Type:        eventTypeClientMessage,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			SequenceID:  2,
 			Authority:   ss.Address,
@@ -210,7 +209,7 @@ func (s) TestClientRPCEventsLogAll(t *testing.T) {
 		{
 			Type:        eventTypeServerHeader,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			SequenceID:  3,
 			Authority:   ss.Address,
@@ -221,7 +220,7 @@ func (s) TestClientRPCEventsLogAll(t *testing.T) {
 		{
 			Type:        eventTypeServerMessage,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			Authority:   ss.Address,
 			SequenceID:  4,
@@ -229,7 +228,7 @@ func (s) TestClientRPCEventsLogAll(t *testing.T) {
 		{
 			Type:        eventTypeServerTrailer,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			SequenceID:  5,
 			Authority:   ss.Address,
@@ -269,7 +268,7 @@ func (s) TestClientRPCEventsLogAll(t *testing.T) {
 		{
 			Type:        eventTypeClientHeader,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "FullDuplexCall",
 			Authority:   ss.Address,
 			SequenceID:  1,
@@ -280,7 +279,7 @@ func (s) TestClientRPCEventsLogAll(t *testing.T) {
 		{
 			Type:        eventTypeClientMessage,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "FullDuplexCall",
 			SequenceID:  2,
 			Authority:   ss.Address,
@@ -291,7 +290,7 @@ func (s) TestClientRPCEventsLogAll(t *testing.T) {
 		{
 			Type:        eventTypeServerHeader,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "FullDuplexCall",
 			SequenceID:  3,
 			Authority:   ss.Address,
@@ -302,7 +301,7 @@ func (s) TestClientRPCEventsLogAll(t *testing.T) {
 		{
 			Type:        eventTypeServerMessage,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "FullDuplexCall",
 			SequenceID:  4,
 			Authority:   ss.Address,
@@ -310,7 +309,7 @@ func (s) TestClientRPCEventsLogAll(t *testing.T) {
 		{
 			Type:        eventTypeClientHalfClose,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "FullDuplexCall",
 			SequenceID:  5,
 			Authority:   ss.Address,
@@ -318,7 +317,7 @@ func (s) TestClientRPCEventsLogAll(t *testing.T) {
 		{
 			Type:        eventTypeServerTrailer,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "FullDuplexCall",
 			Authority:   ss.Address,
 			SequenceID:  6,
@@ -370,7 +369,7 @@ func (s) TestServerRPCEventsLogAll(t *testing.T) {
 		UnaryCallF: func(ctx context.Context, in *testpb.SimpleRequest) (*testpb.SimpleResponse, error) {
 			return &testpb.SimpleResponse{}, nil
 		},
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			if _, err := stream.Recv(); err != nil {
 				return err
 			}
@@ -397,7 +396,7 @@ func (s) TestServerRPCEventsLogAll(t *testing.T) {
 		{
 			Type:        eventTypeClientHeader,
 			Logger:      loggerServer,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			Authority:   ss.Address,
 			SequenceID:  1,
@@ -408,7 +407,7 @@ func (s) TestServerRPCEventsLogAll(t *testing.T) {
 		{
 			Type:        eventTypeClientMessage,
 			Logger:      loggerServer,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			SequenceID:  2,
 			Authority:   ss.Address,
@@ -416,7 +415,7 @@ func (s) TestServerRPCEventsLogAll(t *testing.T) {
 		{
 			Type:        eventTypeServerHeader,
 			Logger:      loggerServer,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			SequenceID:  3,
 			Authority:   ss.Address,
@@ -427,7 +426,7 @@ func (s) TestServerRPCEventsLogAll(t *testing.T) {
 		{
 			Type:        eventTypeServerMessage,
 			Logger:      loggerServer,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			Authority:   ss.Address,
 			SequenceID:  4,
@@ -438,7 +437,7 @@ func (s) TestServerRPCEventsLogAll(t *testing.T) {
 		{
 			Type:        eventTypeServerTrailer,
 			Logger:      loggerServer,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			SequenceID:  5,
 			Authority:   ss.Address,
@@ -477,7 +476,7 @@ func (s) TestServerRPCEventsLogAll(t *testing.T) {
 		{
 			Type:        eventTypeClientHeader,
 			Logger:      loggerServer,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "FullDuplexCall",
 			Authority:   ss.Address,
 			SequenceID:  1,
@@ -488,7 +487,7 @@ func (s) TestServerRPCEventsLogAll(t *testing.T) {
 		{
 			Type:        eventTypeClientMessage,
 			Logger:      loggerServer,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "FullDuplexCall",
 			SequenceID:  2,
 			Authority:   ss.Address,
@@ -496,7 +495,7 @@ func (s) TestServerRPCEventsLogAll(t *testing.T) {
 		{
 			Type:        eventTypeServerHeader,
 			Logger:      loggerServer,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "FullDuplexCall",
 			SequenceID:  3,
 			Authority:   ss.Address,
@@ -507,7 +506,7 @@ func (s) TestServerRPCEventsLogAll(t *testing.T) {
 		{
 			Type:        eventTypeServerMessage,
 			Logger:      loggerServer,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "FullDuplexCall",
 			SequenceID:  4,
 			Authority:   ss.Address,
@@ -518,7 +517,7 @@ func (s) TestServerRPCEventsLogAll(t *testing.T) {
 		{
 			Type:        eventTypeClientHalfClose,
 			Logger:      loggerServer,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "FullDuplexCall",
 			SequenceID:  5,
 			Authority:   ss.Address,
@@ -526,7 +525,7 @@ func (s) TestServerRPCEventsLogAll(t *testing.T) {
 		{
 			Type:        eventTypeServerTrailer,
 			Logger:      loggerServer,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "FullDuplexCall",
 			Authority:   ss.Address,
 			SequenceID:  6,
@@ -592,7 +591,7 @@ func (s) TestBothClientAndServerRPCEvents(t *testing.T) {
 		UnaryCallF: func(ctx context.Context, in *testpb.SimpleRequest) (*testpb.SimpleResponse, error) {
 			return &testpb.SimpleResponse{}, nil
 		},
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			_, err := stream.Recv()
 			if err != io.EOF {
 				return err
@@ -697,7 +696,7 @@ func (s) TestClientRPCEventsTruncateHeaderAndMetadata(t *testing.T) {
 		{
 			Type:        eventTypeClientHeader,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			Authority:   ss.Address,
 			SequenceID:  1,
@@ -712,7 +711,7 @@ func (s) TestClientRPCEventsTruncateHeaderAndMetadata(t *testing.T) {
 		{
 			Type:        eventTypeClientMessage,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			SequenceID:  2,
 			Authority:   ss.Address,
@@ -728,7 +727,7 @@ func (s) TestClientRPCEventsTruncateHeaderAndMetadata(t *testing.T) {
 		{
 			Type:        eventTypeServerHeader,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			SequenceID:  3,
 			Authority:   ss.Address,
@@ -739,7 +738,7 @@ func (s) TestClientRPCEventsTruncateHeaderAndMetadata(t *testing.T) {
 		{
 			Type:        eventTypeServerMessage,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			Authority:   ss.Address,
 			SequenceID:  4,
@@ -747,7 +746,7 @@ func (s) TestClientRPCEventsTruncateHeaderAndMetadata(t *testing.T) {
 		{
 			Type:        eventTypeServerTrailer,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			SequenceID:  5,
 			Authority:   ss.Address,
@@ -796,18 +795,18 @@ func (s) TestPrecedenceOrderingInConfiguration(t *testing.T) {
 		CloudLogging: &cloudLogging{
 			ClientRPCEvents: []clientRPCEvents{
 				{
-					Methods:          []string{"grpc.testing.TestService/UnaryCall"},
+					Methods:          []string{"grpcforunconflict.testing.TestService/UnaryCall"},
 					MaxMetadataBytes: 30,
 					MaxMessageBytes:  30,
 				},
 				{
-					Methods:          []string{"grpc.testing.TestService/EmptyCall"},
+					Methods:          []string{"grpcforunconflict.testing.TestService/EmptyCall"},
 					Exclude:          true,
 					MaxMetadataBytes: 30,
 					MaxMessageBytes:  30,
 				},
 				{
-					Methods:          []string{"grpc.testing.TestService/*"},
+					Methods:          []string{"grpcforunconflict.testing.TestService/*"},
 					MaxMetadataBytes: 30,
 					MaxMessageBytes:  30,
 				},
@@ -828,7 +827,7 @@ func (s) TestPrecedenceOrderingInConfiguration(t *testing.T) {
 		UnaryCallF: func(ctx context.Context, in *testpb.SimpleRequest) (*testpb.SimpleResponse, error) {
 			return &testpb.SimpleResponse{}, nil
 		},
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			_, err := stream.Recv()
 			if err != io.EOF {
 				return err
@@ -854,7 +853,7 @@ func (s) TestPrecedenceOrderingInConfiguration(t *testing.T) {
 		{
 			Type:        eventTypeClientHeader,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			Authority:   ss.Address,
 			SequenceID:  1,
@@ -865,7 +864,7 @@ func (s) TestPrecedenceOrderingInConfiguration(t *testing.T) {
 		{
 			Type:        eventTypeClientMessage,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			SequenceID:  2,
 			Authority:   ss.Address,
@@ -876,7 +875,7 @@ func (s) TestPrecedenceOrderingInConfiguration(t *testing.T) {
 		{
 			Type:        eventTypeServerHeader,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			SequenceID:  3,
 			Authority:   ss.Address,
@@ -887,7 +886,7 @@ func (s) TestPrecedenceOrderingInConfiguration(t *testing.T) {
 		{
 			Type:        eventTypeServerMessage,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			Authority:   ss.Address,
 			SequenceID:  4,
@@ -895,7 +894,7 @@ func (s) TestPrecedenceOrderingInConfiguration(t *testing.T) {
 		{
 			Type:        eventTypeServerTrailer,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			SequenceID:  5,
 			Authority:   ss.Address,
@@ -944,7 +943,7 @@ func (s) TestPrecedenceOrderingInConfiguration(t *testing.T) {
 		{
 			Type:        eventTypeClientHeader,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "FullDuplexCall",
 			Authority:   ss.Address,
 			SequenceID:  1,
@@ -955,7 +954,7 @@ func (s) TestPrecedenceOrderingInConfiguration(t *testing.T) {
 		{
 			Type:        eventTypeClientHalfClose,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "FullDuplexCall",
 			SequenceID:  2,
 			Authority:   ss.Address,
@@ -963,7 +962,7 @@ func (s) TestPrecedenceOrderingInConfiguration(t *testing.T) {
 		{
 			Type:        eventTypeServerTrailer,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "FullDuplexCall",
 			Authority:   ss.Address,
 			SequenceID:  3,
@@ -1175,7 +1174,7 @@ func (s) TestMetadataTruncationAccountsKey(t *testing.T) {
 		{
 			Type:        eventTypeClientHeader,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			Authority:   ss.Address,
 			SequenceID:  1,
@@ -1187,7 +1186,7 @@ func (s) TestMetadataTruncationAccountsKey(t *testing.T) {
 		{
 			Type:        eventTypeClientMessage,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			SequenceID:  2,
 			Authority:   ss.Address,
@@ -1200,7 +1199,7 @@ func (s) TestMetadataTruncationAccountsKey(t *testing.T) {
 		{
 			Type:        eventTypeServerHeader,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			SequenceID:  3,
 			Authority:   ss.Address,
@@ -1211,7 +1210,7 @@ func (s) TestMetadataTruncationAccountsKey(t *testing.T) {
 		{
 			Type:        eventTypeServerMessage,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			Authority:   ss.Address,
 			SequenceID:  4,
@@ -1219,7 +1218,7 @@ func (s) TestMetadataTruncationAccountsKey(t *testing.T) {
 		{
 			Type:        eventTypeServerTrailer,
 			Logger:      loggerClient,
-			ServiceName: "grpc.testing.TestService",
+			ServiceName: "grpcforunconflict.testing.TestService",
 			MethodName:  "UnaryCall",
 			SequenceID:  5,
 			Authority:   ss.Address,

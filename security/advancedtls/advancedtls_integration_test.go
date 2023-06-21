@@ -97,18 +97,18 @@ func callAndVerify(msg string, client pb.GreeterClient, shouldFail bool) error {
 
 // TODO(ZhenLian): remove shouldFail and add ...DialOption to the function
 // signature to provider cleaner tests.
-func callAndVerifyWithClientConn(connCtx context.Context, address string, msg string, creds credentials.TransportCredentials, shouldFail bool) (*grpc.ClientConn, pb.GreeterClient, error) {
-	var conn *grpc.ClientConn
+func callAndVerifyWithClientConn(connCtx context.Context, address string, msg string, creds credentials.TransportCredentials, shouldFail bool) (*grpcforunconflict.ClientConn, pb.GreeterClient, error) {
+	var conn *grpcforunconflict.ClientConn
 	var err error
 	// If we want the test to fail, we establish a non-blocking connection to
 	// avoid it hangs and killed by the context.
 	if shouldFail {
-		conn, err = grpc.DialContext(connCtx, address, grpc.WithTransportCredentials(creds))
+		conn, err = grpcforunconflict.DialContext(connCtx, address, grpcforunconflict.WithTransportCredentials(creds))
 		if err != nil {
 			return nil, nil, fmt.Errorf("client failed to connect to %s. Error: %v", address, err)
 		}
 	} else {
-		conn, err = grpc.DialContext(connCtx, address, grpc.WithTransportCredentials(creds), grpc.WithBlock())
+		conn, err = grpcforunconflict.DialContext(connCtx, address, grpcforunconflict.WithTransportCredentials(creds), grpcforunconflict.WithBlock())
 		if err != nil {
 			return nil, nil, fmt.Errorf("client failed to connect to %s. Error: %v", address, err)
 		}
@@ -352,7 +352,7 @@ func (s) TestEnd2End(t *testing.T) {
 			if err != nil {
 				t.Fatalf("failed to create server creds: %v", err)
 			}
-			s := grpc.NewServer(grpc.Creds(serverTLSCreds))
+			s := grpcforunconflict.NewServer(grpcforunconflict.Creds(serverTLSCreds))
 			defer s.Stop()
 			lis, err := net.Listen("tcp", "localhost:0")
 			if err != nil {
@@ -643,7 +643,7 @@ func (s) TestPEMFileProviderEnd2End(t *testing.T) {
 			if err != nil {
 				t.Fatalf("failed to create server creds: %v", err)
 			}
-			s := grpc.NewServer(grpc.Creds(serverTLSCreds))
+			s := grpcforunconflict.NewServer(grpcforunconflict.Creds(serverTLSCreds))
 			defer s.Stop()
 			lis, err := net.Listen("tcp", "localhost:0")
 			if err != nil {
@@ -774,7 +774,7 @@ func (s) TestDefaultHostNameCheck(t *testing.T) {
 			if err != nil {
 				t.Fatalf("failed to create server creds: %v", err)
 			}
-			s := grpc.NewServer(grpc.Creds(serverTLSCreds))
+			s := grpcforunconflict.NewServer(grpcforunconflict.Creds(serverTLSCreds))
 			defer s.Stop()
 			lis, err := net.Listen("tcp", "localhost:0")
 			if err != nil {
@@ -914,7 +914,7 @@ func (s) TestTLSVersions(t *testing.T) {
 			if err != nil {
 				t.Fatalf("failed to create server creds: %v", err)
 			}
-			s := grpc.NewServer(grpc.Creds(serverTLSCreds))
+			s := grpcforunconflict.NewServer(grpcforunconflict.Creds(serverTLSCreds))
 			defer s.Stop()
 			lis, err := net.Listen("tcp", "localhost:0")
 			if err != nil {

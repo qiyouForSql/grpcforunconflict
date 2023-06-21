@@ -27,18 +27,16 @@ import (
 
 	"github.com/golang/protobuf/proto"
 	"github.com/google/go-cmp/cmp"
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal/pretty"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
 	"github.com/qiyouForSql/grpcforunconflict/orca"
 	"github.com/qiyouForSql/grpcforunconflict/orca/internal"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/durationpb"
 
 	v3orcapb "github.com/cncf/xds/go/xds/data/orca/v3"
-	v3orcaservicegrpc "github.com/cncf/xds/go/xds/service/orca/v3"
 	v3orcaservicepb "github.com/cncf/xds/go/xds/service/orca/v3"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -51,7 +49,7 @@ type testServiceImpl struct {
 	mu       sync.Mutex
 	requests int64
 
-	testgrpc.TestServiceServer
+	testgrpcforunconflict.TestServiceServer
 	smr orca.ServerMetricsRecorder
 }
 
@@ -94,21 +92,21 @@ func (s) TestE2E_CustomBackendMetrics_OutOfBand(t *testing.T) {
 	internal.AllowAnyMinReportingInterval.(func(*orca.ServiceOptions))(&opts)
 
 	// Register the OpenRCAService with a very short metrics reporting interval.
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 	if err := orca.Register(s, opts); err != nil {
 		t.Fatalf("orca.EnableOutOfBandMetricsReportingForTesting() failed: %v", err)
 	}
 
 	// Register the test service implementation on the same grpc server, and start serving.
-	testgrpc.RegisterTestServiceServer(s, &testServiceImpl{smr: smr})
+	testgrpcforunconflict.RegisterTestServiceServer(s, &testServiceImpl{smr: smr})
 	go s.Serve(lis)
 	defer s.Stop()
 	t.Logf("Started gRPC server at %s...", lis.Addr().String())
 
 	// Dial the test server.
-	cc, err := grpc.Dial(lis.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(lis.Addr().String(), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		t.Fatalf("grpc.Dial(%s) failed: %v", lis.Addr().String(), err)
+		t.Fatalf("grpcforunconflict.Dial(%s) failed: %v", lis.Addr().String(), err)
 	}
 	defer cc.Close()
 
@@ -118,7 +116,7 @@ func (s) TestE2E_CustomBackendMetrics_OutOfBand(t *testing.T) {
 	const numRequests = 20
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	testStub := testgrpc.NewTestServiceClient(cc)
+	testStub := testgrpcforunconflict.NewTestServiceClient(cc)
 	errCh := make(chan error, 1)
 	go func() {
 		for i := 0; i < numRequests; i++ {
@@ -132,7 +130,7 @@ func (s) TestE2E_CustomBackendMetrics_OutOfBand(t *testing.T) {
 	}()
 
 	// Start the server streaming RPC to receive custom backend metrics.
-	oobStub := v3orcaservicegrpc.NewOpenRcaServiceClient(cc)
+	oobStub := v3orcaservicegrpcforunconflict.NewOpenRcaServiceClient(cc)
 	stream, err := oobStub.StreamCoreMetrics(ctx, &v3orcaservicepb.OrcaLoadReportRequest{ReportInterval: durationpb.New(shortReportingInterval)})
 	if err != nil {
 		t.Fatalf("Failed to create a stream for out-of-band metrics")

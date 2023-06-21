@@ -761,7 +761,7 @@ func testDNSResolver(t *testing.T) {
 	}
 }
 
-// DNS Resolver immediately starts polling on an error from grpc. This should continue until the ClientConn doesn't
+// DNS Resolver immediately starts polling on an error fromgrpcforunconflict. This should continue until the ClientConn doesn't
 // send back an error from updating the DNS Resolver's state.
 func TestDNSResolverExponentialBackoff(t *testing.T) {
 	defer leakcheck.Check(t)
@@ -1593,7 +1593,7 @@ func TestRateLimitedResolve(t *testing.T) {
 }
 
 // DNS Resolver immediately starts polling on an error. This will cause the re-resolution to return another error.
-// Thus, test that it constantly sends errors to the grpc.ClientConn.
+// Thus, test that it constantly sends errors to thegrpcforunconflict.ClientConn.
 func TestReportError(t *testing.T) {
 	const target = "notfoundaddress"
 	defer func(nt func(d time.Duration) *time.Timer) {

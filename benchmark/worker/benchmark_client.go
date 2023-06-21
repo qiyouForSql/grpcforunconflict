@@ -32,12 +32,9 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/credentials"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal/syscall"
+	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	"github.com/qiyouForSql/grpcforunconflict/status"
 	"github.com/qiyouForSql/grpcforunconflict/testdata"
-	"google.golang.org/grpc"
-
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
-	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 
 	_ "github.com/qiyouForSql/grpcforunconflict/xds" // To install the xds resolvers and balancers.
 )
@@ -114,8 +111,8 @@ func setupClientEnv(config *testpb.ClientConfig) {
 // createConns creates connections according to given config.
 // It returns the connections and corresponding function to close them.
 // It returns non-nil error if there is anything wrong.
-func createConns(config *testpb.ClientConfig) ([]*grpc.ClientConn, func(), error) {
-	var opts []grpc.DialOption
+func createConns(config *testpb.ClientConfig) ([]*grpcforunconflict.ClientConn, func(), error) {
+	var opts []grpcforunconflict.DialOption
 
 	// Sanity check for client type.
 	switch config.ClientType {
@@ -134,16 +131,16 @@ func createConns(config *testpb.ClientConfig) ([]*grpc.ClientConn, func(), error
 		if err != nil {
 			return nil, nil, status.Errorf(codes.InvalidArgument, "failed to create TLS credentials: %v", err)
 		}
-		opts = append(opts, grpc.WithTransportCredentials(creds))
+		opts = append(opts, grpcforunconflict.WithTransportCredentials(creds))
 	} else {
-		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		opts = append(opts, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	}
 
 	// Use byteBufCodec if it is required.
 	if config.PayloadConfig != nil {
 		switch config.PayloadConfig.Payload.(type) {
 		case *testpb.PayloadConfig_BytebufParams:
-			opts = append(opts, grpc.WithDefaultCallOptions(grpc.CallCustomCodec(byteBufCodec{})))
+			opts = append(opts, grpcforunconflict.WithDefaultCallOptions(grpcforunconflict.CallCustomCodec(byteBufCodec{})))
 		case *testpb.PayloadConfig_SimpleParams:
 		default:
 			return nil, nil, status.Errorf(codes.InvalidArgument, "unknown payload config: %v", config.PayloadConfig)
@@ -152,7 +149,7 @@ func createConns(config *testpb.ClientConfig) ([]*grpc.ClientConn, func(), error
 
 	// Create connections.
 	connCount := int(config.ClientChannels)
-	conns := make([]*grpc.ClientConn, connCount)
+	conns := make([]*grpcforunconflict.ClientConn, connCount)
 	for connIndex := 0; connIndex < connCount; connIndex++ {
 		conns[connIndex] = benchmark.NewClientConn(config.ServerTargets[connIndex%len(config.ServerTargets)], opts...)
 	}
@@ -164,7 +161,7 @@ func createConns(config *testpb.ClientConfig) ([]*grpc.ClientConn, func(), error
 	}, nil
 }
 
-func performRPCs(config *testpb.ClientConfig, conns []*grpc.ClientConn, bc *benchmarkClient) error {
+func performRPCs(config *testpb.ClientConfig, conns []*grpcforunconflict.ClientConn, bc *benchmarkClient) error {
 	// Read payload size and type from config.
 	var (
 		payloadReqSize, payloadRespSize int
@@ -246,9 +243,9 @@ func startBenchmarkClient(config *testpb.ClientConfig) (*benchmarkClient, error)
 	return bc, nil
 }
 
-func (bc *benchmarkClient) doCloseLoopUnary(conns []*grpc.ClientConn, rpcCountPerConn int, reqSize int, respSize int) {
+func (bc *benchmarkClient) doCloseLoopUnary(conns []*grpcforunconflict.ClientConn, rpcCountPerConn int, reqSize int, respSize int) {
 	for ic, conn := range conns {
-		client := testgrpc.NewBenchmarkServiceClient(conn)
+		client := testgrpcforunconflict.NewBenchmarkServiceClient(conn)
 		// For each connection, create rpcCountPerConn goroutines to do rpc.
 		for j := 0; j < rpcCountPerConn; j++ {
 			// Create histogram for each goroutine.
@@ -289,8 +286,8 @@ func (bc *benchmarkClient) doCloseLoopUnary(conns []*grpc.ClientConn, rpcCountPe
 	}
 }
 
-func (bc *benchmarkClient) doCloseLoopStreaming(conns []*grpc.ClientConn, rpcCountPerConn int, reqSize int, respSize int, payloadType string) {
-	var doRPC func(testgrpc.BenchmarkService_StreamingCallClient, int, int) error
+func (bc *benchmarkClient) doCloseLoopStreaming(conns []*grpcforunconflict.ClientConn, rpcCountPerConn int, reqSize int, respSize int, payloadType string) {
+	var doRPC func(testgrpcforunconflict.BenchmarkService_StreamingCallClient, int, int) error
 	if payloadType == "bytebuf" {
 		doRPC = benchmark.DoByteBufStreamingRoundTrip
 	} else {
@@ -299,7 +296,7 @@ func (bc *benchmarkClient) doCloseLoopStreaming(conns []*grpc.ClientConn, rpcCou
 	for ic, conn := range conns {
 		// For each connection, create rpcCountPerConn goroutines to do rpc.
 		for j := 0; j < rpcCountPerConn; j++ {
-			c := testgrpc.NewBenchmarkServiceClient(conn)
+			c := testgrpcforunconflict.NewBenchmarkServiceClient(conn)
 			stream, err := c.StreamingCall(context.Background())
 			if err != nil {
 				logger.Fatalf("%v.StreamingCall(_) = _, %v", c, err)

@@ -329,7 +329,7 @@ func WithReturnConnectionError() DialOption {
 //
 // Note that using this DialOption with per-RPC credentials (through
 // WithCredentialsBundle or WithPerRPCCredentials) which require transport
-// security is incompatible and will cause grpc.Dial() to fail.
+// security is incompatible and will causegrpcforunconflict.Dial() to fail.
 //
 // Deprecated: use WithTransportCredentials and insecure.NewCredentials()
 // instead. Will be supported throughout 1.x.
@@ -430,7 +430,7 @@ func WithDialer(f func(string, time.Duration) (net.Conn, error)) DialOption {
 func WithStatsHandler(h stats.Handler) DialOption {
 	return newFuncDialOption(func(o *dialOptions) {
 		if h == nil {
-			logger.Error("ignoring nil parameter in grpc.WithStatsHandler ClientOption")
+			logger.Error("ignoring nil parameter ingrpcforunconflict.WithStatsHandler ClientOption")
 			// Do not allow a nil stats handler, which would otherwise cause
 			// panics.
 			return

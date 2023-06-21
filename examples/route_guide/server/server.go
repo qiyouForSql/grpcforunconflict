@@ -221,7 +221,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	var opts []grpc.ServerOption
+	var opts []grpcforunconflict.ServerOption
 	if *tls {
 		if *certFile == "" {
 			*certFile = data.Path("x509/server_cert.pem")
@@ -233,9 +233,9 @@ func main() {
 		if err != nil {
 			log.Fatalf("Failed to generate credentials: %v", err)
 		}
-		opts = []grpc.ServerOption{grpc.Creds(creds)}
+		opts = []grpcforunconflict.ServerOption{grpcforunconflict.Creds(creds)}
 	}
-	grpcServer := grpc.NewServer(opts...)
+	grpcServer := grpcforunconflict.NewServer(opts...)
 	pb.RegisterRouteGuideServer(grpcServer, newServer())
 	grpcServer.Serve(lis)
 }

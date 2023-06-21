@@ -85,7 +85,7 @@ func valid(authorization []string) bool {
 	return token == "some-secret-token"
 }
 
-func unaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+func unaryInterceptor(ctx context.Context, req interface{}, info *grpcforunconflict.UnaryServerInfo, handlergrpcforunconflict.UnaryHandler) (interface{}, error) {
 	// authentication (token verification)
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
@@ -101,10 +101,10 @@ func unaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServ
 	return m, err
 }
 
-// wrappedStream wraps around the embedded grpc.ServerStream, and intercepts the RecvMsg and
+// wrappedStream wraps around the embeddedgrpcforunconflict.ServerStream, and intercepts the RecvMsg and
 // SendMsg method call.
 type wrappedStream struct {
-	grpc.ServerStream
+	grpcforunconflict.ServerStream
 }
 
 func (w *wrappedStream) RecvMsg(m interface{}) error {
@@ -117,11 +117,11 @@ func (w *wrappedStream) SendMsg(m interface{}) error {
 	return w.ServerStream.SendMsg(m)
 }
 
-func newWrappedStream(s grpc.ServerStream) grpc.ServerStream {
+func newWrappedStream(sgrpcforunconflict.ServerStream) grpcforunconflict.ServerStream {
 	return &wrappedStream{s}
 }
 
-func streamInterceptor(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+func streamInterceptor(srv interface{}, ssgrpcforunconflict.ServerStream, info *grpcforunconflict.StreamServerInfo, handlergrpcforunconflict.StreamHandler) error {
 	// authentication (token verification)
 	md, ok := metadata.FromIncomingContext(ss.Context())
 	if !ok {
@@ -152,7 +152,7 @@ func main() {
 		log.Fatalf("failed to create credentials: %v", err)
 	}
 
-	s := grpc.NewServer(grpc.Creds(creds), grpc.UnaryInterceptor(unaryInterceptor), grpc.StreamInterceptor(streamInterceptor))
+	s := grpcforunconflict.NewServer(grpcforunconflict.Creds(creds), grpcforunconflict.UnaryInterceptor(unaryInterceptor), grpcforunconflict.StreamInterceptor(streamInterceptor))
 
 	// Register EchoServer on the server.
 	pb.RegisterEchoServer(s, &server{})

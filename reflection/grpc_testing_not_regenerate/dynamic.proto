@@ -19,7 +19,7 @@ syntax = "proto3";
 
 option go_package = "github.com/qiyouForSql/grpcforunconflict/reflection/grpc_testing_not_regenerate";
 
-package grpc.testing;
+packagegrpcforunconflict.testing;
 
 message DynamicRes {}
 

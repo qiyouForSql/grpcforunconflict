@@ -20,7 +20,7 @@ syntax = "proto3";
 
 option go_package = "github.com/qiyouForSql/grpcforunconflict/examples/features/proto/echo";
 
-package grpc.examples.echo;
+packagegrpcforunconflict.examples.echo;
 
 // EchoRequest is the request for echo.
 message EchoRequest {

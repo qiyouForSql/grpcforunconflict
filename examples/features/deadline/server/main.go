@@ -41,7 +41,7 @@ var port = flag.Int("port", 50052, "port number")
 type server struct {
 	pb.UnimplementedEchoServer
 	client pb.EchoClient
-	cc     *grpc.ClientConn
+	cc     *grpcforunconflict.ClientConn
 }
 
 func (s *server) UnaryEcho(ctx context.Context, req *pb.EchoRequest) (*pb.EchoResponse, error) {
@@ -93,7 +93,7 @@ func (s *server) Close() {
 
 func newEchoServer() *server {
 	target := fmt.Sprintf("localhost:%v", *port)
-	cc, err := grpc.Dial(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	cc, err := grpcforunconflict.Dial(target, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
@@ -112,7 +112,7 @@ func main() {
 	echoServer := newEchoServer()
 	defer echoServer.Close()
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpcforunconflict.NewServer()
 	pb.RegisterEchoServer(grpcServer, echoServer)
 
 	if err := grpcServer.Serve(lis); err != nil {

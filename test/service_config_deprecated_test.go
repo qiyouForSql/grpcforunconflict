@@ -23,20 +23,19 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 // The following functions with function name ending with TD indicates that they
 // should be deleted after old service config API is deprecated and deleted.
-func testServiceConfigSetupTD(t *testing.T, e env) (*test, chan grpc.ServiceConfig) {
+func testServiceConfigSetupTD(t *testing.T, e env) (*test, changrpcforunconflict.ServiceConfig) {
 	te := newTest(t, e)
 	// We write before read.
-	ch := make(chan grpc.ServiceConfig, 1)
+	ch := make(changrpcforunconflict.ServiceConfig, 1)
 	te.sc = ch
 	te.userAgent = testAppUA
 	te.declareLogNoise(
@@ -58,21 +57,21 @@ func testGetMethodConfigTD(t *testing.T, e env) {
 	te, ch := testServiceConfigSetupTD(t, e)
 	defer te.tearDown()
 
-	mc1 := grpc.MethodConfig{
+	mc1 := grpcforunconflict.MethodConfig{
 		WaitForReady: newBool(true),
 		Timeout:      newDuration(time.Millisecond),
 	}
-	mc2 := grpc.MethodConfig{WaitForReady: newBool(false)}
-	m := make(map[string]grpc.MethodConfig)
-	m["/grpc.testing.TestService/EmptyCall"] = mc1
-	m["/grpc.testing.TestService/"] = mc2
-	sc := grpc.ServiceConfig{
+	mc2 := grpcforunconflict.MethodConfig{WaitForReady: newBool(false)}
+	m := make(map[string]grpcforunconflict.MethodConfig)
+	m["/grpcforunconflict.testing.TestService/EmptyCall"] = mc1
+	m["/grpcforunconflict.testing.TestService/"] = mc2
+	sc := grpcforunconflict.ServiceConfig{
 		Methods: m,
 	}
 	ch <- sc
 
 	cc := te.clientConn()
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
 	// The following RPCs are expected to become non-fail-fast ones with 1ms deadline.
@@ -80,10 +79,10 @@ func testGetMethodConfigTD(t *testing.T, e env) {
 		t.Fatalf("TestService/EmptyCall(_, _) = _, %v, want _, %s", err, codes.DeadlineExceeded)
 	}
 
-	m = make(map[string]grpc.MethodConfig)
-	m["/grpc.testing.TestService/UnaryCall"] = mc1
-	m["/grpc.testing.TestService/"] = mc2
-	sc = grpc.ServiceConfig{
+	m = make(map[string]grpcforunconflict.MethodConfig)
+	m["/grpcforunconflict.testing.TestService/UnaryCall"] = mc1
+	m["/grpcforunconflict.testing.TestService/"] = mc2
+	sc = grpcforunconflict.ServiceConfig{
 		Methods: m,
 	}
 	ch <- sc
@@ -110,37 +109,37 @@ func testServiceConfigWaitForReadyTD(t *testing.T, e env) {
 	defer te.tearDown()
 
 	// Case1: Client API set failfast to be false, and service config set wait_for_ready to be false, Client API should win, and the rpc will wait until deadline exceeds.
-	mc := grpc.MethodConfig{
+	mc := grpcforunconflict.MethodConfig{
 		WaitForReady: newBool(false),
 		Timeout:      newDuration(time.Millisecond),
 	}
-	m := make(map[string]grpc.MethodConfig)
-	m["/grpc.testing.TestService/EmptyCall"] = mc
-	m["/grpc.testing.TestService/FullDuplexCall"] = mc
-	sc := grpc.ServiceConfig{
+	m := make(map[string]grpcforunconflict.MethodConfig)
+	m["/grpcforunconflict.testing.TestService/EmptyCall"] = mc
+	m["/grpcforunconflict.testing.TestService/FullDuplexCall"] = mc
+	sc := grpcforunconflict.ServiceConfig{
 		Methods: m,
 	}
 	ch <- sc
 
 	cc := te.clientConn()
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
 	// The following RPCs are expected to become non-fail-fast ones with 1ms deadline.
-	if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); status.Code(err) != codes.DeadlineExceeded {
+	if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); status.Code(err) != codes.DeadlineExceeded {
 		t.Fatalf("TestService/EmptyCall(_, _) = _, %v, want _, %s", err, codes.DeadlineExceeded)
 	}
-	if _, err := tc.FullDuplexCall(ctx, grpc.WaitForReady(true)); status.Code(err) != codes.DeadlineExceeded {
+	if _, err := tc.FullDuplexCall(ctx, grpcforunconflict.WaitForReady(true)); status.Code(err) != codes.DeadlineExceeded {
 		t.Fatalf("TestService/FullDuplexCall(_) = _, %v, want %s", err, codes.DeadlineExceeded)
 	}
 
 	// Generate a service config update.
 	// Case2: Client API does not set failfast, and service config set wait_for_ready to be true, and the rpc will wait until deadline exceeds.
 	mc.WaitForReady = newBool(true)
-	m = make(map[string]grpc.MethodConfig)
-	m["/grpc.testing.TestService/EmptyCall"] = mc
-	m["/grpc.testing.TestService/FullDuplexCall"] = mc
-	sc = grpc.ServiceConfig{
+	m = make(map[string]grpcforunconflict.MethodConfig)
+	m["/grpcforunconflict.testing.TestService/EmptyCall"] = mc
+	m["/grpcforunconflict.testing.TestService/FullDuplexCall"] = mc
+	sc = grpcforunconflict.ServiceConfig{
 		Methods: m,
 	}
 	ch <- sc
@@ -149,7 +148,7 @@ func testServiceConfigWaitForReadyTD(t *testing.T, e env) {
 	ctx, cancel = context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
 	for ; ctx.Err() == nil; <-time.After(defaultTestShortTimeout) {
-		mc = cc.GetMethodConfig("/grpc.testing.TestService/FullDuplexCall")
+		mc = cc.GetMethodConfig("/grpcforunconflict.testing.TestService/FullDuplexCall")
 		if *mc.WaitForReady {
 			break
 		}
@@ -178,27 +177,27 @@ func testServiceConfigTimeoutTD(t *testing.T, e env) {
 	defer te.tearDown()
 
 	// Case1: Client API sets timeout to be 1ns and ServiceConfig sets timeout to be 1hr. Timeout should be 1ns (min of 1ns and 1hr) and the rpc will wait until deadline exceeds.
-	mc := grpc.MethodConfig{
+	mc := grpcforunconflict.MethodConfig{
 		Timeout: newDuration(time.Hour),
 	}
-	m := make(map[string]grpc.MethodConfig)
-	m["/grpc.testing.TestService/EmptyCall"] = mc
-	m["/grpc.testing.TestService/FullDuplexCall"] = mc
-	sc := grpc.ServiceConfig{
+	m := make(map[string]grpcforunconflict.MethodConfig)
+	m["/grpcforunconflict.testing.TestService/EmptyCall"] = mc
+	m["/grpcforunconflict.testing.TestService/FullDuplexCall"] = mc
+	sc := grpcforunconflict.ServiceConfig{
 		Methods: m,
 	}
 	ch <- sc
 
 	cc := te.clientConn()
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	// The following RPCs are expected to become non-fail-fast ones with 1ns deadline.
 	ctx, cancel := context.WithTimeout(context.Background(), time.Nanosecond)
-	if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); status.Code(err) != codes.DeadlineExceeded {
+	if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); status.Code(err) != codes.DeadlineExceeded {
 		t.Fatalf("TestService/EmptyCall(_, _) = _, %v, want _, %s", err, codes.DeadlineExceeded)
 	}
 	cancel()
 	ctx, cancel = context.WithTimeout(context.Background(), time.Nanosecond)
-	if _, err := tc.FullDuplexCall(ctx, grpc.WaitForReady(true)); status.Code(err) != codes.DeadlineExceeded {
+	if _, err := tc.FullDuplexCall(ctx, grpcforunconflict.WaitForReady(true)); status.Code(err) != codes.DeadlineExceeded {
 		t.Fatalf("TestService/FullDuplexCall(_) = _, %v, want %s", err, codes.DeadlineExceeded)
 	}
 	cancel()
@@ -206,10 +205,10 @@ func testServiceConfigTimeoutTD(t *testing.T, e env) {
 	// Generate a service config update.
 	// Case2: Client API sets timeout to be 1hr and ServiceConfig sets timeout to be 1ns. Timeout should be 1ns (min of 1ns and 1hr) and the rpc will wait until deadline exceeds.
 	mc.Timeout = newDuration(time.Nanosecond)
-	m = make(map[string]grpc.MethodConfig)
-	m["/grpc.testing.TestService/EmptyCall"] = mc
-	m["/grpc.testing.TestService/FullDuplexCall"] = mc
-	sc = grpc.ServiceConfig{
+	m = make(map[string]grpcforunconflict.MethodConfig)
+	m["/grpcforunconflict.testing.TestService/EmptyCall"] = mc
+	m["/grpcforunconflict.testing.TestService/FullDuplexCall"] = mc
+	sc = grpcforunconflict.ServiceConfig{
 		Methods: m,
 	}
 	ch <- sc
@@ -218,7 +217,7 @@ func testServiceConfigTimeoutTD(t *testing.T, e env) {
 	ctx, cancel = context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
 	for ; ctx.Err() == nil; <-time.After(defaultTestShortTimeout) {
-		mc = cc.GetMethodConfig("/grpc.testing.TestService/FullDuplexCall")
+		mc = cc.GetMethodConfig("/grpcforunconflict.testing.TestService/FullDuplexCall")
 		if *mc.Timeout == time.Nanosecond {
 			break
 		}
@@ -228,13 +227,13 @@ func testServiceConfigTimeoutTD(t *testing.T, e env) {
 	}
 
 	ctx, cancel = context.WithTimeout(context.Background(), time.Hour)
-	if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); status.Code(err) != codes.DeadlineExceeded {
+	if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); status.Code(err) != codes.DeadlineExceeded {
 		t.Fatalf("TestService/EmptyCall(_, _) = _, %v, want _, %s", err, codes.DeadlineExceeded)
 	}
 	cancel()
 
 	ctx, cancel = context.WithTimeout(context.Background(), time.Hour)
-	if _, err := tc.FullDuplexCall(ctx, grpc.WaitForReady(true)); status.Code(err) != codes.DeadlineExceeded {
+	if _, err := tc.FullDuplexCall(ctx, grpcforunconflict.WaitForReady(true)); status.Code(err) != codes.DeadlineExceeded {
 		t.Fatalf("TestService/FullDuplexCall(_) = _, %v, want %s", err, codes.DeadlineExceeded)
 	}
 	cancel()
@@ -265,15 +264,15 @@ func testServiceConfigMaxMsgSizeTD(t *testing.T, e env) {
 		t.Fatal(err)
 	}
 
-	mc := grpc.MethodConfig{
+	mc := grpcforunconflict.MethodConfig{
 		MaxReqSize:  newInt(extraLargeSize),
 		MaxRespSize: newInt(extraLargeSize),
 	}
 
-	m := make(map[string]grpc.MethodConfig)
-	m["/grpc.testing.TestService/UnaryCall"] = mc
-	m["/grpc.testing.TestService/FullDuplexCall"] = mc
-	sc := grpc.ServiceConfig{
+	m := make(map[string]grpcforunconflict.MethodConfig)
+	m["/grpcforunconflict.testing.TestService/UnaryCall"] = mc
+	m["/grpcforunconflict.testing.TestService/FullDuplexCall"] = mc
+	sc := grpcforunconflict.ServiceConfig{
 		Methods: m,
 	}
 	// Case1: sc set maxReqSize to 2048 (send), maxRespSize to 2048 (recv).
@@ -282,7 +281,7 @@ func testServiceConfigMaxMsgSizeTD(t *testing.T, e env) {
 	defer te1.tearDown()
 
 	ch1 <- sc
-	tc := testgrpc.NewTestServiceClient(te1.clientConn())
+	tc := testgrpcforunconflict.NewTestServiceClient(te1.clientConn())
 
 	req := &testpb.SimpleRequest{
 		ResponseType: testpb.PayloadType_COMPRESSABLE,
@@ -344,7 +343,7 @@ func testServiceConfigMaxMsgSizeTD(t *testing.T, e env) {
 	te2.startServer(&testServer{security: e.security})
 	defer te2.tearDown()
 	ch2 <- sc
-	tc = testgrpc.NewTestServiceClient(te2.clientConn())
+	tc = testgrpcforunconflict.NewTestServiceClient(te2.clientConn())
 
 	// Test for unary RPC recv.
 	req.Payload = smallPayload
@@ -393,7 +392,7 @@ func testServiceConfigMaxMsgSizeTD(t *testing.T, e env) {
 	te3.startServer(&testServer{security: e.security})
 	defer te3.tearDown()
 	ch3 <- sc
-	tc = testgrpc.NewTestServiceClient(te3.clientConn())
+	tc = testgrpcforunconflict.NewTestServiceClient(te3.clientConn())
 
 	// Test for unary RPC recv.
 	req.Payload = smallPayload

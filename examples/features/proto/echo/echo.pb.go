@@ -189,18 +189,18 @@ func file_examples_features_proto_echo_echo_proto_rawDescGZIP() []byte {
 
 var file_examples_features_proto_echo_echo_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_examples_features_proto_echo_echo_proto_goTypes = []interface{}{
-	(*EchoRequest)(nil),  // 0: grpc.examples.echo.EchoRequest
-	(*EchoResponse)(nil), // 1: grpc.examples.echo.EchoResponse
+	(*EchoRequest)(nil),  // 0:grpcforunconflict.examples.echo.EchoRequest
+	(*EchoResponse)(nil), // 1:grpcforunconflict.examples.echo.EchoResponse
 }
 var file_examples_features_proto_echo_echo_proto_depIdxs = []int32{
-	0, // 0: grpc.examples.echo.Echo.UnaryEcho:input_type -> grpc.examples.echo.EchoRequest
-	0, // 1: grpc.examples.echo.Echo.ServerStreamingEcho:input_type -> grpc.examples.echo.EchoRequest
-	0, // 2: grpc.examples.echo.Echo.ClientStreamingEcho:input_type -> grpc.examples.echo.EchoRequest
-	0, // 3: grpc.examples.echo.Echo.BidirectionalStreamingEcho:input_type -> grpc.examples.echo.EchoRequest
-	1, // 4: grpc.examples.echo.Echo.UnaryEcho:output_type -> grpc.examples.echo.EchoResponse
-	1, // 5: grpc.examples.echo.Echo.ServerStreamingEcho:output_type -> grpc.examples.echo.EchoResponse
-	1, // 6: grpc.examples.echo.Echo.ClientStreamingEcho:output_type -> grpc.examples.echo.EchoResponse
-	1, // 7: grpc.examples.echo.Echo.BidirectionalStreamingEcho:output_type -> grpc.examples.echo.EchoResponse
+	0, // 0:grpcforunconflict.examples.echo.Echo.UnaryEcho:input_type ->grpcforunconflict.examples.echo.EchoRequest
+	0, // 1:grpcforunconflict.examples.echo.Echo.ServerStreamingEcho:input_type ->grpcforunconflict.examples.echo.EchoRequest
+	0, // 2:grpcforunconflict.examples.echo.Echo.ClientStreamingEcho:input_type ->grpcforunconflict.examples.echo.EchoRequest
+	0, // 3:grpcforunconflict.examples.echo.Echo.BidirectionalStreamingEcho:input_type ->grpcforunconflict.examples.echo.EchoRequest
+	1, // 4:grpcforunconflict.examples.echo.Echo.UnaryEcho:output_type ->grpcforunconflict.examples.echo.EchoResponse
+	1, // 5:grpcforunconflict.examples.echo.Echo.ServerStreamingEcho:output_type ->grpcforunconflict.examples.echo.EchoResponse
+	1, // 6:grpcforunconflict.examples.echo.Echo.ClientStreamingEcho:output_type ->grpcforunconflict.examples.echo.EchoResponse
+	1, // 7:grpcforunconflict.examples.echo.Echo.BidirectionalStreamingEcho:output_type ->grpcforunconflict.examples.echo.EchoResponse
 	4, // [4:8] is the sub-list for method output_type
 	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name

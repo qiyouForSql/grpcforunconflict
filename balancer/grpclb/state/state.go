@@ -27,7 +27,7 @@ import (
 // keyType is the key to use for storing State in Attributes.
 type keyType string
 
-const key = keyType("grpc.grpclb.state")
+const key = keyType("grpcforunconflict.grpclb.state")
 
 // State contains gRPCLB-relevant data passed from the name resolver.
 type State struct {

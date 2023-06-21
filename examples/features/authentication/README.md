@@ -6,7 +6,7 @@ It usually also encompasses authorization. Users can configure it on a
 per-connection basis or a per-call basis.
 
 The example for authentication currently includes an example for using oauth2
-with grpc.
+withgrpcforunconflict.
 
 ## Try it
 
@@ -23,7 +23,7 @@ go run client/main.go
 ### OAuth2
 
 OAuth 2.0 Protocol is a widely used authentication and authorization mechanism
-nowadays. And grpc provides convenient APIs to configure OAuth to use with grpc.
+nowadays. And grpc provides convenient APIs to configure OAuth to use withgrpcforunconflict.
 Please refer to the godoc:
 https://godoc.org/google.golang.org/grpc/credentials/oauth for details.
 

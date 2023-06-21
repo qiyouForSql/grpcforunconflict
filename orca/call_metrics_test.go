@@ -26,16 +26,15 @@ import (
 
 	"github.com/golang/protobuf/proto"
 	"github.com/google/go-cmp/cmp"
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal/pretty"
 	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
 	"github.com/qiyouForSql/grpcforunconflict/metadata"
 	"github.com/qiyouForSql/grpcforunconflict/orca"
 	"github.com/qiyouForSql/grpcforunconflict/orca/internal"
-	"google.golang.org/grpc"
 
 	v3orcapb "github.com/cncf/xds/go/xds/data/orca/v3"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -73,7 +72,7 @@ func (s) TestE2ECallMetricsUnary(t *testing.T) {
 
 			// An interceptor to injects custom backend metrics, added only when
 			// the injectMetrics field in the test is set.
-			injectingInterceptor := func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+			injectingInterceptor := func(ctx context.Context, req interface{}, info grpcforunconflict.UnaryServerInfo, handler grpcforunconflict.UnaryHandler) (resp interface{}, err error) {
 				recorder := orca.CallMetricsRecorderFromContext(ctx)
 				if recorder == nil {
 					err := errors.New("Failed to retrieve per-RPC custom metrics recorder from the RPC context")
@@ -108,9 +107,9 @@ func (s) TestE2ECallMetricsUnary(t *testing.T) {
 			}
 
 			// Start the stub server with the appropriate server options.
-			sopts := []grpc.ServerOption{callMetricsServerOption}
+			sopts := []grpcforunconflict.ServerOption{callMetricsServerOption}
 			if test.injectMetrics {
-				sopts = append(sopts, grpc.ChainUnaryInterceptor(injectingInterceptor))
+				sopts = append(sopts, grpcforunconflict.ChainUnaryInterceptor(injectingInterceptor))
 			}
 			if err := srv.StartServer(sopts...); err != nil {
 				t.Fatalf("Failed to start server: %v", err)
@@ -118,9 +117,9 @@ func (s) TestE2ECallMetricsUnary(t *testing.T) {
 			defer srv.Stop()
 
 			// Dial the stub server.
-			cc, err := grpc.Dial(srv.Address, grpc.WithTransportCredentials(insecure.NewCredentials()))
+			cc, err := grpcforunconflict.Dial(srv.Address, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 			if err != nil {
-				t.Fatalf("grpc.Dial(%s) failed: %v", srv.Address, err)
+				t.Fatalf("grpcforunconflict.Dial(%s) failed: %v", srv.Address, err)
 			}
 			defer cc.Close()
 
@@ -128,9 +127,9 @@ func (s) TestE2ECallMetricsUnary(t *testing.T) {
 			// backend metrics as an ORCA LoadReport protobuf message.
 			ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 			defer cancel()
-			client := testgrpc.NewTestServiceClient(cc)
+			client := testgrpcforunconflict.NewTestServiceClient(cc)
 			trailer := metadata.MD{}
-			if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.Trailer(&trailer)); err != nil {
+			if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Trailer(&trailer)); err != nil {
 				t.Fatalf("EmptyCall failed: %v", err)
 			}
 
@@ -179,7 +178,7 @@ func (s) TestE2ECallMetricsStreaming(t *testing.T) {
 
 			// An interceptor which injects custom backend metrics, added only
 			// when the injectMetrics field in the test is set.
-			injectingInterceptor := func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+			injectingInterceptor := func(srv interface{}, ss grpcforunconflict.ServerStream, info *grpcforunconflict.StreamServerInfo, handler grpcforunconflict.StreamHandler) error {
 				recorder := orca.CallMetricsRecorderFromContext(ss.Context())
 				if recorder == nil {
 					err := errors.New("Failed to retrieve per-RPC custom metrics recorder from the RPC context")
@@ -197,7 +196,7 @@ func (s) TestE2ECallMetricsStreaming(t *testing.T) {
 			// the injectMetrics field in the test is set. It overwrites one of
 			// the values injected above, by the interceptor.
 			srv := stubserver.StubServer{
-				FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+				FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 					if test.injectMetrics {
 						recorder := orca.CallMetricsRecorderFromContext(stream.Context())
 						if recorder == nil {
@@ -229,9 +228,9 @@ func (s) TestE2ECallMetricsStreaming(t *testing.T) {
 			}
 
 			// Start the stub server with the appropriate server options.
-			sopts := []grpc.ServerOption{callMetricsServerOption}
+			sopts := []grpcforunconflict.ServerOption{callMetricsServerOption}
 			if test.injectMetrics {
-				sopts = append(sopts, grpc.ChainStreamInterceptor(injectingInterceptor))
+				sopts = append(sopts, grpcforunconflict.ChainStreamInterceptor(injectingInterceptor))
 			}
 			if err := srv.StartServer(sopts...); err != nil {
 				t.Fatalf("Failed to start server: %v", err)
@@ -239,16 +238,16 @@ func (s) TestE2ECallMetricsStreaming(t *testing.T) {
 			defer srv.Stop()
 
 			// Dial the stub server.
-			cc, err := grpc.Dial(srv.Address, grpc.WithTransportCredentials(insecure.NewCredentials()))
+			cc, err := grpcforunconflict.Dial(srv.Address, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 			if err != nil {
-				t.Fatalf("grpc.Dial(%s) failed: %v", srv.Address, err)
+				t.Fatalf("grpcforunconflict.Dial(%s) failed: %v", srv.Address, err)
 			}
 			defer cc.Close()
 
 			// Start the full duplex streaming RPC.
 			ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 			defer cancel()
-			tc := testgrpc.NewTestServiceClient(cc)
+			tc := testgrpcforunconflict.NewTestServiceClient(cc)
 			stream, err := tc.FullDuplexCall(ctx)
 			if err != nil {
 				t.Fatalf("FullDuplexCall failed: %v", err)

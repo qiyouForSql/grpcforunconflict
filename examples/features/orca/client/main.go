@@ -42,9 +42,9 @@ func main() {
 
 	// Set up a connection to the server.  Configure to use our custom LB
 	// policy which will receive all the ORCA load reports.
-	conn, err := grpc.Dial(*addr,
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"orca_example":{}}]}`),
+	conn, err := grpcforunconflict.Dial(*addr,
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithDefaultServiceConfig(`{"loadBalancingConfig": [{"orca_example":{}}]}`),
 	)
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)

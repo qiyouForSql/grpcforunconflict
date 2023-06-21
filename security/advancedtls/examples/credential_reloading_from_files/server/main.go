@@ -93,7 +93,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("advancedtls.NewServerCreds(%v) failed: %v", options, err)
 	}
-	s := grpc.NewServer(grpc.Creds(serverTLSCreds), grpc.KeepaliveParams(keepalive.ServerParameters{
+	s := grpcforunconflict.NewServer(grpcforunconflict.Creds(serverTLSCreds), grpcforunconflict.KeepaliveParams(keepalive.ServerParameters{
 		// Set the max connection time to be 0.5 s to force the client to
 		// re-establish the connection, and hence re-invoke the verification
 		// callback.

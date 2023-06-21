@@ -149,7 +149,7 @@ type Endpoint struct {
 	// Port number.
 	Port int32 `protobuf:"varint,2,opt,name=port,proto3" json:"port,omitempty"`
 	// Network protocol (e.g., TCP, UDP) associated with this endpoint.
-	Protocol NetworkProtocol `protobuf:"varint,3,opt,name=protocol,proto3,enum=grpc.gcp.NetworkProtocol" json:"protocol,omitempty"`
+	Protocol NetworkProtocol `protobuf:"varint,3,opt,name=protocol,proto3,enum=grpcforunconflict.gcp.NetworkProtocol" json:"protocol,omitempty"`
 }
 
 func (x *Endpoint) Reset() {
@@ -303,7 +303,7 @@ type StartClientHandshakeReq struct {
 	unknownFields protoimpl.UnknownFields
 
 	// Handshake security protocol requested by the client.
-	HandshakeSecurityProtocol HandshakeProtocol `protobuf:"varint,1,opt,name=handshake_security_protocol,json=handshakeSecurityProtocol,proto3,enum=grpc.gcp.HandshakeProtocol" json:"handshake_security_protocol,omitempty"`
+	HandshakeSecurityProtocol HandshakeProtocol `protobuf:"varint,1,opt,name=handshake_security_protocol,json=handshakeSecurityProtocol,proto3,enum=grpcforunconflict.gcp.HandshakeProtocol" json:"handshake_security_protocol,omitempty"`
 	// The application protocols supported by the client, e.g., "h2" (for http2),
 	// "grpc".
 	ApplicationProtocols []string `protobuf:"bytes,2,rep,name=application_protocols,json=applicationProtocols,proto3" json:"application_protocols,omitempty"`
@@ -1216,47 +1216,47 @@ func file_grpc_gcp_handshaker_proto_rawDescGZIP() []byte {
 var file_grpc_gcp_handshaker_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_grpc_gcp_handshaker_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_grpc_gcp_handshaker_proto_goTypes = []interface{}{
-	(HandshakeProtocol)(0),            // 0: grpc.gcp.HandshakeProtocol
-	(NetworkProtocol)(0),              // 1: grpc.gcp.NetworkProtocol
-	(*Endpoint)(nil),                  // 2: grpc.gcp.Endpoint
-	(*Identity)(nil),                  // 3: grpc.gcp.Identity
-	(*StartClientHandshakeReq)(nil),   // 4: grpc.gcp.StartClientHandshakeReq
-	(*ServerHandshakeParameters)(nil), // 5: grpc.gcp.ServerHandshakeParameters
-	(*StartServerHandshakeReq)(nil),   // 6: grpc.gcp.StartServerHandshakeReq
-	(*NextHandshakeMessageReq)(nil),   // 7: grpc.gcp.NextHandshakeMessageReq
-	(*HandshakerReq)(nil),             // 8: grpc.gcp.HandshakerReq
-	(*HandshakerResult)(nil),          // 9: grpc.gcp.HandshakerResult
-	(*HandshakerStatus)(nil),          // 10: grpc.gcp.HandshakerStatus
-	(*HandshakerResp)(nil),            // 11: grpc.gcp.HandshakerResp
-	nil,                               // 12: grpc.gcp.Identity.AttributesEntry
-	nil,                               // 13: grpc.gcp.StartServerHandshakeReq.HandshakeParametersEntry
-	(*RpcProtocolVersions)(nil),       // 14: grpc.gcp.RpcProtocolVersions
+	(HandshakeProtocol)(0),            // 0:grpcforunconflict.gcp.HandshakeProtocol
+	(NetworkProtocol)(0),              // 1:grpcforunconflict.gcp.NetworkProtocol
+	(*Endpoint)(nil),                  // 2:grpcforunconflict.gcp.Endpoint
+	(*Identity)(nil),                  // 3:grpcforunconflict.gcp.Identity
+	(*StartClientHandshakeReq)(nil),   // 4:grpcforunconflict.gcp.StartClientHandshakeReq
+	(*ServerHandshakeParameters)(nil), // 5:grpcforunconflict.gcp.ServerHandshakeParameters
+	(*StartServerHandshakeReq)(nil),   // 6:grpcforunconflict.gcp.StartServerHandshakeReq
+	(*NextHandshakeMessageReq)(nil),   // 7:grpcforunconflict.gcp.NextHandshakeMessageReq
+	(*HandshakerReq)(nil),             // 8:grpcforunconflict.gcp.HandshakerReq
+	(*HandshakerResult)(nil),          // 9:grpcforunconflict.gcp.HandshakerResult
+	(*HandshakerStatus)(nil),          // 10:grpcforunconflict.gcp.HandshakerStatus
+	(*HandshakerResp)(nil),            // 11:grpcforunconflict.gcp.HandshakerResp
+	nil,                               // 12:grpcforunconflict.gcp.Identity.AttributesEntry
+	nil,                               // 13:grpcforunconflict.gcp.StartServerHandshakeReq.HandshakeParametersEntry
+	(*RpcProtocolVersions)(nil),       // 14:grpcforunconflict.gcp.RpcProtocolVersions
 }
 var file_grpc_gcp_handshaker_proto_depIdxs = []int32{
-	1,  // 0: grpc.gcp.Endpoint.protocol:type_name -> grpc.gcp.NetworkProtocol
-	12, // 1: grpc.gcp.Identity.attributes:type_name -> grpc.gcp.Identity.AttributesEntry
-	0,  // 2: grpc.gcp.StartClientHandshakeReq.handshake_security_protocol:type_name -> grpc.gcp.HandshakeProtocol
-	3,  // 3: grpc.gcp.StartClientHandshakeReq.target_identities:type_name -> grpc.gcp.Identity
-	3,  // 4: grpc.gcp.StartClientHandshakeReq.local_identity:type_name -> grpc.gcp.Identity
-	2,  // 5: grpc.gcp.StartClientHandshakeReq.local_endpoint:type_name -> grpc.gcp.Endpoint
-	2,  // 6: grpc.gcp.StartClientHandshakeReq.remote_endpoint:type_name -> grpc.gcp.Endpoint
-	14, // 7: grpc.gcp.StartClientHandshakeReq.rpc_versions:type_name -> grpc.gcp.RpcProtocolVersions
-	3,  // 8: grpc.gcp.ServerHandshakeParameters.local_identities:type_name -> grpc.gcp.Identity
-	13, // 9: grpc.gcp.StartServerHandshakeReq.handshake_parameters:type_name -> grpc.gcp.StartServerHandshakeReq.HandshakeParametersEntry
-	2,  // 10: grpc.gcp.StartServerHandshakeReq.local_endpoint:type_name -> grpc.gcp.Endpoint
-	2,  // 11: grpc.gcp.StartServerHandshakeReq.remote_endpoint:type_name -> grpc.gcp.Endpoint
-	14, // 12: grpc.gcp.StartServerHandshakeReq.rpc_versions:type_name -> grpc.gcp.RpcProtocolVersions
-	4,  // 13: grpc.gcp.HandshakerReq.client_start:type_name -> grpc.gcp.StartClientHandshakeReq
-	6,  // 14: grpc.gcp.HandshakerReq.server_start:type_name -> grpc.gcp.StartServerHandshakeReq
-	7,  // 15: grpc.gcp.HandshakerReq.next:type_name -> grpc.gcp.NextHandshakeMessageReq
-	3,  // 16: grpc.gcp.HandshakerResult.peer_identity:type_name -> grpc.gcp.Identity
-	3,  // 17: grpc.gcp.HandshakerResult.local_identity:type_name -> grpc.gcp.Identity
-	14, // 18: grpc.gcp.HandshakerResult.peer_rpc_versions:type_name -> grpc.gcp.RpcProtocolVersions
-	9,  // 19: grpc.gcp.HandshakerResp.result:type_name -> grpc.gcp.HandshakerResult
-	10, // 20: grpc.gcp.HandshakerResp.status:type_name -> grpc.gcp.HandshakerStatus
-	5,  // 21: grpc.gcp.StartServerHandshakeReq.HandshakeParametersEntry.value:type_name -> grpc.gcp.ServerHandshakeParameters
-	8,  // 22: grpc.gcp.HandshakerService.DoHandshake:input_type -> grpc.gcp.HandshakerReq
-	11, // 23: grpc.gcp.HandshakerService.DoHandshake:output_type -> grpc.gcp.HandshakerResp
+	1,  // 0:grpcforunconflict.gcp.Endpoint.protocol:type_name ->grpcforunconflict.gcp.NetworkProtocol
+	12, // 1:grpcforunconflict.gcp.Identity.attributes:type_name ->grpcforunconflict.gcp.Identity.AttributesEntry
+	0,  // 2:grpcforunconflict.gcp.StartClientHandshakeReq.handshake_security_protocol:type_name ->grpcforunconflict.gcp.HandshakeProtocol
+	3,  // 3:grpcforunconflict.gcp.StartClientHandshakeReq.target_identities:type_name ->grpcforunconflict.gcp.Identity
+	3,  // 4:grpcforunconflict.gcp.StartClientHandshakeReq.local_identity:type_name ->grpcforunconflict.gcp.Identity
+	2,  // 5:grpcforunconflict.gcp.StartClientHandshakeReq.local_endpoint:type_name ->grpcforunconflict.gcp.Endpoint
+	2,  // 6:grpcforunconflict.gcp.StartClientHandshakeReq.remote_endpoint:type_name ->grpcforunconflict.gcp.Endpoint
+	14, // 7:grpcforunconflict.gcp.StartClientHandshakeReq.rpc_versions:type_name ->grpcforunconflict.gcp.RpcProtocolVersions
+	3,  // 8:grpcforunconflict.gcp.ServerHandshakeParameters.local_identities:type_name ->grpcforunconflict.gcp.Identity
+	13, // 9:grpcforunconflict.gcp.StartServerHandshakeReq.handshake_parameters:type_name ->grpcforunconflict.gcp.StartServerHandshakeReq.HandshakeParametersEntry
+	2,  // 10:grpcforunconflict.gcp.StartServerHandshakeReq.local_endpoint:type_name ->grpcforunconflict.gcp.Endpoint
+	2,  // 11:grpcforunconflict.gcp.StartServerHandshakeReq.remote_endpoint:type_name ->grpcforunconflict.gcp.Endpoint
+	14, // 12:grpcforunconflict.gcp.StartServerHandshakeReq.rpc_versions:type_name ->grpcforunconflict.gcp.RpcProtocolVersions
+	4,  // 13:grpcforunconflict.gcp.HandshakerReq.client_start:type_name ->grpcforunconflict.gcp.StartClientHandshakeReq
+	6,  // 14:grpcforunconflict.gcp.HandshakerReq.server_start:type_name ->grpcforunconflict.gcp.StartServerHandshakeReq
+	7,  // 15:grpcforunconflict.gcp.HandshakerReq.next:type_name ->grpcforunconflict.gcp.NextHandshakeMessageReq
+	3,  // 16:grpcforunconflict.gcp.HandshakerResult.peer_identity:type_name ->grpcforunconflict.gcp.Identity
+	3,  // 17:grpcforunconflict.gcp.HandshakerResult.local_identity:type_name ->grpcforunconflict.gcp.Identity
+	14, // 18:grpcforunconflict.gcp.HandshakerResult.peer_rpc_versions:type_name ->grpcforunconflict.gcp.RpcProtocolVersions
+	9,  // 19:grpcforunconflict.gcp.HandshakerResp.result:type_name ->grpcforunconflict.gcp.HandshakerResult
+	10, // 20:grpcforunconflict.gcp.HandshakerResp.status:type_name ->grpcforunconflict.gcp.HandshakerStatus
+	5,  // 21:grpcforunconflict.gcp.StartServerHandshakeReq.HandshakeParametersEntry.value:type_name ->grpcforunconflict.gcp.ServerHandshakeParameters
+	8,  // 22:grpcforunconflict.gcp.HandshakerService.DoHandshake:input_type ->grpcforunconflict.gcp.HandshakerReq
+	11, // 23:grpcforunconflict.gcp.HandshakerService.DoHandshake:output_type ->grpcforunconflict.gcp.HandshakerResp
 	23, // [23:24] is the sub-list for method output_type
 	22, // [22:23] is the sub-list for method input_type
 	22, // [22:22] is the sub-list for extension type_name

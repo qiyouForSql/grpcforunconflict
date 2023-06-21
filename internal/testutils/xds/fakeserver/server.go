@@ -29,16 +29,12 @@ import (
 	"net"
 	"time"
 
+	v3discoverypb "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
+	v3lrspb "github.com/envoyproxy/go-control-plane/envoy/service/load_stats/v3"
 	"github.com/golang/protobuf/proto"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
-
-	v3discoverygrpc "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
-	v3discoverypb "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
-	v3lrsgrpc "github.com/envoyproxy/go-control-plane/envoy/service/load_stats/v3"
-	v3lrspb "github.com/envoyproxy/go-control-plane/envoy/service/load_stats/v3"
 )
 
 const (
@@ -133,9 +129,9 @@ func StartServer(lis net.Listener) (*Server, func(), error) {
 		server:   s,
 	}
 
-	server := grpc.NewServer()
-	v3lrsgrpc.RegisterLoadReportingServiceServer(server, s)
-	v3discoverygrpc.RegisterAggregatedDiscoveryServiceServer(server, s)
+	server := grpcforunconflict.NewServer()
+	v3lrsgrpcforunconflict.RegisterLoadReportingServiceServer(server, s)
+	v3discoverygrpcforunconflict.RegisterAggregatedDiscoveryServiceServer(server, s)
 	go server.Serve(wp)
 
 	return s, func() { server.Stop() }, nil
@@ -166,7 +162,7 @@ type xdsServerV3 struct {
 	respChan chan *Response
 }
 
-func (xdsS *xdsServerV3) StreamAggregatedResources(s v3discoverygrpc.AggregatedDiscoveryService_StreamAggregatedResourcesServer) error {
+func (xdsS *xdsServerV3) StreamAggregatedResources(s v3discoverygrpcforunconflict.AggregatedDiscoveryService_StreamAggregatedResourcesServer) error {
 	errCh := make(chan error, 2)
 	go func() {
 		for {
@@ -208,7 +204,7 @@ func (xdsS *xdsServerV3) StreamAggregatedResources(s v3discoverygrpc.AggregatedD
 	return nil
 }
 
-func (xdsS *xdsServerV3) DeltaAggregatedResources(v3discoverygrpc.AggregatedDiscoveryService_DeltaAggregatedResourcesServer) error {
+func (xdsS *xdsServerV3) DeltaAggregatedResources(v3discoverygrpcforunconflict.AggregatedDiscoveryService_DeltaAggregatedResourcesServer) error {
 	return status.Error(codes.Unimplemented, "")
 }
 
@@ -219,7 +215,7 @@ type lrsServerV3 struct {
 	streamCloseChan *testutils.Channel
 }
 
-func (lrsS *lrsServerV3) StreamLoadStats(s v3lrsgrpc.LoadReportingService_StreamLoadStatsServer) error {
+func (lrsS *lrsServerV3) StreamLoadStats(s v3lrsgrpcforunconflict.LoadReportingService_StreamLoadStatsServer) error {
 	lrsS.streamOpenChan.Send(nil)
 	defer lrsS.streamCloseChan.Send(nil)
 

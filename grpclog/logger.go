@@ -32,7 +32,7 @@ type Logger interface {
 	Println(args ...interface{})
 }
 
-// SetLogger sets the logger that is used in grpc. Call only from
+// SetLogger sets the logger that is used ingrpcforunconflict. Call only from
 // init() functions.
 //
 // Deprecated: use SetLoggerV2.

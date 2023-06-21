@@ -19,28 +19,26 @@
 package reflection
 
 import (
-	v1grpc "github.com/qiyouForSql/grpcforunconflict/reflection/grpc_reflection_v1"
 	v1pb "github.com/qiyouForSql/grpcforunconflict/reflection/grpc_reflection_v1"
-	v1alphagrpc "github.com/qiyouForSql/grpcforunconflict/reflection/grpc_reflection_v1alpha"
 	v1alphapb "github.com/qiyouForSql/grpcforunconflict/reflection/grpc_reflection_v1alpha"
 )
 
 // asV1Alpha returns an implementation of the v1alpha version of the reflection
 // interface that delegates all calls to the given v1 version.
-func asV1Alpha(svr v1grpc.ServerReflectionServer) v1alphagrpc.ServerReflectionServer {
+func asV1Alpha(svr v1grpcforunconflict.ServerReflectionServer) v1alphagrpcforunconflict.ServerReflectionServer {
 	return v1AlphaServerImpl{svr: svr}
 }
 
 type v1AlphaServerImpl struct {
-	svr v1grpc.ServerReflectionServer
+	svr v1grpcforunconflict.ServerReflectionServer
 }
 
-func (s v1AlphaServerImpl) ServerReflectionInfo(stream v1alphagrpc.ServerReflection_ServerReflectionInfoServer) error {
+func (s v1AlphaServerImpl) ServerReflectionInfo(stream v1alphagrpcforunconflict.ServerReflection_ServerReflectionInfoServer) error {
 	return s.svr.ServerReflectionInfo(v1AlphaServerStreamAdapter{stream})
 }
 
 type v1AlphaServerStreamAdapter struct {
-	v1alphagrpc.ServerReflection_ServerReflectionInfoServer
+	v1alphagrpcforunconflict.ServerReflection_ServerReflectionInfoServer
 }
 
 func (s v1AlphaServerStreamAdapter) Send(response *v1pb.ServerReflectionResponse) error {

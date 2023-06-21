@@ -30,7 +30,7 @@ go run client/main.go
 
 Retry is enabled via the service config, which can be provided by the name resolver or
 a DialOption (described below).  In the below config, we set retry policy for the
-"grpc.example.echo.Echo" method.
+"grpcforunconflict.example.echo.Echo" method.
 
 MaxAttempts: how many times to attempt the RPC before failing.
 InitialBackoff, MaxBackoff, BackoffMultiplier: configures delay between attempts.
@@ -40,7 +40,7 @@ RetryableStatusCodes: Retry only when receiving these status codes.
         var retryPolicy = `{
             "methodConfig": [{
                 // config per method or all methods under service
-                "name": [{"service": "grpc.examples.echo.Echo"}],
+                "name": [{"service": "grpcforunconflict.examples.echo.Echo"}],
                 "waitForReady": true,
 
                 "retryPolicy": {
@@ -57,9 +57,9 @@ RetryableStatusCodes: Retry only when receiving these status codes.
 
 ### Providing the retry policy as a DialOption
 
-To use the above service config, pass it with `grpc.WithDefaultServiceConfig` to
-`grpc.Dial`.
+To use the above service config, pass it with `grpcforunconflict.WithDefaultServiceConfig` to
+`grpcforunconflict.Dial`.
 
 ```go
-conn, err := grpc.Dial(ctx,grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithDefaultServiceConfig(retryPolicy))
+conn, err :=grpcforunconflict.Dial(ctx,grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),grpcforunconflict.WithDefaultServiceConfig(retryPolicy))
 ```

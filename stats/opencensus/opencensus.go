@@ -33,7 +33,7 @@ import (
 )
 
 var (
-	joinDialOptions = internal.JoinDialOptions.(func(...grpc.DialOption) grpc.DialOption)
+	joinDialOptions = internal.JoinDialOptions.(func(...grpcforunconflict.DialOption) grpcforunconflict.DialOption)
 )
 
 // TraceOptions are the tracing options for opencensus instrumentation.
@@ -46,11 +46,11 @@ type TraceOptions struct {
 }
 
 // DialOption returns a dial option which enables OpenCensus instrumentation
-// code for a grpc.ClientConn.
+// code for agrpcforunconflict.ClientConn.
 //
-// Client applications interested in instrumenting their grpc.ClientConn should
+// Client applications interested in instrumenting theirgrpcforunconflict.ClientConn should
 // pass the dial option returned from this function as the first dial option to
-// grpc.Dial().
+//grpcforunconflict.Dial().
 //
 // Using this option will always lead to instrumentation, however in order to
 // use the data an exporter must be registered with the OpenCensus trace package
@@ -60,17 +60,17 @@ type TraceOptions struct {
 // attempt trace/metrics. These three components registered work together in
 // conjunction, and do not work standalone. It is not supported to use this
 // alongside another stats handler dial option.
-func DialOption(to TraceOptions) grpc.DialOption {
+func DialOption(to TraceOptions) grpcforunconflict.DialOption {
 	csh := &clientStatsHandler{to: to}
-	return joinDialOptions(grpc.WithChainUnaryInterceptor(csh.unaryInterceptor), grpc.WithChainStreamInterceptor(csh.streamInterceptor), grpc.WithStatsHandler(csh))
+	return joinDialOptions(grpcforunconflict.WithChainUnaryInterceptor(csh.unaryInterceptor), grpcforunconflict.WithChainStreamInterceptor(csh.streamInterceptor), grpcforunconflict.WithStatsHandler(csh))
 }
 
 // ServerOption returns a server option which enables OpenCensus instrumentation
-// code for a grpc.Server.
+// code for agrpcforunconflict.Server.
 //
-// Server applications interested in instrumenting their grpc.Server should
+// Server applications interested in instrumenting theirgrpcforunconflict.Server should
 // pass the server option returned from this function as the first argument to
-// grpc.NewServer().
+//grpcforunconflict.NewServer().
 //
 // Using this option will always lead to instrumentation, however in order to
 // use the data an exporter must be registered with the OpenCensus trace package
@@ -78,8 +78,8 @@ func DialOption(to TraceOptions) grpc.DialOption {
 // have retries, so a registered Stats Handler is the only option that is
 // returned. It is not supported to use this alongside another stats handler
 // server option.
-func ServerOption(to TraceOptions) grpc.ServerOption {
-	return grpc.StatsHandler(&serverStatsHandler{to: to})
+func ServerOption(to TraceOptions) grpcforunconflict.ServerOption {
+	returngrpcforunconflict.StatsHandler(&serverStatsHandler{to: to})
 }
 
 // createCallSpan creates a call span if tracing is enabled, which will be put
@@ -115,7 +115,7 @@ func perCallTracesAndMetrics(err error, span *trace.Span, startTime time.Time, m
 // unaryInterceptor handles per RPC context management. It also handles per RPC
 // tracing and stats by creating a top level call span and recording the latency
 // for the full RPC call.
-func (csh *clientStatsHandler) unaryInterceptor(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
+func (csh *clientStatsHandler) unaryInterceptor(ctx context.Context, method string, req, reply interface{}, cc *grpcforunconflict.ClientConn, invokergrpcforunconflict.UnaryInvoker, opts ...grpcforunconflict.CallOption) error {
 	startTime := time.Now()
 	ctx, span := csh.createCallSpan(ctx, method)
 	err := invoker(ctx, method, req, reply, cc, opts...)
@@ -126,13 +126,13 @@ func (csh *clientStatsHandler) unaryInterceptor(ctx context.Context, method stri
 // streamInterceptor handles per RPC context management. It also handles per RPC
 // tracing and stats by creating a top level call span and recording the latency
 // for the full RPC call.
-func (csh *clientStatsHandler) streamInterceptor(ctx context.Context, desc *grpc.StreamDesc, cc *grpc.ClientConn, method string, streamer grpc.Streamer, opts ...grpc.CallOption) (grpc.ClientStream, error) {
+func (csh *clientStatsHandler) streamInterceptor(ctx context.Context, desc *grpcforunconflict.StreamDesc, cc *grpcforunconflict.ClientConn, method string, streamergrpcforunconflict.Streamer, opts ...grpcforunconflict.CallOption) (grpcforunconflict.ClientStream, error) {
 	startTime := time.Now()
 	ctx, span := csh.createCallSpan(ctx, method)
 	callback := func(err error) {
 		perCallTracesAndMetrics(err, span, startTime, method)
 	}
-	opts = append([]grpc.CallOption{grpc.OnFinish(callback)}, opts...)
+	opts = append([]grpcforunconflict.CallOption{grpcforunconflict.OnFinish(callback)}, opts...)
 	s, err := streamer(ctx, desc, cc, method, opts...)
 	if err != nil {
 		return nil, err

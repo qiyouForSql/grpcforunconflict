@@ -24,6 +24,9 @@ import (
 	"testing"
 	"time"
 
+	v3corepb "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
+	v3endpointpb "github.com/envoyproxy/go-control-plane/envoy/config/endpoint/v3"
+	wrapperspb "github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal"
@@ -33,19 +36,13 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
 	rrutil "github.com/qiyouForSql/grpcforunconflict/internal/testutils/roundrobin"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/xds/e2e"
+	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"github.com/qiyouForSql/grpcforunconflict/resolver/manual"
 	"github.com/qiyouForSql/grpcforunconflict/serviceconfig"
 	"github.com/qiyouForSql/grpcforunconflict/status"
 	"github.com/qiyouForSql/grpcforunconflict/xds/internal/balancer/priority"
 	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient"
-	"google.golang.org/grpc"
-
-	v3corepb "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
-	v3endpointpb "github.com/envoyproxy/go-control-plane/envoy/config/endpoint/v3"
-	wrapperspb "github.com/golang/protobuf/ptypes/wrappers"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
-	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 
 	_ "github.com/qiyouForSql/grpcforunconflict/xds/internal/balancer/clusterresolver" // Register the "cluster_resolver_experimental" LB policy.
 )
@@ -204,14 +201,14 @@ func (s) TestEDS_OneLocality(t *testing.T) {
 	r.InitialState(xdsclient.SetClient(resolver.State{ServiceConfig: scpr}, client))
 
 	// Create a ClientConn and make a successful RPC.
-	cc, err := grpc.Dial(r.Scheme()+":///test.service", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(r))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.service", grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(r))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
 	defer cc.Close()
 
 	// Ensure RPCs are being roundrobined across the single backend.
-	testClient := testgrpc.NewTestServiceClient(cc)
+	testClient := testgrpcforunconflict.NewTestServiceClient(cc)
 	if err := rrutil.CheckRoundRobinRPCs(ctx, testClient, addrs[:1]); err != nil {
 		t.Fatal(err)
 	}
@@ -313,14 +310,14 @@ func (s) TestEDS_MultipleLocalities(t *testing.T) {
 	r.InitialState(xdsclient.SetClient(resolver.State{ServiceConfig: scpr}, client))
 
 	// Create a ClientConn and make a successful RPC.
-	cc, err := grpc.Dial(r.Scheme()+":///test.service", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(r))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.service", grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(r))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
 	defer cc.Close()
 
 	// Ensure RPCs are being weighted roundrobined across the two backends.
-	testClient := testgrpc.NewTestServiceClient(cc)
+	testClient := testgrpcforunconflict.NewTestServiceClient(cc)
 	if err := rrutil.CheckWeightedRoundRobinRPCs(ctx, testClient, addrs[0:2]); err != nil {
 		t.Fatal(err)
 	}
@@ -435,7 +432,7 @@ func (s) TestEDS_EndpointsHealth(t *testing.T) {
 	r.InitialState(xdsclient.SetClient(resolver.State{ServiceConfig: scpr}, client))
 
 	// Create a ClientConn and make a successful RPC.
-	cc, err := grpc.Dial(r.Scheme()+":///test.service", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(r))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.service", grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(r))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
@@ -443,7 +440,7 @@ func (s) TestEDS_EndpointsHealth(t *testing.T) {
 
 	// Ensure RPCs are being weighted roundrobined across healthy backends from
 	// both localities.
-	testClient := testgrpc.NewTestServiceClient(cc)
+	testClient := testgrpcforunconflict.NewTestServiceClient(cc)
 	if err := rrutil.CheckWeightedRoundRobinRPCs(ctx, testClient, append(addrs[0:2], addrs[6:8]...)); err != nil {
 		t.Fatal(err)
 	}
@@ -504,12 +501,12 @@ func (s) TestEDS_EmptyUpdate(t *testing.T) {
 	// Create a ClientConn and ensure that RPCs fail with "all priorities
 	// removed" error. This is the expected error when the cluster_resolver LB
 	// policy receives an EDS update with no localities.
-	cc, err := grpc.Dial(r.Scheme()+":///test.service", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(r))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.service", grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(r))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
 	defer cc.Close()
-	testClient := testgrpc.NewTestServiceClient(cc)
+	testClient := testgrpcforunconflict.NewTestServiceClient(cc)
 	if err := waitForAllPrioritiesRemovedError(ctx, t, testClient); err != nil {
 		t.Fatal(err)
 	}
@@ -538,7 +535,7 @@ func (s) TestEDS_EmptyUpdate(t *testing.T) {
 // TestServiceClient until they fail with an error which indicates that all
 // priorities have been removed. A non-nil error is returned if the context
 // expires before RPCs fail with the expected error.
-func waitForAllPrioritiesRemovedError(ctx context.Context, t *testing.T, client testgrpc.TestServiceClient) error {
+func waitForAllPrioritiesRemovedError(ctx context.Context, t *testing.T, client testgrpcforunconflict.TestServiceClient) error {
 	for ; ctx.Err() == nil; <-time.After(time.Millisecond) {
 		_, err := client.EmptyCall(ctx, &testpb.Empty{})
 		if err == nil {

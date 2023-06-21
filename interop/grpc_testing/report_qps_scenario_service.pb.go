@@ -58,12 +58,12 @@ var file_grpc_testing_report_qps_scenario_service_proto_rawDesc = []byte{
 }
 
 var file_grpc_testing_report_qps_scenario_service_proto_goTypes = []interface{}{
-	(*ScenarioResult)(nil), // 0: grpc.testing.ScenarioResult
-	(*Void)(nil),           // 1: grpc.testing.Void
+	(*ScenarioResult)(nil), // 0:grpcforunconflict.testing.ScenarioResult
+	(*Void)(nil),           // 1:grpcforunconflict.testing.Void
 }
 var file_grpc_testing_report_qps_scenario_service_proto_depIdxs = []int32{
-	0, // 0: grpc.testing.ReportQpsScenarioService.ReportScenario:input_type -> grpc.testing.ScenarioResult
-	1, // 1: grpc.testing.ReportQpsScenarioService.ReportScenario:output_type -> grpc.testing.Void
+	0, // 0:grpcforunconflict.testing.ReportQpsScenarioService.ReportScenario:input_type ->grpcforunconflict.testing.ScenarioResult
+	1, // 1:grpcforunconflict.testing.ReportQpsScenarioService.ReportScenario:output_type ->grpcforunconflict.testing.Void
 	1, // [1:2] is the sub-list for method output_type
 	0, // [0:1] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name

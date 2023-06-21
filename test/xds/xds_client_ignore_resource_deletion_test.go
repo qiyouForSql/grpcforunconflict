@@ -27,6 +27,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/connectivity"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal"
@@ -36,13 +37,11 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/xds/e2e"
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"github.com/qiyouForSql/grpcforunconflict/xds"
-	"google.golang.org/grpc"
 
 	clusterpb "github.com/envoyproxy/go-control-plane/envoy/config/cluster/v3"
 	endpointpb "github.com/envoyproxy/go-control-plane/envoy/config/endpoint/v3"
 	listenerpb "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
 	routepb "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -65,13 +64,13 @@ var (
 			Domains: []string{serviceName},
 			Routes: []*routepb.Route{
 				{
-					Match: &routepb.RouteMatch{PathSpecifier: &routepb.RouteMatch_Prefix{Prefix: "/grpc.testing.TestService/EmptyCall"}},
+					Match: &routepb.RouteMatch{PathSpecifier: &routepb.RouteMatch_Prefix{Prefix: "/grpcforunconflict.testing.TestService/EmptyCall"}},
 					Action: &routepb.Route_Route{Route: &routepb.RouteAction{
 						ClusterSpecifier: &routepb.RouteAction_Cluster{Cluster: cdsName1},
 					}},
 				},
 				{
-					Match: &routepb.RouteMatch{PathSpecifier: &routepb.RouteMatch_Prefix{Prefix: "/grpc.testing.TestService/UnaryCall"}},
+					Match: &routepb.RouteMatch{PathSpecifier: &routepb.RouteMatch_Prefix{Prefix: "/grpcforunconflict.testing.TestService/UnaryCall"}},
 					Action: &routepb.Route_Route{Route: &routepb.RouteAction{
 						ClusterSpecifier: &routepb.RouteAction_Cluster{Cluster: cdsName2},
 					}},
@@ -158,7 +157,7 @@ func testResourceDeletionIgnored(t *testing.T, initialResource func(string) e2e.
 		t.Fatal(err)
 	}
 
-	cc, err := grpc.Dial(fmt.Sprintf("xds:///%s", serviceName), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(xdsR))
+	cc, err := grpcforunconflict.Dial(fmt.Sprintf("xds:///%s", serviceName), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(xdsR))
 	if err != nil {
 		t.Fatalf("Failed to dial local test server: %v.", err)
 	}
@@ -213,7 +212,7 @@ func testResourceDeletionNotIgnored(t *testing.T, initialResource func(string) e
 		t.Fatal(err)
 	}
 
-	cc, err := grpc.Dial(fmt.Sprintf("xds:///%s", serviceName), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(xdsR))
+	cc, err := grpcforunconflict.Dial(fmt.Sprintf("xds:///%s", serviceName), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(xdsR))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
@@ -230,7 +229,7 @@ func testResourceDeletionNotIgnored(t *testing.T, initialResource func(string) e
 	}
 
 	// Spin up go routines to verify RPCs fail after the update.
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 	go func() {
@@ -306,9 +305,9 @@ func setupGRPCServerWithModeChangeChannelAndServe(t *testing.T, bootstrapContent
 		t.Logf("Serving mode for listener %q changed to %q, err: %v", addr.String(), args.Mode, args.Err)
 		updateCh <- args.Mode
 	})
-	server := xds.NewGRPCServer(grpc.Creds(insecure.NewCredentials()), modeChangeOpt, xds.BootstrapContentsForTesting(bootstrapContents))
+	server := xds.NewGRPCServer(grpcforunconflict.Creds(insecure.NewCredentials()), modeChangeOpt, xds.BootstrapContentsForTesting(bootstrapContents))
 	t.Cleanup(server.Stop)
-	testgrpc.RegisterTestServiceServer(server, &testService{})
+	testgrpcforunconflict.RegisterTestServiceServer(server, &testService{})
 
 	// Serve.
 	go func() {
@@ -372,7 +371,7 @@ func (s) TestListenerResourceDeletionOnServerIgnored(t *testing.T) {
 	}
 
 	// Create a ClientConn and make a successful RPCs.
-	cc, err := grpc.Dial(lis.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(xdsR))
+	cc, err := grpcforunconflict.Dial(lis.Addr().String(), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(xdsR))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
@@ -439,7 +438,7 @@ func (s) TestListenerResourceDeletionOnServerNotIgnored(t *testing.T) {
 	}
 
 	// Create a ClientConn and make a successful RPCs.
-	cc, err := grpc.Dial(lis.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(xdsR))
+	cc, err := grpcforunconflict.Dial(lis.Addr().String(), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(xdsR))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
@@ -467,10 +466,10 @@ func (s) TestListenerResourceDeletionOnServerNotIgnored(t *testing.T) {
 
 // This helper makes both UnaryCall and EmptyCall RPCs using the ClientConn that
 // is passed to this function. This helper panics for any failed RPCs.
-func verifyRPCtoAllEndpoints(cc grpc.ClientConnInterface) error {
+func verifyRPCtoAllEndpoints(ccgrpcforunconflict.ClientConnInterface) error {
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	if _, err := client.EmptyCall(ctx, &testpb.Empty{}); err != nil {
 		return fmt.Errorf("rpc EmptyCall() failed: %v", err)
 	}

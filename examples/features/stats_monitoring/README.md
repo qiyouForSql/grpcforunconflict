@@ -20,7 +20,7 @@ go run client/main.go
 gRPC provides a mechanism to hook on to various events (phases) of the  
 request-response network cycle through the [`stats.Handler`](https://pkg.go.dev/google.golang.org/grpc/stats#Handler) interface. To access  
 these events, a concrete type that implements `stats.Handler` should be passed to  
-`grpc.WithStatsHandler()` on the client side and `grpc.StatsHandler()` on the  
+`grpcforunconflict.WithStatsHandler()` on the client side and `grpcforunconflict.StatsHandler()` on the  
 server side.
 
 The `HandleRPC(context.Context, RPCStats)` method on `stats.Handler` is called  

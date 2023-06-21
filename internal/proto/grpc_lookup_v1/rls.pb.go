@@ -93,7 +93,7 @@ type RouteLookupRequest struct {
 	// would like from RLS to allow it to find the regional server, e.g. "grpc".
 	TargetType string `protobuf:"bytes,3,opt,name=target_type,json=targetType,proto3" json:"target_type,omitempty"`
 	// Reason for making this request.
-	Reason RouteLookupRequest_Reason `protobuf:"varint,5,opt,name=reason,proto3,enum=grpc.lookup.v1.RouteLookupRequest_Reason" json:"reason,omitempty"`
+	Reason RouteLookupRequest_Reason `protobuf:"varint,5,opt,name=reason,proto3,enum=grpcforunconflict.lookup.v1.RouteLookupRequest_Reason" json:"reason,omitempty"`
 	// For REASON_STALE, the header_data from the stale response, if any.
 	StaleHeaderData string `protobuf:"bytes,6,opt,name=stale_header_data,json=staleHeaderData,proto3" json:"stale_header_data,omitempty"`
 	// Map of key values extracted via key builders for the gRPC or HTTP request.
@@ -287,16 +287,16 @@ func file_grpc_lookup_v1_rls_proto_rawDescGZIP() []byte {
 var file_grpc_lookup_v1_rls_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_grpc_lookup_v1_rls_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_grpc_lookup_v1_rls_proto_goTypes = []interface{}{
-	(RouteLookupRequest_Reason)(0), // 0: grpc.lookup.v1.RouteLookupRequest.Reason
-	(*RouteLookupRequest)(nil),     // 1: grpc.lookup.v1.RouteLookupRequest
-	(*RouteLookupResponse)(nil),    // 2: grpc.lookup.v1.RouteLookupResponse
-	nil,                            // 3: grpc.lookup.v1.RouteLookupRequest.KeyMapEntry
+	(RouteLookupRequest_Reason)(0), // 0:grpcforunconflict.lookup.v1.RouteLookupRequest.Reason
+	(*RouteLookupRequest)(nil),     // 1:grpcforunconflict.lookup.v1.RouteLookupRequest
+	(*RouteLookupResponse)(nil),    // 2:grpcforunconflict.lookup.v1.RouteLookupResponse
+	nil,                            // 3:grpcforunconflict.lookup.v1.RouteLookupRequest.KeyMapEntry
 }
 var file_grpc_lookup_v1_rls_proto_depIdxs = []int32{
-	0, // 0: grpc.lookup.v1.RouteLookupRequest.reason:type_name -> grpc.lookup.v1.RouteLookupRequest.Reason
-	3, // 1: grpc.lookup.v1.RouteLookupRequest.key_map:type_name -> grpc.lookup.v1.RouteLookupRequest.KeyMapEntry
-	1, // 2: grpc.lookup.v1.RouteLookupService.RouteLookup:input_type -> grpc.lookup.v1.RouteLookupRequest
-	2, // 3: grpc.lookup.v1.RouteLookupService.RouteLookup:output_type -> grpc.lookup.v1.RouteLookupResponse
+	0, // 0:grpcforunconflict.lookup.v1.RouteLookupRequest.reason:type_name ->grpcforunconflict.lookup.v1.RouteLookupRequest.Reason
+	3, // 1:grpcforunconflict.lookup.v1.RouteLookupRequest.key_map:type_name ->grpcforunconflict.lookup.v1.RouteLookupRequest.KeyMapEntry
+	1, // 2:grpcforunconflict.lookup.v1.RouteLookupService.RouteLookup:input_type ->grpcforunconflict.lookup.v1.RouteLookupRequest
+	2, // 3:grpcforunconflict.lookup.v1.RouteLookupService.RouteLookup:output_type ->grpcforunconflict.lookup.v1.RouteLookupResponse
 	3, // [3:4] is the sub-list for method output_type
 	2, // [2:3] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name

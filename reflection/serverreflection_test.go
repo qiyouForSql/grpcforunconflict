@@ -27,9 +27,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protodesc"
 	"google.golang.org/protobuf/reflect/protoreflect"
@@ -37,9 +37,7 @@ import (
 	"google.golang.org/protobuf/types/descriptorpb"
 	"google.golang.org/protobuf/types/dynamicpb"
 
-	v1grpc "github.com/qiyouForSql/grpcforunconflict/reflection/grpc_reflection_v1"
 	v1pb "github.com/qiyouForSql/grpcforunconflict/reflection/grpc_reflection_v1"
-	v1alphagrpc "github.com/qiyouForSql/grpcforunconflict/reflection/grpc_reflection_v1alpha"
 	v1alphapb "github.com/qiyouForSql/grpcforunconflict/reflection/grpc_reflection_v1alpha"
 	pb "github.com/qiyouForSql/grpcforunconflict/reflection/grpc_testing"
 	pbv3 "github.com/qiyouForSql/grpcforunconflict/reflection/grpc_testing_not_regenerate"
@@ -126,11 +124,11 @@ func (x) TestFileDescContainingExtension(t *testing.T) {
 		extNum int32
 		want   *descriptorpb.FileDescriptorProto
 	}{
-		{"grpc.testing.ToBeExtended", 13, fdProto2Ext},
-		{"grpc.testing.ToBeExtended", 17, fdProto2Ext},
-		{"grpc.testing.ToBeExtended", 19, fdProto2Ext},
-		{"grpc.testing.ToBeExtended", 23, fdProto2Ext2},
-		{"grpc.testing.ToBeExtended", 29, fdProto2Ext2},
+		{"grpcforunconflict.testing.ToBeExtended", 13, fdProto2Ext},
+		{"grpcforunconflict.testing.ToBeExtended", 17, fdProto2Ext},
+		{"grpcforunconflict.testing.ToBeExtended", 19, fdProto2Ext},
+		{"grpcforunconflict.testing.ToBeExtended", 23, fdProto2Ext2},
+		{"grpcforunconflict.testing.ToBeExtended", 29, fdProto2Ext2},
 	} {
 		fd, err := s.fileDescEncodingContainingExtension(test.st, test.extNum, map[string]bool{})
 		if err != nil {
@@ -160,7 +158,7 @@ func (x) TestAllExtensionNumbersForTypeName(t *testing.T) {
 		st   string
 		want []int32
 	}{
-		{"grpc.testing.ToBeExtended", []int32{13, 17, 19, 23, 29}},
+		{"grpcforunconflict.testing.ToBeExtended", []int32{13, 17, 19, 23, 29}},
 	} {
 		r, err := s.allExtensionNumbersForTypeName(test.st)
 		sort.Sort(intArray(r))
@@ -200,7 +198,7 @@ func (x) TestReflectionEnd2end(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to listen: %v", err)
 	}
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 	pb.RegisterSearchServiceServer(s, &server{})
 	pbv3.RegisterSearchServiceV3Server(s, &serverV3{})
 
@@ -212,17 +210,17 @@ func (x) TestReflectionEnd2end(t *testing.T) {
 	t.Cleanup(s.Stop)
 
 	// Create client.
-	conn, err := grpc.Dial(lis.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpcforunconflict.Dial(lis.Addr().String(), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("cannot connect to server: %v", err)
 	}
 	defer conn.Close()
 
-	clientV1 := v1grpc.NewServerReflectionClient(conn)
-	clientV1Alpha := v1alphagrpc.NewServerReflectionClient(conn)
+	clientV1 := v1grpcforunconflict.NewServerReflectionClient(conn)
+	clientV1Alpha := v1alphagrpcforunconflict.NewServerReflectionClient(conn)
 	testCases := []struct {
 		name   string
-		client v1grpc.ServerReflectionClient
+		client v1grpcforunconflict.ServerReflectionClient
 	}{
 		{
 			name:   "v1",
@@ -238,7 +236,7 @@ func (x) TestReflectionEnd2end(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 			defer cancel()
-			stream, err := c.ServerReflectionInfo(ctx, grpc.WaitForReady(true))
+			stream, err := c.ServerReflectionInfo(ctx, grpcforunconflict.WaitForReady(true))
 			if err != nil {
 				t.Fatalf("cannot get ServerReflectionInfo: %v", err)
 			}
@@ -258,7 +256,7 @@ func (x) TestReflectionEnd2end(t *testing.T) {
 	}
 }
 
-func testFileByFilenameTransitiveClosure(t *testing.T, stream v1grpc.ServerReflection_ServerReflectionInfoClient, expectClosure bool) {
+func testFileByFilenameTransitiveClosure(t *testing.T, stream v1grpcforunconflict.ServerReflection_ServerReflectionInfoClient, expectClosure bool) {
 	filename := "reflection/grpc_testing/proto2_ext2.proto"
 	if err := stream.Send(&v1pb.ServerReflectionRequest{
 		MessageRequest: &v1pb.ServerReflectionRequest_FileByFilename{
@@ -291,7 +289,7 @@ func testFileByFilenameTransitiveClosure(t *testing.T, stream v1grpc.ServerRefle
 	}
 }
 
-func testFileByFilename(t *testing.T, stream v1grpc.ServerReflection_ServerReflectionInfoClient) {
+func testFileByFilename(t *testing.T, stream v1grpcforunconflict.ServerReflection_ServerReflectionInfoClient) {
 	for _, test := range []struct {
 		filename string
 		want     []byte
@@ -325,7 +323,7 @@ func testFileByFilename(t *testing.T, stream v1grpc.ServerReflection_ServerRefle
 	}
 }
 
-func testFileByFilenameError(t *testing.T, stream v1grpc.ServerReflection_ServerReflectionInfoClient) {
+func testFileByFilenameError(t *testing.T, stream v1grpcforunconflict.ServerReflection_ServerReflectionInfoClient) {
 	for _, test := range []string{
 		"test.poto",
 		"proo2.proto",
@@ -352,31 +350,31 @@ func testFileByFilenameError(t *testing.T, stream v1grpc.ServerReflection_Server
 	}
 }
 
-func testFileContainingSymbol(t *testing.T, stream v1grpc.ServerReflection_ServerReflectionInfoClient) {
+func testFileContainingSymbol(t *testing.T, stream v1grpcforunconflict.ServerReflection_ServerReflectionInfoClient) {
 	for _, test := range []struct {
 		symbol string
 		want   []byte
 	}{
-		{"grpc.testing.SearchService", fdTestByte},
-		{"grpc.testing.SearchService.Search", fdTestByte},
-		{"grpc.testing.SearchService.StreamingSearch", fdTestByte},
-		{"grpc.testing.SearchResponse", fdTestByte},
-		{"grpc.testing.ToBeExtended", fdProto2Byte},
+		{"grpcforunconflict.testing.SearchService", fdTestByte},
+		{"grpcforunconflict.testing.SearchService.Search", fdTestByte},
+		{"grpcforunconflict.testing.SearchService.StreamingSearch", fdTestByte},
+		{"grpcforunconflict.testing.SearchResponse", fdTestByte},
+		{"grpcforunconflict.testing.ToBeExtended", fdProto2Byte},
 		// Test support package v3.
-		{"grpc.testingv3.SearchServiceV3", fdTestv3Byte},
-		{"grpc.testingv3.SearchServiceV3.Search", fdTestv3Byte},
-		{"grpc.testingv3.SearchServiceV3.StreamingSearch", fdTestv3Byte},
-		{"grpc.testingv3.SearchResponseV3", fdTestv3Byte},
+		{"grpcforunconflict.testingv3.SearchServiceV3", fdTestv3Byte},
+		{"grpcforunconflict.testingv3.SearchServiceV3.Search", fdTestv3Byte},
+		{"grpcforunconflict.testingv3.SearchServiceV3.StreamingSearch", fdTestv3Byte},
+		{"grpcforunconflict.testingv3.SearchResponseV3", fdTestv3Byte},
 		// search for field, oneof, enum, and enum value symbols, too
-		{"grpc.testingv3.SearchResponseV3.Result.snippets", fdTestv3Byte},
-		{"grpc.testingv3.SearchResponseV3.Result.Value.val", fdTestv3Byte},
-		{"grpc.testingv3.SearchResponseV3.Result.Value.str", fdTestv3Byte},
-		{"grpc.testingv3.SearchResponseV3.State", fdTestv3Byte},
-		{"grpc.testingv3.SearchResponseV3.FRESH", fdTestv3Byte},
+		{"grpcforunconflict.testingv3.SearchResponseV3.Result.snippets", fdTestv3Byte},
+		{"grpcforunconflict.testingv3.SearchResponseV3.Result.Value.val", fdTestv3Byte},
+		{"grpcforunconflict.testingv3.SearchResponseV3.Result.Value.str", fdTestv3Byte},
+		{"grpcforunconflict.testingv3.SearchResponseV3.State", fdTestv3Byte},
+		{"grpcforunconflict.testingv3.SearchResponseV3.FRESH", fdTestv3Byte},
 		// Test dynamic symbols
-		{"grpc.testing.DynamicService", fdDynamicByte},
-		{"grpc.testing.DynamicReq", fdDynamicByte},
-		{"grpc.testing.DynamicRes", fdDynamicByte},
+		{"grpcforunconflict.testing.DynamicService", fdDynamicByte},
+		{"grpcforunconflict.testing.DynamicReq", fdDynamicByte},
+		{"grpcforunconflict.testing.DynamicRes", fdDynamicByte},
 	} {
 		if err := stream.Send(&v1pb.ServerReflectionRequest{
 			MessageRequest: &v1pb.ServerReflectionRequest_FileContainingSymbol{
@@ -402,11 +400,11 @@ func testFileContainingSymbol(t *testing.T, stream v1grpc.ServerReflection_Serve
 	}
 }
 
-func testFileContainingSymbolError(t *testing.T, stream v1grpc.ServerReflection_ServerReflectionInfoClient) {
+func testFileContainingSymbolError(t *testing.T, stream v1grpcforunconflict.ServerReflection_ServerReflectionInfoClient) {
 	for _, test := range []string{
-		"grpc.testing.SerchService",
-		"grpc.testing.SearchService.SearchE",
-		"grpc.tesing.SearchResponse",
+		"grpcforunconflict.testing.SerchService",
+		"grpcforunconflict.testing.SearchService.SearchE",
+		"grpcforunconflict.tesing.SearchResponse",
 		"gpc.testing.ToBeExtended",
 	} {
 		if err := stream.Send(&v1pb.ServerReflectionRequest{
@@ -430,17 +428,17 @@ func testFileContainingSymbolError(t *testing.T, stream v1grpc.ServerReflection_
 	}
 }
 
-func testFileContainingExtension(t *testing.T, stream v1grpc.ServerReflection_ServerReflectionInfoClient) {
+func testFileContainingExtension(t *testing.T, stream v1grpcforunconflict.ServerReflection_ServerReflectionInfoClient) {
 	for _, test := range []struct {
 		typeName string
 		extNum   int32
 		want     []byte
 	}{
-		{"grpc.testing.ToBeExtended", 13, fdProto2ExtByte},
-		{"grpc.testing.ToBeExtended", 17, fdProto2ExtByte},
-		{"grpc.testing.ToBeExtended", 19, fdProto2ExtByte},
-		{"grpc.testing.ToBeExtended", 23, fdProto2Ext2Byte},
-		{"grpc.testing.ToBeExtended", 29, fdProto2Ext2Byte},
+		{"grpcforunconflict.testing.ToBeExtended", 13, fdProto2ExtByte},
+		{"grpcforunconflict.testing.ToBeExtended", 17, fdProto2ExtByte},
+		{"grpcforunconflict.testing.ToBeExtended", 19, fdProto2ExtByte},
+		{"grpcforunconflict.testing.ToBeExtended", 23, fdProto2Ext2Byte},
+		{"grpcforunconflict.testing.ToBeExtended", 29, fdProto2Ext2Byte},
 	} {
 		if err := stream.Send(&v1pb.ServerReflectionRequest{
 			MessageRequest: &v1pb.ServerReflectionRequest_FileContainingExtension{
@@ -469,13 +467,13 @@ func testFileContainingExtension(t *testing.T, stream v1grpc.ServerReflection_Se
 	}
 }
 
-func testFileContainingExtensionError(t *testing.T, stream v1grpc.ServerReflection_ServerReflectionInfoClient) {
+func testFileContainingExtensionError(t *testing.T, stream v1grpcforunconflict.ServerReflection_ServerReflectionInfoClient) {
 	for _, test := range []struct {
 		typeName string
 		extNum   int32
 	}{
-		{"grpc.testing.ToBExtended", 17},
-		{"grpc.testing.ToBeExtended", 15},
+		{"grpcforunconflict.testing.ToBExtended", 17},
+		{"grpcforunconflict.testing.ToBeExtended", 15},
 	} {
 		if err := stream.Send(&v1pb.ServerReflectionRequest{
 			MessageRequest: &v1pb.ServerReflectionRequest_FileContainingExtension{
@@ -501,13 +499,13 @@ func testFileContainingExtensionError(t *testing.T, stream v1grpc.ServerReflecti
 	}
 }
 
-func testAllExtensionNumbersOfType(t *testing.T, stream v1grpc.ServerReflection_ServerReflectionInfoClient) {
+func testAllExtensionNumbersOfType(t *testing.T, stream v1grpcforunconflict.ServerReflection_ServerReflectionInfoClient) {
 	for _, test := range []struct {
 		typeName string
 		want     []int32
 	}{
-		{"grpc.testing.ToBeExtended", []int32{13, 17, 19, 23, 29}},
-		{"grpc.testing.DynamicReq", nil},
+		{"grpcforunconflict.testing.ToBeExtended", []int32{13, 17, 19, 23, 29}},
+		{"grpcforunconflict.testing.DynamicReq", nil},
 	} {
 		if err := stream.Send(&v1pb.ServerReflectionRequest{
 			MessageRequest: &v1pb.ServerReflectionRequest_AllExtensionNumbersOfType{
@@ -536,9 +534,9 @@ func testAllExtensionNumbersOfType(t *testing.T, stream v1grpc.ServerReflection_
 	}
 }
 
-func testAllExtensionNumbersOfTypeError(t *testing.T, stream v1grpc.ServerReflection_ServerReflectionInfoClient) {
+func testAllExtensionNumbersOfTypeError(t *testing.T, stream v1grpcforunconflict.ServerReflection_ServerReflectionInfoClient) {
 	for _, test := range []string{
-		"grpc.testing.ToBeExtendedE",
+		"grpcforunconflict.testing.ToBeExtendedE",
 	} {
 		if err := stream.Send(&v1pb.ServerReflectionRequest{
 			MessageRequest: &v1pb.ServerReflectionRequest_AllExtensionNumbersOfType{
@@ -561,7 +559,7 @@ func testAllExtensionNumbersOfTypeError(t *testing.T, stream v1grpc.ServerReflec
 	}
 }
 
-func testListServices(t *testing.T, stream v1grpc.ServerReflection_ServerReflectionInfoClient) {
+func testListServices(t *testing.T, stream v1grpcforunconflict.ServerReflection_ServerReflectionInfoClient) {
 	if err := stream.Send(&v1pb.ServerReflectionRequest{
 		MessageRequest: &v1pb.ServerReflectionRequest_ListServices{},
 	}); err != nil {
@@ -577,11 +575,11 @@ func testListServices(t *testing.T, stream v1grpc.ServerReflection_ServerReflect
 	case *v1pb.ServerReflectionResponse_ListServicesResponse:
 		services := r.GetListServicesResponse().Service
 		want := []string{
-			"grpc.testingv3.SearchServiceV3",
-			"grpc.testing.SearchService",
-			"grpc.reflection.v1.ServerReflection",
-			"grpc.reflection.v1alpha.ServerReflection",
-			"grpc.testing.DynamicService",
+			"grpcforunconflict.testingv3.SearchServiceV3",
+			"grpcforunconflict.testing.SearchService",
+			"grpcforunconflict.reflection.v1.ServerReflection",
+			"grpcforunconflict.reflection.v1alpha.ServerReflection",
+			"grpcforunconflict.testing.DynamicService",
 		}
 		// Compare service names in response with want.
 		if len(services) != len(want) {
@@ -603,13 +601,13 @@ func testListServices(t *testing.T, stream v1grpc.ServerReflection_ServerReflect
 	}
 }
 
-func registerDynamicProto(srv *grpc.Server, fdp *descriptorpb.FileDescriptorProto, fd protoreflect.FileDescriptor) {
+func registerDynamicProto(srv *grpcforunconflict.Server, fdp *descriptorpb.FileDescriptorProto, fd protoreflect.FileDescriptor) {
 	type emptyInterface interface{}
 
 	for i := 0; i < fd.Services().Len(); i++ {
 		s := fd.Services().Get(i)
 
-		sd := &grpc.ServiceDesc{
+		sd := &grpcforunconflict.ServiceDesc{
 			ServiceName: string(s.FullName()),
 			HandlerType: (*emptyInterface)(nil),
 			Metadata:    fdp.GetName(),
@@ -617,7 +615,7 @@ func registerDynamicProto(srv *grpc.Server, fdp *descriptorpb.FileDescriptorProt
 
 		for j := 0; j < s.Methods().Len(); j++ {
 			m := s.Methods().Get(j)
-			sd.Methods = append(sd.Methods, grpc.MethodDesc{
+			sd.Methods = append(sd.Methods, grpcforunconflict.MethodDesc{
 				MethodName: string(m.Name()),
 			})
 		}
@@ -627,10 +625,10 @@ func registerDynamicProto(srv *grpc.Server, fdp *descriptorpb.FileDescriptorProt
 }
 
 type v1AlphaClientAdapter struct {
-	stub v1alphagrpc.ServerReflectionClient
+	stub v1alphagrpcforunconflict.ServerReflectionClient
 }
 
-func (v v1AlphaClientAdapter) ServerReflectionInfo(ctx context.Context, opts ...grpc.CallOption) (v1grpc.ServerReflection_ServerReflectionInfoClient, error) {
+func (v v1AlphaClientAdapter) ServerReflectionInfo(ctx context.Context, opts ...grpcforunconflict.CallOption) (v1grpcforunconflict.ServerReflection_ServerReflectionInfoClient, error) {
 	stream, err := v.stub.ServerReflectionInfo(ctx, opts...)
 	if err != nil {
 		return nil, err
@@ -639,7 +637,7 @@ func (v v1AlphaClientAdapter) ServerReflectionInfo(ctx context.Context, opts ...
 }
 
 type v1AlphaClientStreamAdapter struct {
-	v1alphagrpc.ServerReflection_ServerReflectionInfoClient
+	v1alphagrpcforunconflict.ServerReflection_ServerReflectionInfoClient
 }
 
 func (s v1AlphaClientStreamAdapter) Send(request *v1pb.ServerReflectionRequest) error {

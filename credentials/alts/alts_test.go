@@ -32,15 +32,12 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/alts/internal/handshaker"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/alts/internal/handshaker/service"
-	altsgrpc "github.com/qiyouForSql/grpcforunconflict/credentials/alts/internal/proto/grpc_gcp"
 	altspb "github.com/qiyouForSql/grpcforunconflict/credentials/alts/internal/proto/grpc_gcp"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/alts/internal/testutil"
 	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 )
 
 const (
@@ -384,14 +381,14 @@ func versions(minMajor, minMinor, maxMajor, maxMinor uint32) *altspb.RpcProtocol
 
 func establishAltsConnection(t *testing.T, handshakerAddress, serverAddress string) {
 	clientCreds := NewClientCreds(&ClientOptions{HandshakerServiceAddress: handshakerAddress})
-	conn, err := grpc.Dial(serverAddress, grpc.WithTransportCredentials(clientCreds))
+	conn, err := grpcforunconflict.Dial(serverAddress, grpcforunconflict.WithTransportCredentials(clientCreds))
 	if err != nil {
-		t.Fatalf("grpc.Dial(%v) failed: %v", serverAddress, err)
+		t.Fatalf("grpcforunconflict.Dial(%v) failed: %v", serverAddress, err)
 	}
 	defer conn.Close()
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestLongTimeout)
 	defer cancel()
-	c := testgrpc.NewTestServiceClient(conn)
+	c := testgrpcforunconflict.NewTestServiceClient(conn)
 	for ; ctx.Err() == nil; <-time.After(defaultTestShortTimeout) {
 		_, err = c.UnaryCall(ctx, &testpb.SimpleRequest{})
 		if err == nil {
@@ -410,8 +407,8 @@ func startFakeHandshakerService(t *testing.T, wait *sync.WaitGroup) (stop func()
 	if err != nil {
 		t.Fatalf("LocalTCPListener() failed: %v", err)
 	}
-	s := grpc.NewServer()
-	altsgrpc.RegisterHandshakerServiceServer(s, &testutil.FakeHandshaker{})
+	s := grpcforunconflict.NewServer()
+	altsgrpcforunconflict.RegisterHandshakerServiceServer(s, &testutil.FakeHandshaker{})
 	wait.Add(1)
 	go func() {
 		defer wait.Done()
@@ -429,8 +426,8 @@ func startServer(t *testing.T, handshakerServiceAddress string, wait *sync.WaitG
 	}
 	serverOpts := &ServerOptions{HandshakerServiceAddress: handshakerServiceAddress}
 	creds := NewServerCreds(serverOpts)
-	s := grpc.NewServer(grpc.Creds(creds))
-	testgrpc.RegisterTestServiceServer(s, &testServer{})
+	s := grpcforunconflict.NewServer(grpcforunconflict.Creds(creds))
+	testgrpcforunconflict.RegisterTestServiceServer(s, &testServer{})
 	wait.Add(1)
 	go func() {
 		defer wait.Done()
@@ -442,7 +439,7 @@ func startServer(t *testing.T, handshakerServiceAddress string, wait *sync.WaitG
 }
 
 type testServer struct {
-	testgrpc.UnimplementedTestServiceServer
+	testgrpcforunconflict.UnimplementedTestServiceServer
 }
 
 func (s *testServer) UnaryCall(ctx context.Context, in *testpb.SimpleRequest) (*testpb.SimpleResponse, error) {

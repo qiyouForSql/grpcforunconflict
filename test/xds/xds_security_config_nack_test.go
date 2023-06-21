@@ -23,16 +23,15 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	xdscreds "github.com/qiyouForSql/grpcforunconflict/credentials/xds"
 	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/xds/e2e"
-	"google.golang.org/grpc"
 
 	v3corepb "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
 	v3tlspb "github.com/envoyproxy/go-control-plane/envoy/extensions/transport_sockets/tls/v3"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -188,7 +187,7 @@ func (s) TestUnmarshalListener_WithUpdateValidatorFunc(t *testing.T) {
 			}
 
 			// Create a ClientConn with the xds scheme and make an RPC.
-			cc, err := grpc.DialContext(ctx, fmt.Sprintf("xds:///%s", serviceName), grpc.WithTransportCredentials(creds), grpc.WithResolvers(resolver))
+			cc, err := grpcforunconflict.DialContext(ctx, fmt.Sprintf("xds:///%s", serviceName), grpcforunconflict.WithTransportCredentials(creds), grpcforunconflict.WithResolvers(resolver))
 			if err != nil {
 				t.Fatalf("failed to dial local test server: %v", err)
 			}
@@ -202,8 +201,8 @@ func (s) TestUnmarshalListener_WithUpdateValidatorFunc(t *testing.T) {
 			}
 			ctx, cancel = context.WithTimeout(ctx, timeout)
 			defer cancel()
-			client := testgrpc.NewTestServiceClient(cc)
-			if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); (err != nil) != test.wantErr {
+			client := testgrpcforunconflict.NewTestServiceClient(cc)
+			if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); (err != nil) != test.wantErr {
 				t.Fatalf("EmptyCall() returned err: %v, wantErr %v", err, test.wantErr)
 			}
 		})
@@ -344,7 +343,7 @@ func (s) TestUnmarshalCluster_WithUpdateValidatorFunc(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			cc, err := grpc.Dial(fmt.Sprintf("xds:///%s", serviceName), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(resolver))
+			cc, err := grpcforunconflict.Dial(fmt.Sprintf("xds:///%s", serviceName), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(resolver))
 			if err != nil {
 				t.Fatalf("failed to dial local test server: %v", err)
 			}
@@ -358,8 +357,8 @@ func (s) TestUnmarshalCluster_WithUpdateValidatorFunc(t *testing.T) {
 			}
 			ctx2, cancel2 := context.WithTimeout(ctx, timeout)
 			defer cancel2()
-			client := testgrpc.NewTestServiceClient(cc)
-			if _, err := client.EmptyCall(ctx2, &testpb.Empty{}, grpc.WaitForReady(true)); (err != nil) != test.wantErr {
+			client := testgrpcforunconflict.NewTestServiceClient(cc)
+			if _, err := client.EmptyCall(ctx2, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); (err != nil) != test.wantErr {
 				t.Fatalf("EmptyCall() returned err: %v, wantErr %v", err, test.wantErr)
 			}
 		})

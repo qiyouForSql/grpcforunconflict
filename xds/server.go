@@ -25,6 +25,7 @@ import (
 	"net"
 	"sync"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/connectivity"
 	"github.com/qiyouForSql/grpcforunconflict/credentials"
@@ -42,7 +43,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient"
 	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/bootstrap"
 	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/xdsresource"
-	"google.golang.org/grpc"
 )
 
 const serverPrefix = "[xds-server %p] "
@@ -52,28 +52,28 @@ var (
 	newXDSClient = func() (xdsclient.XDSClient, func(), error) {
 		return xdsclient.New()
 	}
-	newGRPCServer = func(opts ...grpc.ServerOption) grpcServer {
-		return grpc.NewServer(opts...)
+	newGRPCServer = func(opts ...grpcforunconflict.ServerOption) grpcServer {
+		return grpcforunconflict.NewServer(opts...)
 	}
 
-	grpcGetServerCreds    = internal.GetServerCredentials.(func(*grpc.Server) credentials.TransportCredentials)
-	drainServerTransports = internal.DrainServerTransports.(func(*grpc.Server, string))
+	grpcGetServerCreds    = internal.GetServerCredentials.(func(*grpcforunconflict.Server) credentials.TransportCredentials)
+	drainServerTransports = internal.DrainServerTransports.(func(*grpcforunconflict.Server, string))
 	logger                = grpclog.Component("xds")
 )
 
-// grpcServer contains methods from grpc.Server which are used by the
+// grpcServer contains methods from grpcforunconflict.Server which are used by the
 // GRPCServer type here. This is useful for overriding in unit tests.
 type grpcServer interface {
-	RegisterService(*grpc.ServiceDesc, interface{})
+	RegisterService(*grpcforunconflict.ServiceDesc, interface{})
 	Serve(net.Listener) error
 	Stop()
 	GracefulStop()
-	GetServiceInfo() map[string]grpc.ServiceInfo
+	GetServiceInfo() map[string]grpcforunconflict.ServiceInfo
 }
 
 // GRPCServer wraps a gRPC server and provides server-side xDS functionality, by
 // communication with a management server using xDS APIs. It implements the
-// grpc.ServiceRegistrar interface and can be passed to service registration
+// grpcforunconflict.ServiceRegistrar interface and can be passed to service registration
 // functions in IDL generated code.
 type GRPCServer struct {
 	gs            grpcServer
@@ -93,10 +93,10 @@ type GRPCServer struct {
 // NewGRPCServer creates an xDS-enabled gRPC server using the passed in opts.
 // The underlying gRPC server has no service registered and has not started to
 // accept requests yet.
-func NewGRPCServer(opts ...grpc.ServerOption) *GRPCServer {
-	newOpts := []grpc.ServerOption{
-		grpc.ChainUnaryInterceptor(xdsUnaryInterceptor),
-		grpc.ChainStreamInterceptor(xdsStreamInterceptor),
+func NewGRPCServer(opts ...grpcforunconflict.ServerOption) *GRPCServer {
+	newOpts := []grpcforunconflict.ServerOption{
+		grpcforunconflict.ChainUnaryInterceptor(xdsUnaryInterceptor),
+		grpcforunconflict.ChainStreamInterceptor(xdsStreamInterceptor),
 	}
 	newOpts = append(newOpts, opts...)
 	s := &GRPCServer{
@@ -107,12 +107,12 @@ func NewGRPCServer(opts ...grpc.ServerOption) *GRPCServer {
 	s.logger.Infof("Created xds.GRPCServer")
 	s.handleServerOptions(opts)
 
-	// We type assert our underlying gRPC server to the real grpc.Server here
+	// We type assert our underlying gRPC server to the real grpcforunconflict.Server here
 	// before trying to retrieve the configured credentials. This approach
 	// avoids performing the same type assertion in the grpc package which
 	// provides the implementation for internal.GetServerCredentials, and allows
 	// us to use a fake gRPC server in tests.
-	if gs, ok := s.gs.(*grpc.Server); ok {
+	if gs, ok := s.gs.(*grpcforunconflict.Server); ok {
 		creds := grpcGetServerCreds(gs)
 		if xc, ok := creds.(interface{ UsesXDS() bool }); ok && xc.UsesXDS() {
 			s.xdsCredsInUse = true
@@ -125,7 +125,7 @@ func NewGRPCServer(opts ...grpc.ServerOption) *GRPCServer {
 
 // handleServerOptions iterates through the list of server options passed in by
 // the user, and handles the xDS server specific options.
-func (s *GRPCServer) handleServerOptions(opts []grpc.ServerOption) {
+func (s *GRPCServer) handleServerOptions(opts []grpcforunconflict.ServerOption) {
 	so := s.defaultServerOptions()
 	for _, opt := range opts {
 		if o, ok := opt.(*serverOption); ok {
@@ -159,13 +159,13 @@ func (s *GRPCServer) loggingServerModeChangeCallback(addr net.Addr, args Serving
 // RegisterService registers a service and its implementation to the underlying
 // gRPC server. It is called from the IDL generated code. This must be called
 // before invoking Serve.
-func (s *GRPCServer) RegisterService(sd *grpc.ServiceDesc, ss interface{}) {
+func (s *GRPCServer) RegisterService(sd *grpcforunconflict.ServiceDesc, ss interface{}) {
 	s.gs.RegisterService(sd, ss)
 }
 
 // GetServiceInfo returns a map from service names to ServiceInfo.
 // Service names include the package names, in the form of <package>.<service>.
-func (s *GRPCServer) GetServiceInfo() map[string]grpc.ServiceInfo {
+func (s *GRPCServer) GetServiceInfo() map[string]grpcforunconflict.ServiceInfo {
 	return s.gs.GetServiceInfo()
 }
 
@@ -259,7 +259,7 @@ func (s *GRPCServer) Serve(lis net.Listener) error {
 			})
 		},
 		DrainCallback: func(addr net.Addr) {
-			if gs, ok := s.gs.(*grpc.Server); ok {
+			if gs, ok := s.gs.(*grpcforunconflict.Server); ok {
 				drainServerTransports(gs, addr.String())
 			}
 		},
@@ -289,7 +289,7 @@ type modeChangeArgs struct {
 // handleServingModeChanges runs as a separate goroutine, spawned from Serve().
 // It reads a channel on to which mode change arguments are pushed, and in turn
 // invokes the user registered callback. It also calls an internal method on the
-// underlying grpc.Server to gracefully close existing connections, if the
+// underlying grpcforunconflict.Server to gracefully close existing connections, if the
 // listener moved to a "not-serving" mode.
 func (s *GRPCServer) handleServingModeChanges(updateCh *buffer.Unbounded) {
 	for {
@@ -304,12 +304,12 @@ func (s *GRPCServer) handleServingModeChanges(updateCh *buffer.Unbounded) {
 			args := u.(*modeChangeArgs)
 			if args.mode == connectivity.ServingModeNotServing {
 				// We type assert our underlying gRPC server to the real
-				// grpc.Server here before trying to initiate the drain
+				// grpcforunconflict.Server here before trying to initiate the drain
 				// operation. This approach avoids performing the same type
 				// assertion in the grpc package which provides the
 				// implementation for internal.GetServerCredentials, and allows
 				// us to use a fake gRPC server in tests.
-				if gs, ok := s.gs.(*grpc.Server); ok {
+				if gs, ok := s.gs.(*grpcforunconflict.Server); ok {
 					drainServerTransports(gs, args.addr.String())
 				}
 			}
@@ -361,7 +361,7 @@ func routeAndProcess(ctx context.Context) error {
 	if !ok {
 		return errors.New("missing virtual hosts in incoming context")
 	}
-	mn, ok := grpc.Method(ctx)
+	mn, ok := grpcforunconflict.Method(ctx)
 	if !ok {
 		return errors.New("missing method name in incoming context")
 	}
@@ -407,7 +407,7 @@ func routeAndProcess(ctx context.Context) error {
 
 // xdsUnaryInterceptor is the unary interceptor added to the gRPC server to
 // perform any xDS specific functionality on unary RPCs.
-func xdsUnaryInterceptor(ctx context.Context, req interface{}, _ *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
+func xdsUnaryInterceptor(ctx context.Context, req interface{}, _ *grpcforunconflict.UnaryServerInfo, handler grpcforunconflict.UnaryHandler) (resp interface{}, err error) {
 	if envconfig.XDSRBAC {
 		if err := routeAndProcess(ctx); err != nil {
 			return nil, err
@@ -418,7 +418,7 @@ func xdsUnaryInterceptor(ctx context.Context, req interface{}, _ *grpc.UnaryServ
 
 // xdsStreamInterceptor is the stream interceptor added to the gRPC server to
 // perform any xDS specific functionality on streaming RPCs.
-func xdsStreamInterceptor(srv interface{}, ss grpc.ServerStream, _ *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+func xdsStreamInterceptor(srv interface{}, ss grpcforunconflict.ServerStream, _ *grpcforunconflict.StreamServerInfo, handler grpcforunconflict.StreamHandler) error {
 	if envconfig.XDSRBAC {
 		if err := routeAndProcess(ss.Context()); err != nil {
 			return err

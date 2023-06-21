@@ -34,11 +34,8 @@ import (
 
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/grpclog"
-	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
-
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
+	"github.com/qiyouForSql/grpcforunconflict/status"
 )
 
 var (
@@ -77,12 +74,12 @@ func (byteBufCodec) String() string {
 // workerServer implements WorkerService rpc handlers.
 // It can create benchmarkServer or benchmarkClient on demand.
 type workerServer struct {
-	testgrpc.UnimplementedWorkerServiceServer
+	testgrpcforunconflict.UnimplementedWorkerServiceServer
 	stop       chan<- bool
 	serverPort int
 }
 
-func (s *workerServer) RunServer(stream testgrpc.WorkerService_RunServerServer) error {
+func (s *workerServer) RunServer(stream testgrpcforunconflict.WorkerService_RunServerServer) error {
 	var bs *benchmarkServer
 	defer func() {
 		// Close benchmark server when stream ends.
@@ -137,7 +134,7 @@ func (s *workerServer) RunServer(stream testgrpc.WorkerService_RunServerServer) 
 	}
 }
 
-func (s *workerServer) RunClient(stream testgrpc.WorkerService_RunClientServer) error {
+func (s *workerServer) RunClient(stream testgrpcforunconflict.WorkerService_RunClientServer) error {
 	var bc *benchmarkClient
 	defer func() {
 		// Shut down benchmark client when stream ends.
@@ -200,7 +197,7 @@ func (s *workerServer) QuitWorker(ctx context.Context, in *testpb.Void) (*testpb
 }
 
 func main() {
-	grpc.EnableTracing = false
+	grpcforunconflict.EnableTracing = false
 
 	flag.Parse()
 	lis, err := net.Listen("tcp", ":"+strconv.Itoa(*driverPort))
@@ -209,9 +206,9 @@ func main() {
 	}
 	logger.Infof("worker listening at port %v", *driverPort)
 
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 	stop := make(chan bool)
-	testgrpc.RegisterWorkerServiceServer(s, &workerServer{
+	testgrpcforunconflict.RegisterWorkerServiceServer(s, &workerServer{
 		stop:       stop,
 		serverPort: *serverPort,
 	})

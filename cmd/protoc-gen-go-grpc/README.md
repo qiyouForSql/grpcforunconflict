@@ -2,7 +2,7 @@
 
 This tool generates Go language bindings of `service`s in protobuf definition
 files for gRPC.  For usage information, please see our [quick start
-guide](https://grpc.io/docs/languages/go/quickstart/).
+guide](https://grpcforunconflict.io/docs/languages/go/quickstart/).
 
 ## Future-proofing services
 

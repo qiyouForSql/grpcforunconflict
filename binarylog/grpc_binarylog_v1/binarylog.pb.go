@@ -250,8 +250,8 @@ type GrpcLogEntry struct {
 	// this field is to detect missing entries in environments where
 	// durability or ordering is not guaranteed.
 	SequenceIdWithinCall uint64                 `protobuf:"varint,3,opt,name=sequence_id_within_call,json=sequenceIdWithinCall,proto3" json:"sequence_id_within_call,omitempty"`
-	Type                 GrpcLogEntry_EventType `protobuf:"varint,4,opt,name=type,proto3,enum=grpc.binarylog.v1.GrpcLogEntry_EventType" json:"type,omitempty"`
-	Logger               GrpcLogEntry_Logger    `protobuf:"varint,5,opt,name=logger,proto3,enum=grpc.binarylog.v1.GrpcLogEntry_Logger" json:"logger,omitempty"` // One of the above Logger enum
+	Type                 GrpcLogEntry_EventType `protobuf:"varint,4,opt,name=type,proto3,enum=grpcforunconflict.binarylog.v1.GrpcLogEntry_EventType" json:"type,omitempty"`
+	Logger               GrpcLogEntry_Logger    `protobuf:"varint,5,opt,name=logger,proto3,enum=grpcforunconflict.binarylog.v1.GrpcLogEntry_Logger" json:"logger,omitempty"` // One of the above Logger enum
 	// The logger uses one of the following fields to record the payload,
 	// according to the type of the log entry.
 	//
@@ -812,7 +812,7 @@ type Address struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Type    Address_Type `protobuf:"varint,1,opt,name=type,proto3,enum=grpc.binarylog.v1.Address_Type" json:"type,omitempty"`
+	Type    Address_Type `protobuf:"varint,1,opt,name=type,proto3,enum=grpcforunconflict.binarylog.v1.Address_Type" json:"type,omitempty"`
 	Address string       `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
 	// only for TYPE_IPV4 and TYPE_IPV6
 	IpPort uint32 `protobuf:"varint,3,opt,name=ip_port,json=ipPort,proto3" json:"ip_port,omitempty"`
@@ -1016,35 +1016,35 @@ func file_grpc_binlog_v1_binarylog_proto_rawDescGZIP() []byte {
 var file_grpc_binlog_v1_binarylog_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
 var file_grpc_binlog_v1_binarylog_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_grpc_binlog_v1_binarylog_proto_goTypes = []interface{}{
-	(GrpcLogEntry_EventType)(0),   // 0: grpc.binarylog.v1.GrpcLogEntry.EventType
-	(GrpcLogEntry_Logger)(0),      // 1: grpc.binarylog.v1.GrpcLogEntry.Logger
-	(Address_Type)(0),             // 2: grpc.binarylog.v1.Address.Type
-	(*GrpcLogEntry)(nil),          // 3: grpc.binarylog.v1.GrpcLogEntry
-	(*ClientHeader)(nil),          // 4: grpc.binarylog.v1.ClientHeader
-	(*ServerHeader)(nil),          // 5: grpc.binarylog.v1.ServerHeader
-	(*Trailer)(nil),               // 6: grpc.binarylog.v1.Trailer
-	(*Message)(nil),               // 7: grpc.binarylog.v1.Message
-	(*Metadata)(nil),              // 8: grpc.binarylog.v1.Metadata
-	(*MetadataEntry)(nil),         // 9: grpc.binarylog.v1.MetadataEntry
-	(*Address)(nil),               // 10: grpc.binarylog.v1.Address
+	(GrpcLogEntry_EventType)(0),   // 0:grpcforunconflict.binarylog.v1.GrpcLogEntry.EventType
+	(GrpcLogEntry_Logger)(0),      // 1:grpcforunconflict.binarylog.v1.GrpcLogEntry.Logger
+	(Address_Type)(0),             // 2:grpcforunconflict.binarylog.v1.Address.Type
+	(*GrpcLogEntry)(nil),          // 3:grpcforunconflict.binarylog.v1.GrpcLogEntry
+	(*ClientHeader)(nil),          // 4:grpcforunconflict.binarylog.v1.ClientHeader
+	(*ServerHeader)(nil),          // 5:grpcforunconflict.binarylog.v1.ServerHeader
+	(*Trailer)(nil),               // 6:grpcforunconflict.binarylog.v1.Trailer
+	(*Message)(nil),               // 7:grpcforunconflict.binarylog.v1.Message
+	(*Metadata)(nil),              // 8:grpcforunconflict.binarylog.v1.Metadata
+	(*MetadataEntry)(nil),         // 9:grpcforunconflict.binarylog.v1.MetadataEntry
+	(*Address)(nil),               // 10:grpcforunconflict.binarylog.v1.Address
 	(*timestamppb.Timestamp)(nil), // 11: google.protobuf.Timestamp
 	(*durationpb.Duration)(nil),   // 12: google.protobuf.Duration
 }
 var file_grpc_binlog_v1_binarylog_proto_depIdxs = []int32{
-	11, // 0: grpc.binarylog.v1.GrpcLogEntry.timestamp:type_name -> google.protobuf.Timestamp
-	0,  // 1: grpc.binarylog.v1.GrpcLogEntry.type:type_name -> grpc.binarylog.v1.GrpcLogEntry.EventType
-	1,  // 2: grpc.binarylog.v1.GrpcLogEntry.logger:type_name -> grpc.binarylog.v1.GrpcLogEntry.Logger
-	4,  // 3: grpc.binarylog.v1.GrpcLogEntry.client_header:type_name -> grpc.binarylog.v1.ClientHeader
-	5,  // 4: grpc.binarylog.v1.GrpcLogEntry.server_header:type_name -> grpc.binarylog.v1.ServerHeader
-	7,  // 5: grpc.binarylog.v1.GrpcLogEntry.message:type_name -> grpc.binarylog.v1.Message
-	6,  // 6: grpc.binarylog.v1.GrpcLogEntry.trailer:type_name -> grpc.binarylog.v1.Trailer
-	10, // 7: grpc.binarylog.v1.GrpcLogEntry.peer:type_name -> grpc.binarylog.v1.Address
-	8,  // 8: grpc.binarylog.v1.ClientHeader.metadata:type_name -> grpc.binarylog.v1.Metadata
-	12, // 9: grpc.binarylog.v1.ClientHeader.timeout:type_name -> google.protobuf.Duration
-	8,  // 10: grpc.binarylog.v1.ServerHeader.metadata:type_name -> grpc.binarylog.v1.Metadata
-	8,  // 11: grpc.binarylog.v1.Trailer.metadata:type_name -> grpc.binarylog.v1.Metadata
-	9,  // 12: grpc.binarylog.v1.Metadata.entry:type_name -> grpc.binarylog.v1.MetadataEntry
-	2,  // 13: grpc.binarylog.v1.Address.type:type_name -> grpc.binarylog.v1.Address.Type
+	11, // 0:grpcforunconflict.binarylog.v1.GrpcLogEntry.timestamp:type_name -> google.protobuf.Timestamp
+	0,  // 1:grpcforunconflict.binarylog.v1.GrpcLogEntry.type:type_name ->grpcforunconflict.binarylog.v1.GrpcLogEntry.EventType
+	1,  // 2:grpcforunconflict.binarylog.v1.GrpcLogEntry.logger:type_name ->grpcforunconflict.binarylog.v1.GrpcLogEntry.Logger
+	4,  // 3:grpcforunconflict.binarylog.v1.GrpcLogEntry.client_header:type_name ->grpcforunconflict.binarylog.v1.ClientHeader
+	5,  // 4:grpcforunconflict.binarylog.v1.GrpcLogEntry.server_header:type_name ->grpcforunconflict.binarylog.v1.ServerHeader
+	7,  // 5:grpcforunconflict.binarylog.v1.GrpcLogEntry.message:type_name ->grpcforunconflict.binarylog.v1.Message
+	6,  // 6:grpcforunconflict.binarylog.v1.GrpcLogEntry.trailer:type_name ->grpcforunconflict.binarylog.v1.Trailer
+	10, // 7:grpcforunconflict.binarylog.v1.GrpcLogEntry.peer:type_name ->grpcforunconflict.binarylog.v1.Address
+	8,  // 8:grpcforunconflict.binarylog.v1.ClientHeader.metadata:type_name ->grpcforunconflict.binarylog.v1.Metadata
+	12, // 9:grpcforunconflict.binarylog.v1.ClientHeader.timeout:type_name -> google.protobuf.Duration
+	8,  // 10:grpcforunconflict.binarylog.v1.ServerHeader.metadata:type_name ->grpcforunconflict.binarylog.v1.Metadata
+	8,  // 11:grpcforunconflict.binarylog.v1.Trailer.metadata:type_name ->grpcforunconflict.binarylog.v1.Metadata
+	9,  // 12:grpcforunconflict.binarylog.v1.Metadata.entry:type_name ->grpcforunconflict.binarylog.v1.MetadataEntry
+	2,  // 13:grpcforunconflict.binarylog.v1.Address.type:type_name ->grpcforunconflict.binarylog.v1.Address.Type
 	14, // [14:14] is the sub-list for method output_type
 	14, // [14:14] is the sub-list for method input_type
 	14, // [14:14] is the sub-list for extension type_name

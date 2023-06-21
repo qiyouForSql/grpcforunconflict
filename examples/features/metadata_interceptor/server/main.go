@@ -41,7 +41,7 @@ type server struct {
 	pb.UnimplementedEchoServer
 }
 
-func unaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+func unaryInterceptor(ctx context.Context, req interface{}, info *grpcforunconflict.UnaryServerInfo, handlergrpcforunconflict.UnaryHandler) (interface{}, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return nil, errMissingMetadata
@@ -73,7 +73,7 @@ func (s *server) UnaryEcho(ctx context.Context, in *pb.EchoRequest) (*pb.EchoRes
 }
 
 type wrappedStream struct {
-	grpc.ServerStream
+	grpcforunconflict.ServerStream
 	ctx context.Context
 }
 
@@ -81,7 +81,7 @@ func (s *wrappedStream) Context() context.Context {
 	return s.ctx
 }
 
-func streamInterceptor(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+func streamInterceptor(srv interface{}, ssgrpcforunconflict.ServerStream, info *grpcforunconflict.StreamServerInfo, handlergrpcforunconflict.StreamHandler) error {
 	md, ok := metadata.FromIncomingContext(ss.Context())
 	if !ok {
 		return errMissingMetadata
@@ -132,7 +132,7 @@ func main() {
 	}
 	fmt.Printf("Server listening at %v\n", lis.Addr())
 
-	s := grpc.NewServer(grpc.UnaryInterceptor(unaryInterceptor), grpc.StreamInterceptor(streamInterceptor))
+	s := grpcforunconflict.NewServer(grpcforunconflict.UnaryInterceptor(unaryInterceptor), grpcforunconflict.StreamInterceptor(streamInterceptor))
 	pb.RegisterEchoServer(s, &server{})
 	s.Serve(lis)
 }

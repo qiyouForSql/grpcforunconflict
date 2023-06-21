@@ -1,11 +1,11 @@
 # Authentication
 
-As outlined in the [gRPC authentication guide](https://grpc.io/docs/guides/auth.html) there are a number of different mechanisms for asserting identity between an client and server. We'll present some code-samples here demonstrating how to provide TLS support encryption and identity assertions as well as passing OAuth2 tokens to services that support it.
+As outlined in the [gRPC authentication guide](https://grpcforunconflict.io/docs/guides/auth.html) there are a number of different mechanisms for asserting identity between an client and server. We'll present some code-samples here demonstrating how to provide TLS support encryption and identity assertions as well as passing OAuth2 tokens to services that support it.
 
 # Enabling TLS on a gRPC client
 
 ```Go
-conn, err := grpc.Dial(serverAddr, grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")))
+conn, err :=grpcforunconflict.Dial(serverAddr,grpcforunconflict.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")))
 ```
 
 # Enabling TLS on a gRPC server
@@ -16,7 +16,7 @@ if err != nil {
   log.Fatalf("Failed to generate credentials %v", err)
 }
 lis, err := net.Listen("tcp", ":0")
-server := grpc.NewServer(grpc.Creds(creds))
+server :=grpcforunconflict.NewServer(grpcforunconflict.Creds(creds))
 ...
 server.Serve(lis)
 ```
@@ -39,23 +39,23 @@ to lowercase. See [here](https://godoc.org/google.golang.org/grpc/metadata#New).
 
 It is possible to configure token validation for all RPCs using an interceptor.
 A server may configure either a
-[grpc.UnaryInterceptor](https://godoc.org/google.golang.org/grpc#UnaryInterceptor)
+[grpcforunconflict.UnaryInterceptor](https://godoc.org/google.golang.org/grpc#UnaryInterceptor)
 or a
-[grpc.StreamInterceptor](https://godoc.org/google.golang.org/grpc#StreamInterceptor).
+[grpcforunconflict.StreamInterceptor](https://godoc.org/google.golang.org/grpc#StreamInterceptor).
 
 ## Adding a token to all outgoing client RPCs
 
 To send an OAuth2 token with each RPC, a client may configure the
-`grpc.DialOption`
-[grpc.WithPerRPCCredentials](https://godoc.org/google.golang.org/grpc#WithPerRPCCredentials).
-Alternatively, a client may also use the `grpc.CallOption`
-[grpc.PerRPCCredentials](https://godoc.org/google.golang.org/grpc#PerRPCCredentials)
+`grpcforunconflict.DialOption`
+[grpcforunconflict.WithPerRPCCredentials](https://godoc.org/google.golang.org/grpc#WithPerRPCCredentials).
+Alternatively, a client may also use the `grpcforunconflict.CallOption`
+[grpcforunconflict.PerRPCCredentials](https://godoc.org/google.golang.org/grpc#PerRPCCredentials)
 on each invocation of an RPC.
 
 To create a `credentials.PerRPCCredentials`, use
 [oauth.TokenSource](https://godoc.org/google.golang.org/grpc/credentials/oauth#TokenSource).
-Note, the OAuth2 implementation of `grpc.PerRPCCredentials` requires a client to use
-[grpc.WithTransportCredentials](https://godoc.org/google.golang.org/grpc#WithTransportCredentials)
+Note, the OAuth2 implementation of `grpcforunconflict.PerRPCCredentials` requires a client to use
+[grpcforunconflict.WithTransportCredentials](https://godoc.org/google.golang.org/grpc#WithTransportCredentials)
 to prevent any insecure transmission of tokens.
 
 # Authenticating with Google
@@ -63,7 +63,7 @@ to prevent any insecure transmission of tokens.
 ## Google Compute Engine (GCE)
 
 ```Go
-conn, err := grpc.Dial(serverAddr, grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")), grpc.WithPerRPCCredentials(oauth.NewComputeEngine()))
+conn, err :=grpcforunconflict.Dial(serverAddr,grpcforunconflict.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")),grpcforunconflict.WithPerRPCCredentials(oauth.NewComputeEngine()))
 ```
 
 ## JWT
@@ -73,6 +73,6 @@ jwtCreds, err := oauth.NewServiceAccountFromFile(*serviceAccountKeyFile, *oauthS
 if err != nil {
   log.Fatalf("Failed to create JWT credentials: %v", err)
 }
-conn, err := grpc.Dial(serverAddr, grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")), grpc.WithPerRPCCredentials(jwtCreds))
+conn, err :=grpcforunconflict.Dial(serverAddr,grpcforunconflict.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")),grpcforunconflict.WithPerRPCCredentials(jwtCreds))
 ```
 

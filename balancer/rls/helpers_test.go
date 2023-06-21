@@ -24,6 +24,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/balancer/rls/internal/test/e2e"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/internal"
@@ -33,13 +34,11 @@ import (
 	rlspb "github.com/qiyouForSql/grpcforunconflict/internal/proto/grpc_lookup_v1"
 	internalserviceconfig "github.com/qiyouForSql/grpcforunconflict/internal/serviceconfig"
 	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"github.com/qiyouForSql/grpcforunconflict/resolver/manual"
 	"github.com/qiyouForSql/grpcforunconflict/serviceconfig"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
@@ -129,7 +128,7 @@ func buildBasicRLSConfig(childPolicyName, rlsServerAddress string) *e2e.RLSConfi
 		RouteLookupConfig: &rlspb.RouteLookupConfig{
 			GrpcKeybuilders: []*rlspb.GrpcKeyBuilder{
 				{
-					Names: []*rlspb.GrpcKeyBuilder_Name{{Service: "grpc.testing.TestService"}},
+					Names: []*rlspb.GrpcKeyBuilder_Name{{Service: "grpcforunconflict.testing.TestService"}},
 					Headers: []*rlspb.NameMatcher{
 						{Key: "k1", Names: []string{"n1"}},
 						{Key: "k2", Names: []string{"n2"}},
@@ -156,7 +155,7 @@ func buildBasicRLSConfigWithChildPolicy(t *testing.T, childPolicyName, rlsServer
 
 	return &e2e.RLSConfig{
 		RouteLookupConfig: &rlspb.RouteLookupConfig{
-			GrpcKeybuilders:      []*rlspb.GrpcKeyBuilder{{Names: []*rlspb.GrpcKeyBuilder_Name{{Service: "grpc.testing.TestService"}}}},
+			GrpcKeybuilders:      []*rlspb.GrpcKeyBuilder{{Names: []*rlspb.GrpcKeyBuilder_Name{{Service: "grpcforunconflict.testing.TestService"}}}},
 			LookupService:        rlsServerAddress,
 			LookupServiceTimeout: durationpb.New(defaultTestTimeout),
 			CacheSizeBytes:       1024,
@@ -171,7 +170,7 @@ func buildBasicRLSConfigWithChildPolicy(t *testing.T, childPolicyName, rlsServer
 // It returns a channel for tests to get notified whenever an RPC is invoked on
 // the backend. This allows tests to ensure that RPCs reach expected backends.
 // Also returns the address of the backend.
-func startBackend(t *testing.T, sopts ...grpc.ServerOption) (rpcCh chan struct{}, address string) {
+func startBackend(t *testing.T, sopts ...grpcforunconflict.ServerOption) (rpcCh chan struct{}, address string) {
 	t.Helper()
 
 	rpcCh = make(chan struct{}, 1)
@@ -225,7 +224,7 @@ func startManualResolverWithConfig(t *testing.T, rlsConfig *e2e.RLSConfig) *manu
 //
 // Therefore, we do not return an error when the RPC fails. Instead, we wait for
 // the context to expire before failing.
-func makeTestRPCAndExpectItToReachBackend(ctx context.Context, t *testing.T, cc *grpc.ClientConn, ch chan struct{}) {
+func makeTestRPCAndExpectItToReachBackend(ctx context.Context, t *testing.T, cc *grpcforunconflict.ClientConn, ch chan struct{}) {
 	t.Helper()
 
 	// Drain the backend channel before performing the RPC to remove any
@@ -240,7 +239,7 @@ func makeTestRPCAndExpectItToReachBackend(ctx context.Context, t *testing.T, cc 
 			t.Fatalf("Timeout when waiting for RPCs to be routed to the given target: %v", err)
 		}
 		sCtx, sCancel := context.WithTimeout(ctx, defaultTestShortTimeout)
-		client := testgrpc.NewTestServiceClient(cc)
+		client := testgrpcforunconflict.NewTestServiceClient(cc)
 		client.EmptyCall(sCtx, &testpb.Empty{})
 
 		select {
@@ -258,7 +257,7 @@ func makeTestRPCAndExpectItToReachBackend(ctx context.Context, t *testing.T, cc 
 //
 // Similar to makeTestRPCAndExpectItToReachBackend, retries until expected
 // outcome is reached or the provided context has expired.
-func makeTestRPCAndVerifyError(ctx context.Context, t *testing.T, cc *grpc.ClientConn, wantCode codes.Code, wantErr error) {
+func makeTestRPCAndVerifyError(ctx context.Context, t *testing.T, cc *grpcforunconflict.ClientConn, wantCode codes.Code, wantErr error) {
 	t.Helper()
 
 	for {
@@ -266,7 +265,7 @@ func makeTestRPCAndVerifyError(ctx context.Context, t *testing.T, cc *grpc.Clien
 			t.Fatalf("Timeout when waiting for RPCs to fail with given error: %v", err)
 		}
 		sCtx, sCancel := context.WithTimeout(ctx, defaultTestShortTimeout)
-		client := testgrpc.NewTestServiceClient(cc)
+		client := testgrpcforunconflict.NewTestServiceClient(cc)
 		_, err := client.EmptyCall(sCtx, &testpb.Empty{})
 
 		// If the RPC fails with the expected code and expected error message (if

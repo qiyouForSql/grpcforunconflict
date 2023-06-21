@@ -25,19 +25,16 @@ import (
 	"testing"
 	"time"
 
+	v3corepb "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
+	v3endpointpb "github.com/envoyproxy/go-control-plane/envoy/config/endpoint/v3"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
 	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/xds/e2e"
-	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
-
-	v3corepb "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
-	v3endpointpb "github.com/envoyproxy/go-control-plane/envoy/config/endpoint/v3"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
+	"github.com/qiyouForSql/grpcforunconflict/status"
 
 	_ "github.com/qiyouForSql/grpcforunconflict/xds"
 )
@@ -92,13 +89,13 @@ func (s) TestConfigUpdateWithSameLoadReportingServerConfig(t *testing.T) {
 	}
 
 	// Create a ClientConn and make a successful RPC.
-	cc, err := grpc.Dial(fmt.Sprintf("xds:///%s", serviceName), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(resolver))
+	cc, err := grpcforunconflict.Dial(fmt.Sprintf("xds:///%s", serviceName), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(resolver))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
 	defer cc.Close()
 
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	if _, err := client.EmptyCall(ctx, &testpb.Empty{}); err != nil {
 		t.Fatalf("rpc EmptyCall() failed: %v", err)
 	}

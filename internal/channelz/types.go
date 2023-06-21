@@ -640,7 +640,7 @@ func (c *channelTrace) append(e *TraceEvent) {
 		del := c.events[0]
 		c.events = c.events[1:]
 		if del.RefID != 0 {
-			// start recursive cleanup in a goroutine to not block the call originated from grpc.
+			// start recursive cleanup in a goroutine to not block the call originated fromgrpcforunconflict.
 			go func() {
 				// need to acquire c.cm.mu lock to call the unlocked attemptCleanup func.
 				c.cm.mu.Lock()

@@ -39,7 +39,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/status"
 	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient"
 	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/xdsresource/version"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	v3clusterpb "github.com/envoyproxy/go-control-plane/envoy/config/cluster/v3"
@@ -47,7 +46,6 @@ import (
 	v3endpointpb "github.com/envoyproxy/go-control-plane/envoy/config/endpoint/v3"
 	v3aggregateclusterpb "github.com/envoyproxy/go-control-plane/envoy/extensions/clusters/aggregate/v3"
 	v3discoverypb "github.com/envoyproxy/go-control-plane/envoy/service/discovery/v3"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 
 	_ "github.com/qiyouForSql/grpcforunconflict/xds/internal/balancer/cdsbalancer" // Register the "cds_experimental" LB policy.
@@ -136,7 +134,7 @@ func setupDNS() (chan resolver.Target, chan struct{}, chan resolver.ResolveNowOp
 //   - creates a ClientConn to talk to the test backends
 //
 // Returns a function to close the ClientConn and the xDS client.
-func setupAndDial(t *testing.T, bootstrapContents []byte) (*grpc.ClientConn, func()) {
+func setupAndDial(t *testing.T, bootstrapContents []byte) (*grpcforunconflict.ClientConn, func()) {
 	t.Helper()
 
 	// Create an xDS client for use by the cluster_resolver LB policy.
@@ -160,7 +158,7 @@ func setupAndDial(t *testing.T, bootstrapContents []byte) (*grpc.ClientConn, fun
 	r.InitialState(xdsclient.SetClient(resolver.State{ServiceConfig: scpr}, xdsC))
 
 	// Create a ClientConn and make a successful RPC.
-	cc, err := grpc.Dial(r.Scheme()+":///test.service", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(r))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.service", grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(r))
 	if err != nil {
 		xdsClose()
 		t.Fatalf("Failed to dial local test server: %v", err)
@@ -220,7 +218,7 @@ func (s) TestErrorFromParentLB_ConnectionError(t *testing.T) {
 	cc, cleanup := setupAndDial(t, bootstrapContents)
 	defer cleanup()
 
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	if _, err := client.EmptyCall(ctx, &testpb.Empty{}); err != nil {
 		t.Fatalf("EmptyCall() failed: %v", err)
 	}
@@ -311,7 +309,7 @@ func (s) TestErrorFromParentLB_ResourceNotFound(t *testing.T) {
 	}
 
 	// Ensure that a successful RPC can be made.
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	if _, err := client.EmptyCall(ctx, &testpb.Empty{}); err != nil {
 		t.Fatalf("EmptyCall() failed: %v", err)
 	}
@@ -442,7 +440,7 @@ func (s) TestEDS_ResourceRemoved(t *testing.T) {
 	cc, cleanup := setupAndDial(t, bootstrapContents)
 	defer cleanup()
 
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	if _, err := client.EmptyCall(ctx, &testpb.Empty{}); err != nil {
 		t.Fatalf("EmptyCall() failed: %v", err)
 	}
@@ -510,7 +508,7 @@ func (s) TestEDS_ClusterResourceDoesNotContainEDSServiceName(t *testing.T) {
 	cc, cleanup := setupAndDial(t, bootstrapContents)
 	defer cleanup()
 
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	if _, err := client.EmptyCall(ctx, &testpb.Empty{}); err != nil {
 		t.Fatalf("EmptyCall() failed: %v", err)
 	}
@@ -593,9 +591,9 @@ func (s) TestEDS_ClusterResourceUpdates(t *testing.T) {
 	cc, cleanup := setupAndDial(t, bootstrapContents)
 	defer cleanup()
 
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	peer := &peer.Peer{}
-	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.Peer(peer)); err != nil {
+	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Peer(peer)); err != nil {
 		t.Fatalf("EmptyCall() failed: %v", err)
 	}
 	if peer.Addr.String() != addrs[0].Addr {
@@ -637,7 +635,7 @@ func (s) TestEDS_ClusterResourceUpdates(t *testing.T) {
 	// Make a RPC, and ensure that it gets routed to second backend,
 	// corresponding to the cluster_name.
 	for ; ctx.Err() == nil; <-time.After(defaultTestShortTimeout) {
-		if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.Peer(peer)); err != nil {
+		if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Peer(peer)); err != nil {
 			continue
 		}
 		if peer.Addr.String() == addrs[1].Addr {
@@ -664,7 +662,7 @@ func (s) TestEDS_ClusterResourceUpdates(t *testing.T) {
 	// Ensure that RPCs continue to get routed to the second backend for the
 	// next second.
 	for end := time.Now().Add(time.Second); time.Now().Before(end); <-time.After(defaultTestShortTimeout) {
-		if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.Peer(peer)); err != nil {
+		if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Peer(peer)); err != nil {
 			t.Fatalf("EmptyCall() failed: %v", err)
 		}
 		if peer.Addr.String() != addrs[1].Addr {
@@ -759,7 +757,7 @@ func (s) TestAggregateCluster_WithTwoEDSClusters(t *testing.T) {
 	// Make an RPC with a short deadline. We expect this RPC to not succeed
 	// because the management server has not responded with all EDS resources
 	// requested.
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	sCtx, sCancel := context.WithTimeout(ctx, defaultTestShortTimeout)
 	defer sCancel()
 	if _, err := client.EmptyCall(sCtx, &testpb.Empty{}); status.Code(err) != codes.DeadlineExceeded {
@@ -775,7 +773,7 @@ func (s) TestAggregateCluster_WithTwoEDSClusters(t *testing.T) {
 	// Make an RPC and ensure that it gets routed to cluster-1, implicitly
 	// higher priority than cluster-2.
 	peer := &peer.Peer{}
-	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.Peer(peer), grpc.WaitForReady(true)); err != nil {
+	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Peer(peer), grpcforunconflict.WaitForReady(true)); err != nil {
 		t.Fatalf("EmptyCall() failed: %v", err)
 	}
 	if peer.Addr.String() != addrs[0].Addr {
@@ -828,9 +826,9 @@ func (s) TestAggregateCluster_WithTwoEDSClusters_PrioritiesChange(t *testing.T) 
 
 	// Make an RPC and ensure that it gets routed to cluster-1, implicitly
 	// higher priority than cluster-2.
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	peer := &peer.Peer{}
-	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.Peer(peer), grpc.WaitForReady(true)); err != nil {
+	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Peer(peer), grpcforunconflict.WaitForReady(true)); err != nil {
 		t.Fatalf("EmptyCall() failed: %v", err)
 	}
 	if peer.Addr.String() != addrs[0].Addr {
@@ -850,7 +848,7 @@ func (s) TestAggregateCluster_WithTwoEDSClusters_PrioritiesChange(t *testing.T) 
 	// Wait for RPCs to get routed to cluster-2, which is now implicitly higher
 	// priority than cluster-1, after the priority switch above.
 	for ; ctx.Err() == nil; <-time.After(defaultTestShortTimeout) {
-		if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.Peer(peer), grpc.WaitForReady(true)); err != nil {
+		if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Peer(peer), grpcforunconflict.WaitForReady(true)); err != nil {
 			t.Fatalf("EmptyCall() failed: %v", err)
 		}
 		if peer.Addr.String() == addrs[1].Addr {
@@ -920,9 +918,9 @@ func (s) TestAggregateCluster_WithOneDNSCluster(t *testing.T) {
 
 	// Make an RPC and ensure that it gets routed to the first backend since the
 	// child policy for a LOGICAL_DNS cluster is pick_first by default.
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	peer := &peer.Peer{}
-	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.Peer(peer), grpc.WaitForReady(true)); err != nil {
+	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Peer(peer), grpcforunconflict.WaitForReady(true)); err != nil {
 		t.Fatalf("EmptyCall() failed: %v", err)
 	}
 	if peer.Addr.String() != addrs[0].Addr {
@@ -1017,7 +1015,7 @@ func (s) TestAggregateCluster_WithEDSAndDNS(t *testing.T) {
 
 	// Make an RPC with a short deadline. We expect this RPC to not succeed
 	// because the DNS resolver has not responded with endpoint addresses.
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	sCtx, sCancel := context.WithTimeout(ctx, defaultTestShortTimeout)
 	defer sCancel()
 	if _, err := client.EmptyCall(sCtx, &testpb.Empty{}); status.Code(err) != codes.DeadlineExceeded {
@@ -1030,7 +1028,7 @@ func (s) TestAggregateCluster_WithEDSAndDNS(t *testing.T) {
 	// Make an RPC and ensure that it gets routed to the first backend since the
 	// EDS cluster is of higher priority than the LOGICAL_DNS cluster.
 	peer := &peer.Peer{}
-	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.Peer(peer), grpc.WaitForReady(true)); err != nil {
+	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Peer(peer), grpcforunconflict.WaitForReady(true)); err != nil {
 		t.Fatalf("EmptyCall() failed: %v", err)
 	}
 	if peer.Addr.String() != addrs[0].Addr {
@@ -1089,9 +1087,9 @@ func (s) TestAggregateCluster_SwitchEDSAndDNS(t *testing.T) {
 	defer cleanup()
 
 	// Ensure that the RPC is routed to the appropriate backend.
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	peer := &peer.Peer{}
-	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.Peer(peer), grpc.WaitForReady(true)); err != nil {
+	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Peer(peer), grpcforunconflict.WaitForReady(true)); err != nil {
 		t.Fatalf("EmptyCall() failed: %v", err)
 	}
 	if peer.Addr.String() != addrs[0].Addr {
@@ -1125,7 +1123,7 @@ func (s) TestAggregateCluster_SwitchEDSAndDNS(t *testing.T) {
 	// Ensure that start getting routed to the backend corresponding to the
 	// LOGICAL_DNS cluster.
 	for ; ctx.Err() == nil; <-time.After(defaultTestShortTimeout) {
-		client.EmptyCall(ctx, &testpb.Empty{}, grpc.Peer(peer))
+		client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Peer(peer))
 		if peer.Addr.String() == addrs[1].Addr {
 			break
 		}
@@ -1191,7 +1189,7 @@ func (s) TestAggregateCluster_BadEDS_GoodToBadDNS(t *testing.T) {
 	// Make an RPC with a short deadline. We expect this RPC to not succeed
 	// because the EDS resource came back with no endpoints, and we are yet to
 	// push an update through the DNS resolver.
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	sCtx, sCancel := context.WithTimeout(ctx, defaultTestShortTimeout)
 	defer sCancel()
 	if _, err := client.EmptyCall(sCtx, &testpb.Empty{}); status.Code(err) != codes.DeadlineExceeded {
@@ -1216,7 +1214,7 @@ func (s) TestAggregateCluster_BadEDS_GoodToBadDNS(t *testing.T) {
 	// child policy for a LOGICAL_DNS cluster is pick_first by default.
 	for ; ctx.Err() == nil; <-time.After(defaultTestShortTimeout) {
 		peer := &peer.Peer{}
-		if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.Peer(peer)); err != nil {
+		if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Peer(peer)); err != nil {
 			t.Logf("EmptyCall() failed: %v", err)
 			continue
 		}
@@ -1235,7 +1233,7 @@ func (s) TestAggregateCluster_BadEDS_GoodToBadDNS(t *testing.T) {
 	// Ensure that RPCs continue to succeed for the next second.
 	for end := time.Now().Add(time.Second); time.Now().Before(end); <-time.After(defaultTestShortTimeout) {
 		peer := &peer.Peer{}
-		if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.Peer(peer)); err != nil {
+		if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.Peer(peer)); err != nil {
 			t.Fatalf("EmptyCall() failed: %v", err)
 		}
 		if peer.Addr.String() != addrs[0].Addr {
@@ -1293,7 +1291,7 @@ func (s) TestAggregateCluster_BadEDS_BadDNS(t *testing.T) {
 	// Make an RPC with a short deadline. We expect this RPC to not succeed
 	// because the EDS resource came back with no endpoints, and we are yet to
 	// push an update through the DNS resolver.
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 	sCtx, sCancel := context.WithTimeout(ctx, defaultTestShortTimeout)
 	defer sCancel()
 	if _, err := client.EmptyCall(sCtx, &testpb.Empty{}); status.Code(err) != codes.DeadlineExceeded {

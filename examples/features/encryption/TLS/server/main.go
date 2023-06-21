@@ -55,7 +55,7 @@ func main() {
 		log.Fatalf("failed to create credentials: %v", err)
 	}
 
-	s := grpc.NewServer(grpc.Creds(creds))
+	s := grpcforunconflict.NewServer(grpcforunconflict.Creds(creds))
 
 	// Register EchoServer on the server.
 	pb.RegisterEchoServer(s, &ecServer{})

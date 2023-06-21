@@ -16,7 +16,7 @@ syntax = "proto2";
 
 option go_package = "github.com/qiyouForSql/grpcforunconflict/reflection/grpc_testing";
 
-package grpc.testing;
+packagegrpcforunconflict.testing;
 
 message ToBeExtended {
   required int32 foo = 1;

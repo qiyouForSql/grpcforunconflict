@@ -8,7 +8,7 @@ To register server reflection on a gRPC server:
 ```go
 import "github.com/qiyouForSql/grpcforunconflict/reflection"
 
-s := grpc.NewServer()
+s :=grpcforunconflict.NewServer()
 pb.RegisterYourOwnServer(s, &server{})
 
 // Register reflection service on gRPC server.

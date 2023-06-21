@@ -280,15 +280,15 @@ func file_stress_grpc_testing_metrics_proto_rawDescGZIP() []byte {
 
 var file_stress_grpc_testing_metrics_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_stress_grpc_testing_metrics_proto_goTypes = []interface{}{
-	(*GaugeResponse)(nil), // 0: grpc.testing.GaugeResponse
-	(*GaugeRequest)(nil),  // 1: grpc.testing.GaugeRequest
-	(*EmptyMessage)(nil),  // 2: grpc.testing.EmptyMessage
+	(*GaugeResponse)(nil), // 0:grpcforunconflict.testing.GaugeResponse
+	(*GaugeRequest)(nil),  // 1:grpcforunconflict.testing.GaugeRequest
+	(*EmptyMessage)(nil),  // 2:grpcforunconflict.testing.EmptyMessage
 }
 var file_stress_grpc_testing_metrics_proto_depIdxs = []int32{
-	2, // 0: grpc.testing.MetricsService.GetAllGauges:input_type -> grpc.testing.EmptyMessage
-	1, // 1: grpc.testing.MetricsService.GetGauge:input_type -> grpc.testing.GaugeRequest
-	0, // 2: grpc.testing.MetricsService.GetAllGauges:output_type -> grpc.testing.GaugeResponse
-	0, // 3: grpc.testing.MetricsService.GetGauge:output_type -> grpc.testing.GaugeResponse
+	2, // 0:grpcforunconflict.testing.MetricsService.GetAllGauges:input_type ->grpcforunconflict.testing.EmptyMessage
+	1, // 1:grpcforunconflict.testing.MetricsService.GetGauge:input_type ->grpcforunconflict.testing.GaugeRequest
+	0, // 2:grpcforunconflict.testing.MetricsService.GetAllGauges:output_type ->grpcforunconflict.testing.GaugeResponse
+	0, // 3:grpcforunconflict.testing.MetricsService.GetGauge:output_type ->grpcforunconflict.testing.GaugeResponse
 	2, // [2:4] is the sub-list for method output_type
 	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name

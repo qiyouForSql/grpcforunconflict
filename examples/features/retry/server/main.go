@@ -75,7 +75,7 @@ func main() {
 	}
 	fmt.Println("listen on address", address)
 
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 
 	// Configure server to pass every fourth RPC;
 	// client is configured to make four attempts.

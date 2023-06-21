@@ -39,7 +39,7 @@ import (
 	math "math"
 
 	proto "github.com/golang/protobuf/proto"
-	grpc "google.golang.org/grpc"
+	grpcforunconflict "github.com/qiyouForSql/grpcforunconflict"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -79,7 +79,7 @@ func (SearchResponseV3_State) EnumDescriptor() ([]byte, []int) { return fileDesc
 
 type SearchResponseV3 struct {
 	Results []*SearchResponseV3_Result `protobuf:"bytes,1,rep,name=results" json:"results,omitempty"`
-	State   SearchResponseV3_State     `protobuf:"varint,2,opt,name=state,enum=grpc.testingv3.SearchResponseV3_State" json:"state,omitempty"`
+	State   SearchResponseV3_State     `protobuf:"varint,2,opt,name=state,enum=grpcforunconflict.testingv3.SearchResponseV3_State" json:"state,omitempty"`
 }
 
 func (m *SearchResponseV3) Reset()                    { *m = SearchResponseV3{} }
@@ -298,47 +298,47 @@ func (m *SearchRequestV3) GetQuery() string {
 }
 
 func init() {
-	proto.RegisterType((*SearchResponseV3)(nil), "grpc.testingv3.SearchResponseV3")
-	proto.RegisterType((*SearchResponseV3_Result)(nil), "grpc.testingv3.SearchResponseV3.Result")
-	proto.RegisterType((*SearchResponseV3_Result_Value)(nil), "grpc.testingv3.SearchResponseV3.Result.Value")
-	proto.RegisterType((*SearchRequestV3)(nil), "grpc.testingv3.SearchRequestV3")
-	proto.RegisterEnum("grpc.testingv3.SearchResponseV3_State", SearchResponseV3_State_name, SearchResponseV3_State_value)
+	proto.RegisterType((*SearchResponseV3)(nil), "grpcforunconflict.testingv3.SearchResponseV3")
+	proto.RegisterType((*SearchResponseV3_Result)(nil), "grpcforunconflict.testingv3.SearchResponseV3.Result")
+	proto.RegisterType((*SearchResponseV3_Result_Value)(nil), "grpcforunconflict.testingv3.SearchResponseV3.Result.Value")
+	proto.RegisterType((*SearchRequestV3)(nil), "grpcforunconflict.testingv3.SearchRequestV3")
+	proto.RegisterEnum("grpcforunconflict.testingv3.SearchResponseV3_State", SearchResponseV3_State_name, SearchResponseV3_State_value)
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ context.Context
-var _ grpc.ClientConn
+var _grpcforunconflict.ClientConn
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion3
+const _ = grpcforunconflict.SupportPackageIsVersion3
 
 // Client API for SearchServiceV3 service
 
 type SearchServiceV3Client interface {
-	Search(ctx context.Context, in *SearchRequestV3, opts ...grpc.CallOption) (*SearchResponseV3, error)
-	StreamingSearch(ctx context.Context, opts ...grpc.CallOption) (SearchServiceV3_StreamingSearchClient, error)
+	Search(ctx context.Context, in *SearchRequestV3, opts ...grpcforunconflict.CallOption) (*SearchResponseV3, error)
+	StreamingSearch(ctx context.Context, opts ...grpcforunconflict.CallOption) (SearchServiceV3_StreamingSearchClient, error)
 }
 
 type searchServiceV3Client struct {
-	cc *grpc.ClientConn
+	cc *grpcforunconflict.ClientConn
 }
 
-func NewSearchServiceV3Client(cc *grpc.ClientConn) SearchServiceV3Client {
+func NewSearchServiceV3Client(cc *grpcforunconflict.ClientConn) SearchServiceV3Client {
 	return &searchServiceV3Client{cc}
 }
 
-func (c *searchServiceV3Client) Search(ctx context.Context, in *SearchRequestV3, opts ...grpc.CallOption) (*SearchResponseV3, error) {
+func (c *searchServiceV3Client) Search(ctx context.Context, in *SearchRequestV3, opts ...grpcforunconflict.CallOption) (*SearchResponseV3, error) {
 	out := new(SearchResponseV3)
-	err := grpc.Invoke(ctx, "/grpc.testingv3.SearchServiceV3/Search", in, out, c.cc, opts...)
+	err := grpcforunconflict.Invoke(ctx, "/grpcforunconflict.testingv3.SearchServiceV3/Search", in, out, c.cc, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *searchServiceV3Client) StreamingSearch(ctx context.Context, opts ...grpc.CallOption) (SearchServiceV3_StreamingSearchClient, error) {
-	stream, err := grpc.NewClientStream(ctx, &_SearchServiceV3_serviceDesc.Streams[0], c.cc, "/grpc.testingv3.SearchServiceV3/StreamingSearch", opts...)
+func (c *searchServiceV3Client) StreamingSearch(ctx context.Context, opts ...grpcforunconflict.CallOption) (SearchServiceV3_StreamingSearchClient, error) {
+	stream, err := grpcforunconflict.NewClientStream(ctx, &_SearchServiceV3_serviceDesc.Streams[0], c.cc, "/grpcforunconflict.testingv3.SearchServiceV3/StreamingSearch", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -349,11 +349,11 @@ func (c *searchServiceV3Client) StreamingSearch(ctx context.Context, opts ...grp
 type SearchServiceV3_StreamingSearchClient interface {
 	Send(*SearchRequestV3) error
 	Recv() (*SearchResponseV3, error)
-	grpc.ClientStream
+	grpcforunconflict.ClientStream
 }
 
 type searchServiceV3StreamingSearchClient struct {
-	grpc.ClientStream
+	grpcforunconflict.ClientStream
 }
 
 func (x *searchServiceV3StreamingSearchClient) Send(m *SearchRequestV3) error {
@@ -375,11 +375,11 @@ type SearchServiceV3Server interface {
 	StreamingSearch(SearchServiceV3_StreamingSearchServer) error
 }
 
-func RegisterSearchServiceV3Server(s *grpc.Server, srv SearchServiceV3Server) {
+func RegisterSearchServiceV3Server(s *grpcforunconflict.Server, srv SearchServiceV3Server) {
 	s.RegisterService(&_SearchServiceV3_serviceDesc, srv)
 }
 
-func _SearchServiceV3_Search_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SearchServiceV3_Search_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptorgrpcforunconflict.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SearchRequestV3)
 	if err := dec(in); err != nil {
 		return nil, err
@@ -387,9 +387,9 @@ func _SearchServiceV3_Search_Handler(srv interface{}, ctx context.Context, dec f
 	if interceptor == nil {
 		return srv.(SearchServiceV3Server).Search(ctx, in)
 	}
-	info := &grpc.UnaryServerInfo{
+	info := &grpcforunconflict.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/grpc.testingv3.SearchServiceV3/Search",
+		FullMethod: "/grpcforunconflict.testingv3.SearchServiceV3/Search",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(SearchServiceV3Server).Search(ctx, req.(*SearchRequestV3))
@@ -397,18 +397,18 @@ func _SearchServiceV3_Search_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SearchServiceV3_StreamingSearch_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _SearchServiceV3_StreamingSearch_Handler(srv interface{}, streamgrpcforunconflict.ServerStream) error {
 	return srv.(SearchServiceV3Server).StreamingSearch(&searchServiceV3StreamingSearchServer{stream})
 }
 
 type SearchServiceV3_StreamingSearchServer interface {
 	Send(*SearchResponseV3) error
 	Recv() (*SearchRequestV3, error)
-	grpc.ServerStream
+	grpcforunconflict.ServerStream
 }
 
 type searchServiceV3StreamingSearchServer struct {
-	grpc.ServerStream
+	grpcforunconflict.ServerStream
 }
 
 func (x *searchServiceV3StreamingSearchServer) Send(m *SearchResponseV3) error {
@@ -423,16 +423,16 @@ func (x *searchServiceV3StreamingSearchServer) Recv() (*SearchRequestV3, error) 
 	return m, nil
 }
 
-var _SearchServiceV3_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "grpc.testingv3.SearchServiceV3",
+var _SearchServiceV3_serviceDesc = grpcforunconflict.ServiceDesc{
+	ServiceName: "grpcforunconflict.testingv3.SearchServiceV3",
 	HandlerType: (*SearchServiceV3Server)(nil),
-	Methods: []grpc.MethodDesc{
+	Methods: []grpcforunconflict.MethodDesc{
 		{
 			MethodName: "Search",
 			Handler:    _SearchServiceV3_Search_Handler,
 		},
 	},
-	Streams: []grpc.StreamDesc{
+	Streams: []grpcforunconflict.StreamDesc{
 		{
 			StreamName:    "StreamingSearch",
 			Handler:       _SearchServiceV3_StreamingSearch_Handler,

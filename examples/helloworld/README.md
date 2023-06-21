@@ -26,4 +26,4 @@ For more details (including instructions for making a small change to the
 example code) or if you're having trouble running this example, see [Quick
 Start][].
 
-[quick start]: https://grpc.io/docs/languages/go/quickstart
+[quick start]: https://grpcforunconflict.io/docs/languages/go/quickstart

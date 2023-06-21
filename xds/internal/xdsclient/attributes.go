@@ -21,7 +21,7 @@ import "github.com/qiyouForSql/grpcforunconflict/resolver"
 
 type clientKeyType string
 
-const clientKey = clientKeyType("grpc.xds.internal.client.Client")
+const clientKey = clientKeyType("grpcforunconflict.xds.internal.client.Client")
 
 // FromResolverState returns the Client from state, or nil if not present.
 func FromResolverState(state resolver.State) XDSClient {

@@ -29,6 +29,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/attributes"
 	"github.com/qiyouForSql/grpcforunconflict/balancer"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
@@ -47,9 +48,7 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/resolver/manual"
 	"github.com/qiyouForSql/grpcforunconflict/status"
 	"github.com/qiyouForSql/grpcforunconflict/testdata"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -154,21 +153,21 @@ func (s) TestCredsBundleFromBalancer(t *testing.T) {
 	})
 	te := newTest(t, env{name: "creds-bundle", network: "tcp", balancer: ""})
 	te.tapHandle = authHandle
-	te.customDialOptions = []grpc.DialOption{
-		grpc.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, testBalancerName)),
+	te.customDialOptions = []grpcforunconflict.DialOption{
+		grpcforunconflict.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, testBalancerName)),
 	}
 	creds, err := credentials.NewServerTLSFromFile(testdata.Path("x509/server1_cert.pem"), testdata.Path("x509/server1_key.pem"))
 	if err != nil {
 		t.Fatalf("Failed to generate credentials %v", err)
 	}
-	te.customServerOptions = []grpc.ServerOption{
-		grpc.Creds(creds),
+	te.customServerOptions = []grpcforunconflict.ServerOption{
+		grpcforunconflict.Creds(creds),
 	}
 	te.startServer(&testServer{})
 	defer te.tearDown()
 
 	cc := te.clientConn()
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	if _, err := tc.EmptyCall(context.Background(), &testpb.Empty{}); err != nil {
 		t.Fatalf("Test failed. Reason: %v", err)
 	}
@@ -189,9 +188,9 @@ func testPickExtraMetadata(t *testing.T, e env) {
 		testSubContentType = "proto"
 	)
 
-	te.customDialOptions = []grpc.DialOption{
-		grpc.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, testBalancerName)),
-		grpc.WithUserAgent(testUserAgent),
+	te.customDialOptions = []grpcforunconflict.DialOption{
+		grpcforunconflict.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, testBalancerName)),
+		grpcforunconflict.WithUserAgent(testUserAgent),
 	}
 	te.startServer(&testServer{security: e.security})
 	defer te.tearDown()
@@ -205,14 +204,14 @@ func testPickExtraMetadata(t *testing.T, e env) {
 	r.InitialState(resolver.State{Addresses: []resolver.Address{{Addr: te.srvAddr}}})
 	te.resolverScheme = "xds"
 	cc := te.clientConn()
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); err != nil {
+	if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); err != nil {
 		t.Fatalf("TestService/EmptyCall(_, _) = _, %v, want _, %v", err, nil)
 	}
-	if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpc.CallContentSubtype(testSubContentType)); err != nil {
+	if _, err := tc.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.CallContentSubtype(testSubContentType)); err != nil {
 		t.Fatalf("TestService/EmptyCall(_, _) = _, %v, want _, %v", err, nil)
 	}
 
@@ -237,15 +236,15 @@ func testDoneInfo(t *testing.T, e env) {
 	te := newTest(t, e)
 	b := &testBalancer{}
 	balancer.Register(b)
-	te.customDialOptions = []grpc.DialOption{
-		grpc.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, testBalancerName)),
+	te.customDialOptions = []grpcforunconflict.DialOption{
+		grpcforunconflict.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, testBalancerName)),
 	}
 	te.userAgent = failAppUA
 	te.startServer(&testServer{security: e.security})
 	defer te.tearDown()
 
 	cc := te.clientConn()
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -313,16 +312,16 @@ func testDoneLoads(t *testing.T) {
 
 	ss := &stubserver.StubServer{
 		EmptyCallF: func(ctx context.Context, in *testpb.Empty) (*testpb.Empty, error) {
-			grpc.SetTrailer(ctx, metadata.Pairs(loadMDKey, testLoad))
+			grpcforunconflict.SetTrailer(ctx, metadata.Pairs(loadMDKey, testLoad))
 			return &testpb.Empty{}, nil
 		},
 	}
-	if err := ss.Start(nil, grpc.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, testBalancerName))); err != nil {
+	if err := ss.Start(nil, grpcforunconflict.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, testBalancerName))); err != nil {
 		t.Fatalf("error starting testing server: %v", err)
 	}
 	defer ss.Stop()
 
-	tc := testgrpc.NewTestServiceClient(ss.CC)
+	tc := testgrpcforunconflict.NewTestServiceClient(ss.CC)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -331,7 +330,7 @@ func testDoneLoads(t *testing.T) {
 	}
 
 	piWant := []balancer.PickInfo{
-		{FullMethodName: "/grpc.testing.TestService/EmptyCall"},
+		{FullMethodName: "/grpcforunconflict.testing.TestService/EmptyCall"},
 	}
 	if !reflect.DeepEqual(b.pickInfos, piWant) {
 		t.Fatalf("b.pickInfos = %v; want %v", b.pickInfos, piWant)
@@ -395,19 +394,19 @@ func (s) TestNonGRPCLBBalancerGetsNoGRPCLBAddress(t *testing.T) {
 	b := newTestBalancerKeepAddresses()
 	balancer.Register(b)
 
-	cc, err := grpc.Dial(r.Scheme()+":///test.server",
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithResolvers(r),
-		grpc.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, b.Name())))
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.server",
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithResolvers(r),
+		grpcforunconflict.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, b.Name())))
 	if err != nil {
 		t.Fatalf("failed to dial: %v", err)
 	}
 	defer cc.Close()
 
 	grpclbAddresses := []resolver.Address{{
-		Addr:       "grpc.lb.com",
+		Addr:       "grpcforunconflict.lb.com",
 		Type:       resolver.GRPCLB,
-		ServerName: "grpc.lb.com",
+		ServerName: "grpcforunconflict.lb.com",
 	}}
 
 	nonGRPCLBAddresses := []resolver.Address{{
@@ -511,24 +510,24 @@ func (s) TestAddressAttributesInNewSubConn(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	s := grpc.NewServer()
-	testgrpc.RegisterTestServiceServer(s, &testServer{})
+	s := grpcforunconflict.NewServer()
+	testgrpcforunconflict.RegisterTestServiceServer(s, &testServer{})
 	go s.Serve(lis)
 	defer s.Stop()
 	t.Logf("Started gRPC server at %s...", lis.Addr().String())
 
 	creds := &attrTransportCreds{}
-	dopts := []grpc.DialOption{
-		grpc.WithTransportCredentials(creds),
-		grpc.WithResolvers(r),
-		grpc.WithDefaultServiceConfig(fmt.Sprintf(`{ "loadBalancingConfig": [{"%v": {}}] }`, attrBalancerName)),
+	dopts := []grpcforunconflict.DialOption{
+		grpcforunconflict.WithTransportCredentials(creds),
+		grpcforunconflict.WithResolvers(r),
+		grpcforunconflict.WithDefaultServiceConfig(fmt.Sprintf(`{ "loadBalancingConfig": [{"%v": {}}] }`, attrBalancerName)),
 	}
-	cc, err := grpc.Dial(r.Scheme()+":///test.server", dopts...)
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.server", dopts...)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer cc.Close()
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 	t.Log("Created a ClientConn...")
 
 	// The first RPC should fail because there's no address.
@@ -605,7 +604,7 @@ func (s) TestMetadataInAddressAttributes(t *testing.T) {
 			return &testpb.Empty{}, nil
 		},
 	}
-	if err := ss.Start(nil, grpc.WithDefaultServiceConfig(
+	if err := ss.Start(nil, grpcforunconflict.WithDefaultServiceConfig(
 		fmt.Sprintf(`{ "loadBalancingConfig": [{"%v": {}}] }`, mdBalancerName),
 	)); err != nil {
 		t.Fatalf("Error starting endpoint server: %v", err)
@@ -639,13 +638,13 @@ func (s) TestServersSwap(t *testing.T) {
 		if err != nil {
 			t.Fatalf("Error while listening. Err: %v", err)
 		}
-		s := grpc.NewServer()
+		s := grpcforunconflict.NewServer()
 		ts := &funcServer{
 			unaryCall: func(ctx context.Context, in *testpb.SimpleRequest) (*testpb.SimpleResponse, error) {
 				return &testpb.SimpleResponse{Username: username}, nil
 			},
 		}
-		testgrpc.RegisterTestServiceServer(s, ts)
+		testgrpcforunconflict.RegisterTestServiceServer(s, ts)
 		go s.Serve(lis)
 		return lis.Addr().String(), s.Stop
 	}
@@ -659,12 +658,12 @@ func (s) TestServersSwap(t *testing.T) {
 	// Initialize client
 	r := manual.NewBuilderWithScheme("whatever")
 	r.InitialState(resolver.State{Addresses: []resolver.Address{{Addr: addr1}}})
-	cc, err := grpc.DialContext(ctx, r.Scheme()+":///", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(r))
+	cc, err := grpcforunconflict.DialContext(ctx, r.Scheme()+":///", grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(r))
 	if err != nil {
 		t.Fatalf("Error creating client: %v", err)
 	}
 	defer cc.Close()
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 
 	// Confirm we are connected to the first server
 	if res, err := client.UnaryCall(ctx, &testpb.SimpleRequest{}); err != nil || res.Username != one {
@@ -694,7 +693,7 @@ func (s) TestWaitForReady(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error while listening. Err: %v", err)
 	}
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 	defer s.Stop()
 	const one = "1"
 	ts := &funcServer{
@@ -702,18 +701,18 @@ func (s) TestWaitForReady(t *testing.T) {
 			return &testpb.SimpleResponse{Username: one}, nil
 		},
 	}
-	testgrpc.RegisterTestServiceServer(s, ts)
+	testgrpcforunconflict.RegisterTestServiceServer(s, ts)
 	go s.Serve(lis)
 
 	// Initialize client
 	r := manual.NewBuilderWithScheme("whatever")
 
-	cc, err := grpc.DialContext(ctx, r.Scheme()+":///", grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithResolvers(r))
+	cc, err := grpcforunconflict.DialContext(ctx, r.Scheme()+":///", grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithResolvers(r))
 	if err != nil {
 		t.Fatalf("Error creating client: %v", err)
 	}
 	defer cc.Close()
-	client := testgrpc.NewTestServiceClient(cc)
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
 
 	// Report an error so non-WFR RPCs will give up early.
 	r.CC.ReportError(errors.New("fake resolver error"))
@@ -725,7 +724,7 @@ func (s) TestWaitForReady(t *testing.T) {
 
 	errChan := make(chan error, 1)
 	go func() {
-		if res, err := client.UnaryCall(ctx, &testpb.SimpleRequest{}, grpc.WaitForReady(true)); err != nil || res.Username != one {
+		if res, err := client.UnaryCall(ctx, &testpb.SimpleRequest{}, grpcforunconflict.WaitForReady(true)); err != nil || res.Username != one {
 			errChan <- fmt.Errorf("UnaryCall(_) = %v, %v; want {Username: %q}, nil", res, err, one)
 		}
 		close(errChan)
@@ -770,25 +769,25 @@ func (s) TestAuthorityInBuildOptions(t *testing.T) {
 
 	tests := []struct {
 		name          string
-		dopts         []grpc.DialOption
+		dopts         []grpcforunconflict.DialOption
 		wantAuthority string
 	}{
 		{
 			name:          "authority from dial target",
-			dopts:         []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())},
+			dopts:         []grpcforunconflict.DialOption{grpcforunconflict.WithTransportCredentials(insecure.NewCredentials())},
 			wantAuthority: dialTarget,
 		},
 		{
 			name: "authority from dial option",
-			dopts: []grpc.DialOption{
-				grpc.WithTransportCredentials(insecure.NewCredentials()),
-				grpc.WithAuthority("authority-override"),
+			dopts: []grpcforunconflict.DialOption{
+				grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+				grpcforunconflict.WithAuthority("authority-override"),
 			},
 			wantAuthority: "authority-override",
 		},
 		{
 			name:          "authority from transport creds",
-			dopts:         []grpc.DialOption{grpc.WithTransportCredentials(&authorityOverrideTransportCreds{authorityOverride: "authority-override-from-transport-creds"})},
+			dopts:         []grpcforunconflict.DialOption{grpcforunconflict.WithTransportCredentials(&authorityOverrideTransportCreds{authorityOverride: "authority-override-from-transport-creds"})},
 			wantAuthority: "authority-override-from-transport-creds",
 		},
 	}
@@ -829,8 +828,8 @@ func (s) TestAuthorityInBuildOptions(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			s := grpc.NewServer()
-			testgrpc.RegisterTestServiceServer(s, &testServer{})
+			s := grpcforunconflict.NewServer()
+			testgrpcforunconflict.RegisterTestServiceServer(s, &testServer{})
 			go s.Serve(lis)
 			defer s.Stop()
 			t.Logf("Started gRPC server at %s...", lis.Addr().String())
@@ -839,16 +838,16 @@ func (s) TestAuthorityInBuildOptions(t *testing.T) {
 			t.Logf("Registered manual resolver with scheme %s...", r.Scheme())
 			r.InitialState(resolver.State{Addresses: []resolver.Address{{Addr: lis.Addr().String()}}})
 
-			dopts := append([]grpc.DialOption{
-				grpc.WithResolvers(r),
-				grpc.WithDefaultServiceConfig(fmt.Sprintf(`{ "loadBalancingConfig": [{"%v": {}}] }`, balancerName)),
+			dopts := append([]grpcforunconflict.DialOption{
+				grpcforunconflict.WithResolvers(r),
+				grpcforunconflict.WithDefaultServiceConfig(fmt.Sprintf(`{ "loadBalancingConfig": [{"%v": {}}] }`, balancerName)),
 			}, test.dopts...)
-			cc, err := grpc.Dial(r.Scheme()+":///"+dialTarget, dopts...)
+			cc, err := grpcforunconflict.Dial(r.Scheme()+":///"+dialTarget, dopts...)
 			if err != nil {
 				t.Fatal(err)
 			}
 			defer cc.Close()
-			tc := testgrpc.NewTestServiceClient(cc)
+			tc := testgrpcforunconflict.NewTestServiceClient(cc)
 			t.Log("Created a ClientConn...")
 
 			ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
@@ -877,7 +876,7 @@ type wrappedPickFirstBalancerBuilder struct {
 }
 
 func (*wrappedPickFirstBalancerBuilder) Build(cc balancer.ClientConn, opts balancer.BuildOptions) balancer.Balancer {
-	builder := balancer.Get(grpc.PickFirstBalancerName)
+	builder := balancer.Get(grpcforunconflict.PickFirstBalancerName)
 	wpfb := &wrappedPickFirstBalancer{
 		ClientConn: cc,
 	}
@@ -961,17 +960,17 @@ func (s) TestMetadataInPickResult(t *testing.T) {
 	t.Log("Creating ClientConn to test backend...")
 	r := manual.NewBuilderWithScheme("whatever")
 	r.InitialState(resolver.State{Addresses: []resolver.Address{{Addr: ss.Address}}})
-	dopts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithResolvers(r),
-		grpc.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, b.Name())),
+	dopts := []grpcforunconflict.DialOption{
+		grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()),
+		grpcforunconflict.WithResolvers(r),
+		grpcforunconflict.WithDefaultServiceConfig(fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, b.Name())),
 	}
-	cc, err := grpc.Dial(r.Scheme()+":///test.server", dopts...)
+	cc, err := grpcforunconflict.Dial(r.Scheme()+":///test.server", dopts...)
 	if err != nil {
-		t.Fatalf("grpc.Dial(): %v", err)
+		t.Fatalf("grpcforunconflict.Dial(): %v", err)
 	}
 	defer cc.Close()
-	tc := testgrpc.NewTestServiceClient(cc)
+	tc := testgrpcforunconflict.NewTestServiceClient(cc)
 
 	t.Log("Making EmptyCall() RPC with custom metadata...")
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
@@ -1079,7 +1078,7 @@ type testProducerBuilder struct {
 }
 
 func (b *testProducerBuilder) Build(cci interface{}) (balancer.Producer, func()) {
-	c := testgrpc.NewTestServiceClient(cci.(grpc.ClientConnInterface))
+	c := testgrpcforunconflict.NewTestServiceClient(cci.(grpcforunconflict.ClientConnInterface))
 	// Perform the RPC in a goroutine instead of during build because the
 	// subchannel's mutex is held here.
 	go func() {
@@ -1112,7 +1111,7 @@ func (s) TestBalancerProducerBlockUntilReady(t *testing.T) {
 
 	// Start the server & client with the test producer LB policy.
 	svcCfg := fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, producerTestBalancerName)
-	if err := ss.Start(nil, grpc.WithDefaultServiceConfig(svcCfg)); err != nil {
+	if err := ss.Start(nil, grpcforunconflict.WithDefaultServiceConfig(svcCfg)); err != nil {
 		t.Fatalf("Error starting testing server: %v", err)
 	}
 	defer ss.Stop()
@@ -1143,7 +1142,7 @@ func (s) TestBalancerProducerHonorsContext(t *testing.T) {
 
 	// Start the server & client with the test producer LB policy.
 	svcCfg := fmt.Sprintf(`{"loadBalancingConfig": [{"%s":{}}]}`, producerTestBalancerName)
-	if err := ss.Start(nil, grpc.WithDefaultServiceConfig(svcCfg)); err != nil {
+	if err := ss.Start(nil, grpcforunconflict.WithDefaultServiceConfig(svcCfg)); err != nil {
 		t.Fatalf("Error starting testing server: %v", err)
 	}
 	defer ss.Stop()

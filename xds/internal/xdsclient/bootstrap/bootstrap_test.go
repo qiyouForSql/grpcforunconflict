@@ -25,17 +25,15 @@ import (
 	"os"
 	"testing"
 
+	v3corepb "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
 	"github.com/golang/protobuf/proto"
+	structpb "github.com/golang/protobuf/ptypes/struct"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/tls/certprovider"
 	"github.com/qiyouForSql/grpcforunconflict/internal"
 	"github.com/qiyouForSql/grpcforunconflict/internal/envconfig"
 	"github.com/qiyouForSql/grpcforunconflict/xds/bootstrap"
-	"google.golang.org/grpc"
-
-	v3corepb "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
-	structpb "github.com/golang/protobuf/ptypes/struct"
 )
 
 var (
@@ -209,7 +207,7 @@ var (
 		Id:                   "ENVOY_NODE_ID",
 		Metadata:             metadata,
 		UserAgentName:        gRPCUserAgentName,
-		UserAgentVersionType: &v3corepb.Node_UserAgentVersion{UserAgentVersion: grpc.Version},
+		UserAgentVersionType: &v3corepb.Node_UserAgentVersion{UserAgentVersion: grpcforunconflict.Version},
 		ClientFeatures:       []string{clientFeatureNoOverprovisioning, clientFeatureResourceWrapper},
 	}
 	nilCredsConfigNoServerFeatures = &Config{
@@ -253,7 +251,7 @@ func (c *Config) compare(want *Config) error {
 	if diff := cmp.Diff(want, c,
 		cmpopts.EquateEmpty(),
 		cmp.Comparer(proto.Equal),
-		cmp.Comparer(func(a, b grpc.DialOption) bool { return (a != nil) == (b != nil) }),
+		cmp.Comparer(func(a, bgrpcforunconflict.DialOption) bool { return (a != nil) == (b != nil) }),
 		cmp.Transformer("certproviderconfigstring", func(a *certprovider.BuildableConfig) string { return a.String() }),
 	); diff != "" {
 		return fmt.Errorf("unexpected diff in config (-want, +got):\n%s", diff)
@@ -407,7 +405,7 @@ func TestNewConfigV3ProtoSuccess(t *testing.T) {
 				},
 				NodeProto: &v3corepb.Node{
 					UserAgentName:        gRPCUserAgentName,
-					UserAgentVersionType: &v3corepb.Node_UserAgentVersion{UserAgentVersion: grpc.Version},
+					UserAgentVersionType: &v3corepb.Node_UserAgentVersion{UserAgentVersion: grpcforunconflict.Version},
 					ClientFeatures:       []string{clientFeatureNoOverprovisioning, clientFeatureResourceWrapper},
 				},
 				ClientDefaultListenerResourceNameTemplate: "%s",

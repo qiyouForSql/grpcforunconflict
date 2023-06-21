@@ -932,7 +932,7 @@ func (s) TestUpdateAddresses_NoopIfCalledWithSameAddresses(t *testing.T) {
 		}
 
 		// nextStateNotifier() is updated after balancerBuilder.Build(), which is
-		// called by grpc.Dial. It's safe to do it here because lis1.Accept blocks
+		// called bygrpcforunconflict.Dial. It's safe to do it here because lis1.Accept blocks
 		// until balancer is built to process the addresses.
 		stateNotifications := testBalancerBuilder.nextStateNotifier()
 		// Wait for the transport to become ready.

@@ -16,7 +16,7 @@
  *
  */
 
-// Package grpclog (internal) defines depth logging for grpc.
+// Package grpclog (internal) defines depth logging forgrpcforunconflict.
 package grpclog
 
 import (

@@ -30,6 +30,7 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/uuid"
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
@@ -38,7 +39,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/xds/csds"
 	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient"
 	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/xdsresource"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/testing/protocmp"
 	"google.golang.org/protobuf/types/known/anypb"
 
@@ -48,8 +48,6 @@ import (
 	v3listenerpb "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
 	v3routepb "github.com/envoyproxy/go-control-plane/envoy/config/route/v3"
 	v3statuspb "github.com/envoyproxy/go-control-plane/envoy/service/status/v3"
-	v3statuspbgrpc "github.com/envoyproxy/go-control-plane/envoy/service/status/v3"
-
 	_ "github.com/qiyouForSql/grpcforunconflict/xds/internal/httpfilter/router" // Register the router filter
 )
 
@@ -142,12 +140,12 @@ func (s) TestCSDS(t *testing.T) {
 	defer close()
 
 	// Initialize an gRPC server and register CSDS on it.
-	server := grpc.NewServer()
+	server := grpcforunconflict.NewServer()
 	csdss, err := csds.NewClientStatusDiscoveryServer()
 	if err != nil {
 		t.Fatal(err)
 	}
-	v3statuspbgrpc.RegisterClientStatusDiscoveryServiceServer(server, csdss)
+	v3statuspbgrpcforunconflict.RegisterClientStatusDiscoveryServiceServer(server, csdss)
 	defer func() {
 		server.Stop()
 		csdss.Close()
@@ -165,14 +163,14 @@ func (s) TestCSDS(t *testing.T) {
 	}()
 
 	// Create a client to the CSDS server.
-	conn, err := grpc.Dial(lis.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpcforunconflict.Dial(lis.Addr().String(), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("Failed to dial CSDS server %q: %v", lis.Addr().String(), err)
 	}
-	c := v3statuspbgrpc.NewClientStatusDiscoveryServiceClient(conn)
+	c := v3statuspbgrpcforunconflict.NewClientStatusDiscoveryServiceClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	stream, err := c.StreamClientStatus(ctx, grpc.WaitForReady(true))
+	stream, err := c.StreamClientStatus(ctx, grpcforunconflict.WaitForReady(true))
 	if err != nil {
 		t.Fatalf("Failed to create a stream for CSDS: %v", err)
 	}
@@ -374,7 +372,7 @@ func makeGenericXdsConfig(typeURL, name, version string, status v3adminpb.Client
 	}
 }
 
-func checkClientStatusResponse(stream v3statuspbgrpc.ClientStatusDiscoveryService_StreamClientStatusClient, want []*v3statuspb.ClientConfig_GenericXdsConfig) error {
+func checkClientStatusResponse(stream v3statuspbgrpcforunconflict.ClientStatusDiscoveryService_StreamClientStatusClient, want []*v3statuspb.ClientConfig_GenericXdsConfig) error {
 	if err := stream.Send(&v3statuspb.ClientStatusRequest{Node: nil}); err != nil {
 		if err != io.EOF {
 			return fmt.Errorf("failed to send ClientStatusRequest: %v", err)
@@ -413,13 +411,13 @@ func (s) TestCSDSNoXDSClient(t *testing.T) {
 	t.Cleanup(func() { bootstrapCleanup() })
 
 	// Initialize an gRPC server and register CSDS on it.
-	server := grpc.NewServer()
+	server := grpcforunconflict.NewServer()
 	csdss, err := csds.NewClientStatusDiscoveryServer()
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer csdss.Close()
-	v3statuspbgrpc.RegisterClientStatusDiscoveryServiceServer(server, csdss)
+	v3statuspbgrpcforunconflict.RegisterClientStatusDiscoveryServiceServer(server, csdss)
 
 	// Create a local listener and pass it to Serve().
 	lis, err := testutils.LocalTCPListener()
@@ -434,15 +432,15 @@ func (s) TestCSDSNoXDSClient(t *testing.T) {
 	defer server.Stop()
 
 	// Create a client to the CSDS server.
-	conn, err := grpc.Dial(lis.Addr().String(), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpcforunconflict.Dial(lis.Addr().String(), grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("Failed to dial CSDS server %q: %v", lis.Addr().String(), err)
 	}
 	defer conn.Close()
-	c := v3statuspbgrpc.NewClientStatusDiscoveryServiceClient(conn)
+	c := v3statuspbgrpcforunconflict.NewClientStatusDiscoveryServiceClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), defaultTestTimeout)
 	defer cancel()
-	stream, err := c.StreamClientStatus(ctx, grpc.WaitForReady(true))
+	stream, err := c.StreamClientStatus(ctx, grpcforunconflict.WaitForReady(true))
 	if err != nil {
 		t.Fatalf("Failed to create a stream for CSDS: %v", err)
 	}

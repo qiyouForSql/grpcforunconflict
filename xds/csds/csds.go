@@ -38,7 +38,6 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	v3adminpb "github.com/envoyproxy/go-control-plane/envoy/admin/v3"
-	v3statusgrpc "github.com/envoyproxy/go-control-plane/envoy/service/status/v3"
 	v3statuspb "github.com/envoyproxy/go-control-plane/envoy/service/status/v3"
 )
 
@@ -78,7 +77,7 @@ func NewClientStatusDiscoveryServer() (*ClientStatusDiscoveryServer, error) {
 }
 
 // StreamClientStatus implementations interface ClientStatusDiscoveryServiceServer.
-func (s *ClientStatusDiscoveryServer) StreamClientStatus(stream v3statusgrpc.ClientStatusDiscoveryService_StreamClientStatusServer) error {
+func (s *ClientStatusDiscoveryServer) StreamClientStatus(stream v3statusgrpcforunconflict.ClientStatusDiscoveryService_StreamClientStatusServer) error {
 	for {
 		req, err := stream.Recv()
 		if err == io.EOF {

@@ -69,7 +69,7 @@ func main() {
 		ClientCAs:    ca,
 	}
 
-	s := grpc.NewServer(grpc.Creds(credentials.NewTLS(tlsConfig)))
+	s := grpcforunconflict.NewServer(grpcforunconflict.Creds(credentials.NewTLS(tlsConfig)))
 	pb.RegisterEchoServer(s, &ecServer{})
 	lis, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", *port))
 	if err != nil {

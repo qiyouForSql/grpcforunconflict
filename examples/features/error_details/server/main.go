@@ -75,7 +75,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	s := grpc.NewServer()
+	s := grpcforunconflict.NewServer()
 	pb.RegisterGreeterServer(s, &server{count: make(map[string]int)})
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)

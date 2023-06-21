@@ -29,6 +29,7 @@ import (
 	"time"
 
 	"github.com/golang/protobuf/proto"
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/binarylog"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/grpclog"
@@ -36,10 +37,8 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
 	"github.com/qiyouForSql/grpcforunconflict/metadata"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
 	binlogpb "github.com/qiyouForSql/grpcforunconflict/binarylog/grpc_binarylog_v1"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -129,18 +128,18 @@ func payloadToID(p *testpb.Payload) int32 {
 }
 
 type testServer struct {
-	testgrpc.UnimplementedTestServiceServer
+	testgrpcforunconflict.UnimplementedTestServiceServer
 	te *test
 }
 
 func (s *testServer) UnaryCall(ctx context.Context, in *testpb.SimpleRequest) (*testpb.SimpleResponse, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if ok {
-		if err := grpc.SendHeader(ctx, md); err != nil {
-			return nil, status.Errorf(status.Code(err), "grpc.SendHeader(_, %v) = %v, want <nil>", md, err)
+		if err := grpcforunconflict.SendHeader(ctx, md); err != nil {
+			return nil, status.Errorf(status.Code(err), "grpcforunconflict.SendHeader(_, %v) = %v, want <nil>", md, err)
 		}
-		if err := grpc.SetTrailer(ctx, testTrailerMetadata); err != nil {
-			return nil, status.Errorf(status.Code(err), "grpc.SetTrailer(_, %v) = %v, want <nil>", testTrailerMetadata, err)
+		if err := grpcforunconflict.SetTrailer(ctx, testTrailerMetadata); err != nil {
+			return nil, status.Errorf(status.Code(err), "grpcforunconflict.SetTrailer(_, %v) = %v, want <nil>", testTrailerMetadata, err)
 		}
 	}
 
@@ -151,7 +150,7 @@ func (s *testServer) UnaryCall(ctx context.Context, in *testpb.SimpleRequest) (*
 	return &testpb.SimpleResponse{Payload: in.Payload}, nil
 }
 
-func (s *testServer) FullDuplexCall(stream testgrpc.TestService_FullDuplexCallServer) error {
+func (s *testServer) FullDuplexCall(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 	md, ok := metadata.FromIncomingContext(stream.Context())
 	if ok {
 		if err := stream.SendHeader(md); err != nil {
@@ -179,7 +178,7 @@ func (s *testServer) FullDuplexCall(stream testgrpc.TestService_FullDuplexCallSe
 	}
 }
 
-func (s *testServer) StreamingInputCall(stream testgrpc.TestService_StreamingInputCallServer) error {
+func (s *testServer) StreamingInputCall(stream testgrpcforunconflict.TestService_StreamingInputCallServer) error {
 	md, ok := metadata.FromIncomingContext(stream.Context())
 	if ok {
 		if err := stream.SendHeader(md); err != nil {
@@ -203,7 +202,7 @@ func (s *testServer) StreamingInputCall(stream testgrpc.TestService_StreamingInp
 	}
 }
 
-func (s *testServer) StreamingOutputCall(in *testpb.StreamingOutputCallRequest, stream testgrpc.TestService_StreamingOutputCallServer) error {
+func (s *testServer) StreamingOutputCall(in *testpb.StreamingOutputCallRequest, stream testgrpcforunconflict.TestService_StreamingOutputCallServer) error {
 	md, ok := metadata.FromIncomingContext(stream.Context())
 	if ok {
 		if err := stream.SendHeader(md); err != nil {
@@ -230,14 +229,14 @@ func (s *testServer) StreamingOutputCall(in *testpb.StreamingOutputCallRequest, 
 type test struct {
 	t *testing.T
 
-	testService testgrpc.TestServiceServer // nil means none
+	testService testgrpcforunconflict.TestServiceServer // nil means none
 	// srv and srvAddr are set once startServer is called.
-	srv     *grpc.Server
+	srv     *grpcforunconflict.Server
 	srvAddr string // Server IP without port.
 	srvIP   net.IP
 	srvPort int
 
-	cc *grpc.ClientConn // nil until requested via clientConn
+	cc *grpcforunconflict.ClientConn // nil until requested via clientConn
 
 	// Fields for client address. Set by the service handler.
 	clientAddrMu sync.Mutex
@@ -282,7 +281,7 @@ func (lw *listenerWrapper) Accept() (net.Conn, error) {
 
 // startServer starts a gRPC server listening. Callers should defer a
 // call to te.tearDown to clean up.
-func (te *test) startServer(ts testgrpc.TestServiceServer) {
+func (te *test) startServer(ts testgrpcforunconflict.TestServiceServer) {
 	te.testService = ts
 	lis, err := net.Listen("tcp", "localhost:0")
 
@@ -294,11 +293,11 @@ func (te *test) startServer(ts testgrpc.TestServiceServer) {
 	if err != nil {
 		te.t.Fatalf("Failed to listen: %v", err)
 	}
-	var opts []grpc.ServerOption
-	s := grpc.NewServer(opts...)
+	var opts []grpcforunconflict.ServerOption
+	s := grpcforunconflict.NewServer(opts...)
 	te.srv = s
 	if te.testService != nil {
-		testgrpc.RegisterTestServiceServer(s, te.testService)
+		testgrpcforunconflict.RegisterTestServiceServer(s, te.testService)
 	}
 
 	go s.Serve(lis)
@@ -307,14 +306,14 @@ func (te *test) startServer(ts testgrpc.TestServiceServer) {
 	te.srvPort = lis.Addr().(*net.TCPAddr).Port
 }
 
-func (te *test) clientConn() *grpc.ClientConn {
+func (te *test) clientConn() *grpcforunconflict.ClientConn {
 	if te.cc != nil {
 		return te.cc
 	}
-	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock()}
+	opts := []grpcforunconflict.DialOption{grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()), grpcforunconflict.WithBlock()}
 
 	var err error
-	te.cc, err = grpc.Dial(te.srvAddr, opts...)
+	te.cc, err = grpcforunconflict.Dial(te.srvAddr, opts...)
 	if err != nil {
 		te.t.Fatalf("Dial(%q) = %v", te.srvAddr, err)
 	}
@@ -343,7 +342,7 @@ func (te *test) doUnaryCall(c *rpcConfig) (*testpb.SimpleRequest, *testpb.Simple
 		req  *testpb.SimpleRequest
 		err  error
 	)
-	tc := testgrpc.NewTestServiceClient(te.clientConn())
+	tc := testgrpcforunconflict.NewTestServiceClient(te.clientConn())
 	if c.success {
 		req = &testpb.SimpleRequest{Payload: idToPayload(errorID + 1)}
 	} else {
@@ -363,7 +362,7 @@ func (te *test) doFullDuplexCallRoundtrip(c *rpcConfig) ([]proto.Message, []prot
 		resps []proto.Message
 		err   error
 	)
-	tc := testgrpc.NewTestServiceClient(te.clientConn())
+	tc := testgrpcforunconflict.NewTestServiceClient(te.clientConn())
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	ctx = metadata.NewOutgoingContext(ctx, testMetadata)
@@ -412,7 +411,7 @@ func (te *test) doClientStreamCall(c *rpcConfig) ([]proto.Message, proto.Message
 		resp *testpb.StreamingInputCallResponse
 		err  error
 	)
-	tc := testgrpc.NewTestServiceClient(te.clientConn())
+	tc := testgrpcforunconflict.NewTestServiceClient(te.clientConn())
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	ctx = metadata.NewOutgoingContext(ctx, testMetadata)
@@ -445,7 +444,7 @@ func (te *test) doServerStreamCall(c *rpcConfig) (proto.Message, []proto.Message
 		err   error
 	)
 
-	tc := testgrpc.NewTestServiceClient(te.clientConn())
+	tc := testgrpcforunconflict.NewTestServiceClient(te.clientConn())
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	ctx = metadata.NewOutgoingContext(ctx, testMetadata)
@@ -804,25 +803,25 @@ func runRPCs(t *testing.T, cc *rpcConfig) *expectedData {
 
 	switch cc.callType {
 	case unaryRPC:
-		expect.method = "/grpc.testing.TestService/UnaryCall"
+		expect.method = "/grpcforunconflict.testing.TestService/UnaryCall"
 		req, resp, err := te.doUnaryCall(cc)
 		expect.requests = []proto.Message{req}
 		expect.responses = []proto.Message{resp}
 		expect.err = err
 	case clientStreamRPC:
-		expect.method = "/grpc.testing.TestService/StreamingInputCall"
+		expect.method = "/grpcforunconflict.testing.TestService/StreamingInputCall"
 		reqs, resp, err := te.doClientStreamCall(cc)
 		expect.requests = reqs
 		expect.responses = []proto.Message{resp}
 		expect.err = err
 	case serverStreamRPC:
-		expect.method = "/grpc.testing.TestService/StreamingOutputCall"
+		expect.method = "/grpcforunconflict.testing.TestService/StreamingOutputCall"
 		req, resps, err := te.doServerStreamCall(cc)
 		expect.responses = resps
 		expect.requests = []proto.Message{req}
 		expect.err = err
 	case fullDuplexStreamRPC, cancelRPC:
-		expect.method = "/grpc.testing.TestService/FullDuplexCall"
+		expect.method = "/grpcforunconflict.testing.TestService/FullDuplexCall"
 		expect.requests, expect.responses, expect.err = te.doFullDuplexCallRoundtrip(cc)
 	}
 	if cc.success != (expect.err == nil) {

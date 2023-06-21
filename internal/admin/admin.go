@@ -19,10 +19,8 @@
 // Package admin contains internal implementation for admin service.
 package admin
 
-import "google.golang.org/grpc"
-
 // services is a map from name to service register functions.
-var services []func(grpc.ServiceRegistrar) (func(), error)
+var services []func(grpcforunconflict.ServiceRegistrar) (func(), error)
 
 // AddService adds a service to the list of admin services.
 //
@@ -30,13 +28,13 @@ var services []func(grpc.ServiceRegistrar) (func(), error)
 // an init() function), and is not thread-safe.
 //
 // If multiple services with the same service name are added (e.g. two services
-// for `grpc.channelz.v1.Channelz`), the server will panic on `Register()`.
-func AddService(f func(grpc.ServiceRegistrar) (func(), error)) {
+// for `grpcforunconflict.channelz.v1.Channelz`), the server will panic on `Register()`.
+func AddService(f func(grpcforunconflict.ServiceRegistrar) (func(), error)) {
 	services = append(services, f)
 }
 
 // Register registers the set of admin services to the given server.
-func Register(s grpc.ServiceRegistrar) (cleanup func(), _ error) {
+func Register(sgrpcforunconflict.ServiceRegistrar) (cleanup func(), _ error) {
 	var cleanups []func()
 	for _, f := range services {
 		cleanup, err := f(s)

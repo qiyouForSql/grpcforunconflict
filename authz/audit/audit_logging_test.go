@@ -30,17 +30,16 @@ import (
 	"time"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/authz"
 	"github.com/qiyouForSql/grpcforunconflict/authz/audit"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/credentials"
 	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
 	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	"github.com/qiyouForSql/grpcforunconflict/status"
 	"github.com/qiyouForSql/grpcforunconflict/testdata"
-	"google.golang.org/grpc"
 
 	_ "github.com/qiyouForSql/grpcforunconflict/authz/audit/stdout"
 )
@@ -111,7 +110,7 @@ func (s) TestAuditLogger(t *testing.T) {
 						"name": "allow_UnaryCall",
 						"request": {
 							"paths": [
-								"/grpc.testing.TestService/UnaryCall"
+								"/grpcforunconflict.testing.TestService/UnaryCall"
 							]
 						}
 					}
@@ -150,7 +149,7 @@ func (s) TestAuditLogger(t *testing.T) {
 						"name": "deny_all",
 						"request": {
 							"paths": [
-								"/grpc.testing.TestService/StreamingInputCall"
+								"/grpcforunconflict.testing.TestService/StreamingInputCall"
 							]
 						}
 					}
@@ -172,7 +171,7 @@ func (s) TestAuditLogger(t *testing.T) {
 			}`,
 			wantAuthzOutcomes: map[bool]int{true: 2, false: 1},
 			eventContent: &audit.Event{
-				FullMethodName: "/grpc.testing.TestService/StreamingInputCall",
+				FullMethodName: "/grpcforunconflict.testing.TestService/StreamingInputCall",
 				Principal:      "spiffe://foo.bar.com/client/workload/1",
 				PolicyName:     "authz",
 				MatchedRule:    "authz_deny_all",
@@ -190,7 +189,7 @@ func (s) TestAuditLogger(t *testing.T) {
 						"name": "allow_UnaryCall",
 						"request": {
 							"paths": [
-								"/grpc.testing.TestService/UnaryCall"
+								"/grpcforunconflict.testing.TestService/UnaryCall"
 							]
 						}
 					}
@@ -219,7 +218,7 @@ func (s) TestAuditLogger(t *testing.T) {
 						"name": "allow_UnaryCall",
 						"request": {
 							"paths": [
-								"/grpc.testing.TestService/UnaryCall_Z"
+								"/grpcforunconflict.testing.TestService/UnaryCall_Z"
 							]
 						}
 					}
@@ -247,7 +246,7 @@ func (s) TestAuditLogger(t *testing.T) {
 		UnaryCallF: func(ctx context.Context, in *testpb.SimpleRequest) (*testpb.SimpleResponse, error) {
 			return &testpb.SimpleResponse{}, nil
 		},
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			_, err := stream.Recv()
 			if err != io.EOF {
 				return err
@@ -266,12 +265,12 @@ func (s) TestAuditLogger(t *testing.T) {
 			audit.RegisterLoggerBuilder(lb)
 			i, _ := authz.NewStatic(test.authzPolicy)
 
-			s := grpc.NewServer(
-				grpc.Creds(serverCreds),
-				grpc.ChainUnaryInterceptor(i.UnaryInterceptor),
-				grpc.ChainStreamInterceptor(i.StreamInterceptor))
+			s := grpcforunconflict.NewServer(
+				grpcforunconflict.Creds(serverCreds),
+				grpcforunconflict.ChainUnaryInterceptor(i.UnaryInterceptor),
+				grpcforunconflict.ChainStreamInterceptor(i.StreamInterceptor))
 			defer s.Stop()
-			testgrpc.RegisterTestServiceServer(s, ss)
+			testgrpcforunconflict.RegisterTestServiceServer(s, ss)
 			lis, err := net.Listen("tcp", "localhost:0")
 			if err != nil {
 				t.Fatalf("Error listening: %v", err)
@@ -279,12 +278,12 @@ func (s) TestAuditLogger(t *testing.T) {
 			go s.Serve(lis)
 
 			// Setup gRPC test client with certificates containing a SPIFFE Id.
-			clientConn, err := grpc.Dial(lis.Addr().String(), grpc.WithTransportCredentials(clientCreds))
+			clientConn, err := grpcforunconflict.Dial(lis.Addr().String(), grpcforunconflict.WithTransportCredentials(clientCreds))
 			if err != nil {
-				t.Fatalf("grpc.Dial(%v) failed: %v", lis.Addr().String(), err)
+				t.Fatalf("grpcforunconflict.Dial(%v) failed: %v", lis.Addr().String(), err)
 			}
 			defer clientConn.Close()
-			client := testgrpc.NewTestServiceClient(clientConn)
+			client := testgrpcforunconflict.NewTestServiceClient(clientConn)
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
 

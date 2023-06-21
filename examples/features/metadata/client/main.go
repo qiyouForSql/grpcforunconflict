@@ -47,7 +47,7 @@ func unaryCallWithMetadata(c pb.EchoClient, message string) {
 
 	// Make RPC using the context with the metadata.
 	var header, trailer metadata.MD
-	r, err := c.UnaryEcho(ctx, &pb.EchoRequest{Message: message}, grpc.Header(&header), grpc.Trailer(&trailer))
+	r, err := c.UnaryEcho(ctx, &pb.EchoRequest{Message: message}, grpcforunconflict.Header(&header), grpcforunconflict.Trailer(&trailer))
 	if err != nil {
 		log.Fatalf("failed to call UnaryEcho: %v", err)
 	}
@@ -286,7 +286,7 @@ const message = "this is examples/metadata"
 func main() {
 	flag.Parse()
 	// Set up a connection to the server.
-	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpcforunconflict.Dial(*addr, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}

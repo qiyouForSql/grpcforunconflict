@@ -21,7 +21,7 @@ package service
 import (
 	"testing"
 
-	grpc "google.golang.org/grpc"
+	grpcforunconflict "github.com/qiyouForSql/grpcforunconflict"
 )
 
 const (
@@ -32,8 +32,8 @@ const (
 func TestDial(t *testing.T) {
 	defer func() func() {
 		temp := hsDialer
-		hsDialer = func(target string, opts ...grpc.DialOption) (*grpc.ClientConn, error) {
-			return &grpc.ClientConn{}, nil
+		hsDialer = func(target string, opts ...grpcforunconflict.DialOption) (*grpcforunconflict.ClientConn, error) {
+			return &grpcforunconflict.ClientConn{}, nil
 		}
 		return func() {
 			hsDialer = temp

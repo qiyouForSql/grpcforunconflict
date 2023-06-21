@@ -29,30 +29,27 @@ import (
 
 	"github.com/qiyouForSql/grpcforunconflict/connectivity"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
+	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"github.com/qiyouForSql/grpcforunconflict/resolver/manual"
 	"github.com/qiyouForSql/grpcforunconflict/serviceconfig"
-	"google.golang.org/grpc"
-
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
-	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 // StubServer is a server that is easy to customize within individual test
 // cases.
 type StubServer struct {
 	// Guarantees we satisfy this interface; panics if unimplemented methods are called.
-	testgrpc.TestServiceServer
+	testgrpcforunconflict.TestServiceServer
 
 	// Customizable implementations of server handlers.
 	EmptyCallF      func(ctx context.Context, in *testpb.Empty) (*testpb.Empty, error)
 	UnaryCallF      func(ctx context.Context, in *testpb.SimpleRequest) (*testpb.SimpleResponse, error)
-	FullDuplexCallF func(stream testgrpc.TestService_FullDuplexCallServer) error
+	FullDuplexCallF func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error
 
 	// A client connected to this service the test may use.  Created in Start().
-	Client testgrpc.TestServiceClient
-	CC     *grpc.ClientConn
-	S      *grpc.Server
+	Client testgrpcforunconflict.TestServiceClient
+	CC     *grpcforunconflict.ClientConn
+	S      *grpcforunconflict.Server
 
 	// Parameters for Listen and Dial. Defaults will be used if these are empty
 	// before Start.
@@ -77,12 +74,12 @@ func (ss *StubServer) UnaryCall(ctx context.Context, in *testpb.SimpleRequest) (
 }
 
 // FullDuplexCall is the handler for testpb.FullDuplexCall
-func (ss *StubServer) FullDuplexCall(stream testgrpc.TestService_FullDuplexCallServer) error {
+func (ss *StubServer) FullDuplexCall(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 	return ss.FullDuplexCallF(stream)
 }
 
 // Start starts the server and creates a client connected to it.
-func (ss *StubServer) Start(sopts []grpc.ServerOption, dopts ...grpc.DialOption) error {
+func (ss *StubServer) Start(sopts []grpcforunconflict.ServerOption, dopts ...grpcforunconflict.DialOption) error {
 	if err := ss.StartServer(sopts...); err != nil {
 		return err
 	}
@@ -94,20 +91,20 @@ func (ss *StubServer) Start(sopts []grpc.ServerOption, dopts ...grpc.DialOption)
 }
 
 type registerServiceServerOption struct {
-	grpc.EmptyServerOption
-	f func(*grpc.Server)
+	grpcforunconflict.EmptyServerOption
+	f func(*grpcforunconflict.Server)
 }
 
 // RegisterServiceServerOption returns a ServerOption that will run f() in
-// Start or StartServer with the grpc.Server created before serving.  This
+// Start or StartServer with thegrpcforunconflict.Server created before serving.  This
 // allows other services to be registered on the test server (e.g. ORCA,
 // health, or reflection).
-func RegisterServiceServerOption(f func(*grpc.Server)) grpc.ServerOption {
+func RegisterServiceServerOption(f func(*grpcforunconflict.Server)) grpcforunconflict.ServerOption {
 	return &registerServiceServerOption{f: f}
 }
 
 // StartServer only starts the server. It does not create a client to it.
-func (ss *StubServer) StartServer(sopts ...grpc.ServerOption) error {
+func (ss *StubServer) StartServer(sopts ...grpcforunconflict.ServerOption) error {
 	if ss.Network == "" {
 		ss.Network = "tcp"
 	}
@@ -125,7 +122,7 @@ func (ss *StubServer) StartServer(sopts ...grpc.ServerOption) error {
 	ss.Address = lis.Addr().String()
 	ss.cleanups = append(ss.cleanups, func() { lis.Close() })
 
-	s := grpc.NewServer(sopts...)
+	s := grpcforunconflict.NewServer(sopts...)
 	for _, so := range sopts {
 		switch x := so.(type) {
 		case *registerServiceServerOption:
@@ -133,7 +130,7 @@ func (ss *StubServer) StartServer(sopts ...grpc.ServerOption) error {
 		}
 	}
 
-	testgrpc.RegisterTestServiceServer(s, ss)
+	testgrpcforunconflict.RegisterTestServiceServer(s, ss)
 	go s.Serve(lis)
 	ss.cleanups = append(ss.cleanups, s.Stop)
 	ss.S = s
@@ -142,16 +139,16 @@ func (ss *StubServer) StartServer(sopts ...grpc.ServerOption) error {
 
 // StartClient creates a client connected to this service that the test may use.
 // The newly created client will be available in the Client field of StubServer.
-func (ss *StubServer) StartClient(dopts ...grpc.DialOption) error {
-	opts := append([]grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}, dopts...)
+func (ss *StubServer) StartClient(dopts ...grpcforunconflict.DialOption) error {
+	opts := append([]grpcforunconflict.DialOption{grpcforunconflict.WithTransportCredentials(insecure.NewCredentials())}, dopts...)
 	if ss.R != nil {
 		ss.Target = ss.R.Scheme() + ":///" + ss.Address
-		opts = append(opts, grpc.WithResolvers(ss.R))
+		opts = append(opts, grpcforunconflict.WithResolvers(ss.R))
 	}
 
-	cc, err := grpc.Dial(ss.Target, opts...)
+	cc, err := grpcforunconflict.Dial(ss.Target, opts...)
 	if err != nil {
-		return fmt.Errorf("grpc.Dial(%q) = %v", ss.Target, err)
+		return fmt.Errorf("grpcforunconflict.Dial(%q) = %v", ss.Target, err)
 	}
 	ss.CC = cc
 	if ss.R != nil {
@@ -164,7 +161,7 @@ func (ss *StubServer) StartClient(dopts ...grpc.DialOption) error {
 
 	ss.cleanups = append(ss.cleanups, func() { cc.Close() })
 
-	ss.Client = testgrpc.NewTestServiceClient(cc)
+	ss.Client = testgrpcforunconflict.NewTestServiceClient(cc)
 	return nil
 }
 
@@ -175,7 +172,7 @@ func (ss *StubServer) NewServiceConfig(sc string) {
 	}
 }
 
-func waitForReady(cc *grpc.ClientConn) error {
+func waitForReady(cc *grpcforunconflict.ClientConn) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	for {

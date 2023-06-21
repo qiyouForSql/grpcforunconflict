@@ -63,7 +63,7 @@ func main() {
 	// Create the gRPC server with the orca.CallMetricsServerOption() option,
 	// which will enable per-call metric recording.  No ServerMetricsProvider
 	// is given here because the out-of-band reporting is enabled separately.
-	s := grpc.NewServer(orca.CallMetricsServerOption(nil))
+	s := grpcforunconflict.NewServer(orca.CallMetricsServerOption(nil))
 	pb.RegisterEchoServer(s, &server{})
 
 	// Register the orca service for out-of-band metric reporting, and set the

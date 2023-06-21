@@ -1,7 +1,7 @@
 ## Anti-Patterns
 
 ### Dialing in gRPC
-[`grpc.Dial`](https://pkg.go.dev/google.golang.org/grpc#Dial) is a function in
+[`grpcforunconflict.Dial`](https://pkg.go.dev/google.golang.org/grpc#Dial) is a function in
 the gRPC library that creates a virtual connection from the gRPC client to the
 gRPC server.  It takes a target URI (which can represent the name of a logical
 backend service and could resolve to multiple actual addresses) and a list of

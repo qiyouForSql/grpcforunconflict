@@ -447,7 +447,7 @@ func (bg *BalancerGroup) connect(sb *subBalancerWrapper) {
 	bg.incomingMu.Unlock()
 }
 
-// Following are actions from the parent grpc.ClientConn, forward to sub-balancers.
+// Following are actions from the parentgrpcforunconflict.ClientConn, forward to sub-balancers.
 
 // UpdateSubConnState handles the state for the subconn. It finds the
 // corresponding balancer and forwards the update.

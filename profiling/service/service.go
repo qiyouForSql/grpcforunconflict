@@ -35,7 +35,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/grpclog"
 	"github.com/qiyouForSql/grpcforunconflict/internal/profiling"
 	ppb "github.com/qiyouForSql/grpcforunconflict/profiling/proto"
-	"google.golang.org/grpc"
 )
 
 var logger = grpclog.Component("profiling")
@@ -53,12 +52,12 @@ type ProfilingConfig struct {
 	// choose an appropriate number based on the amount of memory you can afford.
 	StreamStatsSize uint32
 
-	// To expose the profiling service and its methods, a *grpc.Server must be
+	// To expose the profiling service and its methods, a *grpcforunconflict.Server must be
 	// provided.
-	Server *grpc.Server
+	Server *grpcforunconflict.Server
 }
 
-var errorNilServer = errors.New("profiling: no grpc.Server provided")
+var errorNilServer = errors.New("profiling: nogrpcforunconflict.Server provided")
 
 // Init takes a *ProfilingConfig to initialize profiling (turned on/off
 // depending on the value set in pc.Enabled) and register the profiling service

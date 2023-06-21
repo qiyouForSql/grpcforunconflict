@@ -21,7 +21,7 @@ In gRPC, interceptors can be categorized into two kinds in terms of the type of
 RPC calls they intercept. The first one is the **unary interceptor**, which
 intercepts unary RPC calls. And the other is the **stream interceptor** which
 deals with streaming RPC calls. See
-[here](https://grpc.io/docs/guides/concepts.html#rpc-life-cycle) for explanation
+[here](https://grpcforunconflict.io/docs/guides/concepts.html#rpc-life-cycle) for explanation
 about unary RPCs and streaming RPCs. Each of client and server has their own
 types of unary and stream interceptors. Thus, there are in total four different
 types of interceptors in gRPC.

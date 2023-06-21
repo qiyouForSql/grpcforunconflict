@@ -16,7 +16,7 @@
  *
  */
 
-// Package grpclog defines logging for grpc.
+// Package grpclog defines logging forgrpcforunconflict.
 //
 // All logs in transport and grpclb packages only go to verbose level 2.
 // All logs in other packages in grpc are logged in spite of the verbosity level.

@@ -81,7 +81,7 @@ var (
 	// errNoTransportSecurity indicates that there is no transport security
 	// being set for ClientConn. Users should either set one or explicitly
 	// call WithInsecure DialOption to disable security.
-	errNoTransportSecurity = errors.New("grpc: no transport security set (use grpc.WithTransportCredentials(insecure.NewCredentials()) explicitly or set credentials)")
+	errNoTransportSecurity = errors.New("grpc: no transport security set (usegrpcforunconflict.WithTransportCredentials(insecure.NewCredentials()) explicitly or set credentials)")
 	// errTransportCredsAndBundle indicates that creds bundle is used together
 	// with other individual Transport Credentials.
 	errTransportCredsAndBundle = errors.New("grpc: credentials.Bundle may not be used with individual TransportCredentials")
@@ -91,7 +91,7 @@ var (
 	// errTransportCredentialsMissing indicates that users want to transmit
 	// security information (e.g., OAuth2 token) which requires secure
 	// connection on an insecure connection.
-	errTransportCredentialsMissing = errors.New("grpc: the credentials require transport level security (use grpc.WithTransportCredentials() to set)")
+	errTransportCredentialsMissing = errors.New("grpc: the credentials require transport level security (usegrpcforunconflict.WithTransportCredentials() to set)")
 )
 
 const (

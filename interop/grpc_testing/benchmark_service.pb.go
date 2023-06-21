@@ -77,20 +77,20 @@ var file_grpc_testing_benchmark_service_proto_rawDesc = []byte{
 }
 
 var file_grpc_testing_benchmark_service_proto_goTypes = []interface{}{
-	(*SimpleRequest)(nil),  // 0: grpc.testing.SimpleRequest
-	(*SimpleResponse)(nil), // 1: grpc.testing.SimpleResponse
+	(*SimpleRequest)(nil),  // 0:grpcforunconflict.testing.SimpleRequest
+	(*SimpleResponse)(nil), // 1:grpcforunconflict.testing.SimpleResponse
 }
 var file_grpc_testing_benchmark_service_proto_depIdxs = []int32{
-	0, // 0: grpc.testing.BenchmarkService.UnaryCall:input_type -> grpc.testing.SimpleRequest
-	0, // 1: grpc.testing.BenchmarkService.StreamingCall:input_type -> grpc.testing.SimpleRequest
-	0, // 2: grpc.testing.BenchmarkService.StreamingFromClient:input_type -> grpc.testing.SimpleRequest
-	0, // 3: grpc.testing.BenchmarkService.StreamingFromServer:input_type -> grpc.testing.SimpleRequest
-	0, // 4: grpc.testing.BenchmarkService.StreamingBothWays:input_type -> grpc.testing.SimpleRequest
-	1, // 5: grpc.testing.BenchmarkService.UnaryCall:output_type -> grpc.testing.SimpleResponse
-	1, // 6: grpc.testing.BenchmarkService.StreamingCall:output_type -> grpc.testing.SimpleResponse
-	1, // 7: grpc.testing.BenchmarkService.StreamingFromClient:output_type -> grpc.testing.SimpleResponse
-	1, // 8: grpc.testing.BenchmarkService.StreamingFromServer:output_type -> grpc.testing.SimpleResponse
-	1, // 9: grpc.testing.BenchmarkService.StreamingBothWays:output_type -> grpc.testing.SimpleResponse
+	0, // 0:grpcforunconflict.testing.BenchmarkService.UnaryCall:input_type ->grpcforunconflict.testing.SimpleRequest
+	0, // 1:grpcforunconflict.testing.BenchmarkService.StreamingCall:input_type ->grpcforunconflict.testing.SimpleRequest
+	0, // 2:grpcforunconflict.testing.BenchmarkService.StreamingFromClient:input_type ->grpcforunconflict.testing.SimpleRequest
+	0, // 3:grpcforunconflict.testing.BenchmarkService.StreamingFromServer:input_type ->grpcforunconflict.testing.SimpleRequest
+	0, // 4:grpcforunconflict.testing.BenchmarkService.StreamingBothWays:input_type ->grpcforunconflict.testing.SimpleRequest
+	1, // 5:grpcforunconflict.testing.BenchmarkService.UnaryCall:output_type ->grpcforunconflict.testing.SimpleResponse
+	1, // 6:grpcforunconflict.testing.BenchmarkService.StreamingCall:output_type ->grpcforunconflict.testing.SimpleResponse
+	1, // 7:grpcforunconflict.testing.BenchmarkService.StreamingFromClient:output_type ->grpcforunconflict.testing.SimpleResponse
+	1, // 8:grpcforunconflict.testing.BenchmarkService.StreamingFromServer:output_type ->grpcforunconflict.testing.SimpleResponse
+	1, // 9:grpcforunconflict.testing.BenchmarkService.StreamingBothWays:output_type ->grpcforunconflict.testing.SimpleResponse
 	5, // [5:10] is the sub-list for method output_type
 	0, // [0:5] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name

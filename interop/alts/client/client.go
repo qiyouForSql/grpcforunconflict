@@ -26,9 +26,6 @@ import (
 
 	"github.com/qiyouForSql/grpcforunconflict/credentials/alts"
 	"github.com/qiyouForSql/grpcforunconflict/grpclog"
-	"google.golang.org/grpc"
-
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -48,12 +45,12 @@ func main() {
 	}
 	altsTC := alts.NewClientCreds(opts)
 	// Block until the server is ready.
-	conn, err := grpc.Dial(*serverAddr, grpc.WithTransportCredentials(altsTC), grpc.WithBlock())
+	conn, err := grpcforunconflict.Dial(*serverAddr, grpcforunconflict.WithTransportCredentials(altsTC), grpcforunconflict.WithBlock())
 	if err != nil {
 		logger.Fatalf("gRPC Client: failed to dial the server at %v: %v", *serverAddr, err)
 	}
 	defer conn.Close()
-	grpcClient := testgrpc.NewTestServiceClient(conn)
+	grpcClient := testgrpcforunconflict.NewTestServiceClient(conn)
 
 	// Call the EmptyCall API.
 	ctx := context.Background()

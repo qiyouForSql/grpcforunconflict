@@ -29,7 +29,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/gcp/observability"
 	"github.com/qiyouForSql/grpcforunconflict/interop"
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 var (
@@ -50,12 +49,12 @@ func main() {
 	if *serverPort != 0 {
 		serverAddr = net.JoinHostPort(*serverHost, strconv.Itoa(*serverPort))
 	}
-	conn, err := grpc.Dial(serverAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpcforunconflict.Dial(serverAddr, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Fail to dial: %v", err)
 	}
 	defer conn.Close()
-	tc := testgrpc.NewTestServiceClient(conn)
+	tc := testgrpcforunconflict.NewTestServiceClient(conn)
 	for i := 0; i < *numTimes; i++ {
 		if *testCase == "ping_pong" {
 			interop.DoPingPong(tc)

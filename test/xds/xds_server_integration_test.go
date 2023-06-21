@@ -25,6 +25,7 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	xdscreds "github.com/qiyouForSql/grpcforunconflict/credentials/xds"
@@ -32,14 +33,12 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/xds/e2e"
 	"github.com/qiyouForSql/grpcforunconflict/status"
 	"github.com/qiyouForSql/grpcforunconflict/xds"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 type testService struct {
-	testgrpc.TestServiceServer
+	testgrpcforunconflict.TestServiceServer
 }
 
 func (*testService) EmptyCall(context.Context, *testpb.Empty) (*testpb.Empty, error) {
@@ -82,8 +81,8 @@ func setupGRPCServer(t *testing.T, bootstrapContents []byte) (net.Listener, func
 	})
 
 	// Initialize an xDS-enabled gRPC server and register the stubServer on it.
-	server := xds.NewGRPCServer(grpc.Creds(creds), modeChangeOpt, xds.BootstrapContentsForTesting(bootstrapContents))
-	testgrpc.RegisterTestServiceServer(server, &testService{})
+	server := xds.NewGRPCServer(grpcforunconflict.Creds(creds), modeChangeOpt, xds.BootstrapContentsForTesting(bootstrapContents))
+	testgrpcforunconflict.RegisterTestServiceServer(server, &testService{})
 
 	// Create a local listener and pass it to Serve().
 	lis, err := testutils.LocalTCPListener()
@@ -169,14 +168,14 @@ func (s) TestServerSideXDS_Fallback(t *testing.T) {
 	}
 
 	// Create a ClientConn with the xds scheme and make a successful RPC.
-	cc, err := grpc.DialContext(ctx, fmt.Sprintf("xds:///%s", serviceName), grpc.WithTransportCredentials(creds), grpc.WithResolvers(resolver))
+	cc, err := grpcforunconflict.DialContext(ctx, fmt.Sprintf("xds:///%s", serviceName), grpcforunconflict.WithTransportCredentials(creds), grpcforunconflict.WithResolvers(resolver))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
 	defer cc.Close()
 
-	client := testgrpc.NewTestServiceClient(cc)
-	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); err != nil {
+	client := testgrpcforunconflict.NewTestServiceClient(cc)
+	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); err != nil {
 		t.Errorf("rpc EmptyCall() failed: %v", err)
 	}
 }
@@ -254,14 +253,14 @@ func (s) TestServerSideXDS_FileWatcherCerts(t *testing.T) {
 			}
 
 			// Create a ClientConn with the xds scheme and make an RPC.
-			cc, err := grpc.DialContext(ctx, fmt.Sprintf("xds:///%s", serviceName), grpc.WithTransportCredentials(creds), grpc.WithResolvers(resolver))
+			cc, err := grpcforunconflict.DialContext(ctx, fmt.Sprintf("xds:///%s", serviceName), grpcforunconflict.WithTransportCredentials(creds), grpcforunconflict.WithResolvers(resolver))
 			if err != nil {
 				t.Fatalf("failed to dial local test server: %v", err)
 			}
 			defer cc.Close()
 
-			client := testgrpc.NewTestServiceClient(cc)
-			if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); err != nil {
+			client := testgrpcforunconflict.NewTestServiceClient(cc)
+			if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); err != nil {
 				t.Fatalf("rpc EmptyCall() failed: %v", err)
 			}
 		})
@@ -322,28 +321,28 @@ func (s) TestServerSideXDS_SecurityConfigChange(t *testing.T) {
 	}
 
 	// Create a ClientConn with the xds scheme and make a successful RPC.
-	xdsCC, err := grpc.DialContext(ctx, fmt.Sprintf("xds:///%s", serviceName), grpc.WithTransportCredentials(xdsCreds), grpc.WithResolvers(resolver))
+	xdsCC, err := grpcforunconflict.DialContext(ctx, fmt.Sprintf("xds:///%s", serviceName), grpcforunconflict.WithTransportCredentials(xdsCreds), grpcforunconflict.WithResolvers(resolver))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
 	defer xdsCC.Close()
 
-	client := testgrpc.NewTestServiceClient(xdsCC)
-	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); err != nil {
+	client := testgrpcforunconflict.NewTestServiceClient(xdsCC)
+	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); err != nil {
 		t.Fatalf("rpc EmptyCall() failed: %v", err)
 	}
 
 	// Create a ClientConn with TLS creds. This should fail since the server is
 	// using fallback credentials which in this case in insecure creds.
 	tlsCreds := e2e.CreateClientTLSCredentials(t)
-	tlsCC, err := grpc.DialContext(ctx, lis.Addr().String(), grpc.WithTransportCredentials(tlsCreds))
+	tlsCC, err := grpcforunconflict.DialContext(ctx, lis.Addr().String(), grpcforunconflict.WithTransportCredentials(tlsCreds))
 	if err != nil {
 		t.Fatalf("failed to dial local test server: %v", err)
 	}
 	defer tlsCC.Close()
 
 	// We don't set 'waitForReady` here since we want this call to failfast.
-	client = testgrpc.NewTestServiceClient(tlsCC)
+	client = testgrpcforunconflict.NewTestServiceClient(tlsCC)
 	if _, err := client.EmptyCall(ctx, &testpb.Empty{}); status.Code(err) != codes.Unavailable {
 		t.Fatal("rpc EmptyCall() succeeded when expected to fail")
 	}
@@ -364,7 +363,7 @@ func (s) TestServerSideXDS_SecurityConfigChange(t *testing.T) {
 	}
 
 	// Make another RPC with `waitForReady` set and expect this to succeed.
-	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpc.WaitForReady(true)); err != nil {
+	if _, err := client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.WaitForReady(true)); err != nil {
 		t.Fatalf("rpc EmptyCall() failed: %v", err)
 	}
 }

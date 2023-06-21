@@ -23,12 +23,11 @@ import (
 	"io"
 	"testing"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
 	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
@@ -42,7 +41,7 @@ func (s) TestServerReturningContextError(t *testing.T) {
 		EmptyCallF: func(ctx context.Context, in *testpb.Empty) (*testpb.Empty, error) {
 			return nil, context.DeadlineExceeded
 		},
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			return context.DeadlineExceeded
 		},
 	}
@@ -75,7 +74,7 @@ func (s) TestChainUnaryServerInterceptor(t *testing.T) {
 		secondIntKey = ctxKey("secondIntKey")
 	)
 
-	firstInt := func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	firstInt := func(ctx context.Context, req interface{}, info *grpcforunconflict.UnaryServerInfo, handlergrpcforunconflict.UnaryHandler) (interface{}, error) {
 		if ctx.Value(firstIntKey) != nil {
 			return nil, status.Errorf(codes.Internal, "first interceptor should not have %v in context", firstIntKey)
 		}
@@ -101,7 +100,7 @@ func (s) TestChainUnaryServerInterceptor(t *testing.T) {
 		}, nil
 	}
 
-	secondInt := func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	secondInt := func(ctx context.Context, req interface{}, info *grpcforunconflict.UnaryServerInfo, handlergrpcforunconflict.UnaryHandler) (interface{}, error) {
 		if ctx.Value(firstIntKey) == nil {
 			return nil, status.Errorf(codes.Internal, "second interceptor should have %v in context", firstIntKey)
 		}
@@ -127,7 +126,7 @@ func (s) TestChainUnaryServerInterceptor(t *testing.T) {
 		}, nil
 	}
 
-	lastInt := func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	lastInt := func(ctx context.Context, req interface{}, info *grpcforunconflict.UnaryServerInfo, handlergrpcforunconflict.UnaryHandler) (interface{}, error) {
 		if ctx.Value(firstIntKey) == nil {
 			return nil, status.Errorf(codes.Internal, "last interceptor should have %v in context", firstIntKey)
 		}
@@ -152,8 +151,8 @@ func (s) TestChainUnaryServerInterceptor(t *testing.T) {
 		}, nil
 	}
 
-	sopts := []grpc.ServerOption{
-		grpc.ChainUnaryInterceptor(firstInt, secondInt, lastInt),
+	sopts := []grpcforunconflict.ServerOption{
+		grpcforunconflict.ChainUnaryInterceptor(firstInt, secondInt, lastInt),
 	}
 
 	ss := &stubserver.StubServer{
@@ -189,7 +188,7 @@ func (s) TestChainUnaryServerInterceptor(t *testing.T) {
 func (s) TestChainOnBaseUnaryServerInterceptor(t *testing.T) {
 	baseIntKey := ctxKey("baseIntKey")
 
-	baseInt := func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	baseInt := func(ctx context.Context, req interface{}, info *grpcforunconflict.UnaryServerInfo, handlergrpcforunconflict.UnaryHandler) (interface{}, error) {
 		if ctx.Value(baseIntKey) != nil {
 			return nil, status.Errorf(codes.Internal, "base interceptor should not have %v in context", baseIntKey)
 		}
@@ -198,7 +197,7 @@ func (s) TestChainOnBaseUnaryServerInterceptor(t *testing.T) {
 		return handler(baseCtx, req)
 	}
 
-	chainInt := func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	chainInt := func(ctx context.Context, req interface{}, info *grpcforunconflict.UnaryServerInfo, handlergrpcforunconflict.UnaryHandler) (interface{}, error) {
 		if ctx.Value(baseIntKey) == nil {
 			return nil, status.Errorf(codes.Internal, "chain interceptor should have %v in context", baseIntKey)
 		}
@@ -206,9 +205,9 @@ func (s) TestChainOnBaseUnaryServerInterceptor(t *testing.T) {
 		return handler(ctx, req)
 	}
 
-	sopts := []grpc.ServerOption{
-		grpc.UnaryInterceptor(baseInt),
-		grpc.ChainUnaryInterceptor(chainInt),
+	sopts := []grpcforunconflict.ServerOption{
+		grpcforunconflict.UnaryInterceptor(baseInt),
+		grpcforunconflict.ChainUnaryInterceptor(chainInt),
 	}
 
 	ss := &stubserver.StubServer{
@@ -232,7 +231,7 @@ func (s) TestChainOnBaseUnaryServerInterceptor(t *testing.T) {
 func (s) TestChainStreamServerInterceptor(t *testing.T) {
 	callCounts := make([]int, 4)
 
-	firstInt := func(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+	firstInt := func(srv interface{}, streamgrpcforunconflict.ServerStream, info *grpcforunconflict.StreamServerInfo, handlergrpcforunconflict.StreamHandler) error {
 		if callCounts[0] != 0 {
 			return status.Errorf(codes.Internal, "callCounts[0] should be 0, but got=%d", callCounts[0])
 		}
@@ -249,7 +248,7 @@ func (s) TestChainStreamServerInterceptor(t *testing.T) {
 		return handler(srv, stream)
 	}
 
-	secondInt := func(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+	secondInt := func(srv interface{}, streamgrpcforunconflict.ServerStream, info *grpcforunconflict.StreamServerInfo, handlergrpcforunconflict.StreamHandler) error {
 		if callCounts[0] != 1 {
 			return status.Errorf(codes.Internal, "callCounts[0] should be 1, but got=%d", callCounts[0])
 		}
@@ -266,7 +265,7 @@ func (s) TestChainStreamServerInterceptor(t *testing.T) {
 		return handler(srv, stream)
 	}
 
-	lastInt := func(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+	lastInt := func(srv interface{}, streamgrpcforunconflict.ServerStream, info *grpcforunconflict.StreamServerInfo, handlergrpcforunconflict.StreamHandler) error {
 		if callCounts[0] != 1 {
 			return status.Errorf(codes.Internal, "callCounts[0] should be 1, but got=%d", callCounts[0])
 		}
@@ -283,12 +282,12 @@ func (s) TestChainStreamServerInterceptor(t *testing.T) {
 		return handler(srv, stream)
 	}
 
-	sopts := []grpc.ServerOption{
-		grpc.ChainStreamInterceptor(firstInt, secondInt, lastInt),
+	sopts := []grpcforunconflict.ServerOption{
+		grpcforunconflict.ChainStreamInterceptor(firstInt, secondInt, lastInt),
 	}
 
 	ss := &stubserver.StubServer{
-		FullDuplexCallF: func(stream testgrpc.TestService_FullDuplexCallServer) error {
+		FullDuplexCallF: func(stream testgrpcforunconflict.TestService_FullDuplexCallServer) error {
 			if callCounts[0] != 1 {
 				return status.Errorf(codes.Internal, "callCounts[0] should be 1, but got=%d", callCounts[0])
 			}

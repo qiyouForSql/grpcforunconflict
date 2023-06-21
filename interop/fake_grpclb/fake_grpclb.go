@@ -25,12 +25,12 @@ import (
 	"flag"
 	"strings"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/credentials"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/alts"
 	"github.com/qiyouForSql/grpcforunconflict/grpclog"
 	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/fakegrpclb"
 	"github.com/qiyouForSql/grpcforunconflict/testdata"
-	"google.golang.org/grpc"
 )
 
 var (
@@ -47,7 +47,7 @@ var (
 func main() {
 	flag.Parse()
 
-	var opts []grpc.ServerOption
+	var opts []grpcforunconflict.ServerOption
 	if *useTLS {
 		certFile := testdata.Path("server1.pem")
 		keyFile := testdata.Path("server1.key")
@@ -55,11 +55,11 @@ func main() {
 		if err != nil {
 			logger.Fatalf("Failed to generate credentials: %v", err)
 		}
-		opts = append(opts, grpc.Creds(creds))
+		opts = append(opts, grpcforunconflict.Creds(creds))
 	} else if *useALTS {
 		altsOpts := alts.DefaultServerOptions()
 		altsTC := alts.NewServerCreds(altsOpts)
-		opts = append(opts, grpc.Creds(altsTC))
+		opts = append(opts, grpcforunconflict.Creds(altsTC))
 	}
 
 	rawBackendAddrs := strings.Split(*backendAddrs, ",")

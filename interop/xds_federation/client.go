@@ -25,17 +25,16 @@ import (
 	"sync"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/google"
 	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
 	"github.com/qiyouForSql/grpcforunconflict/grpclog"
 	"github.com/qiyouForSql/grpcforunconflict/interop"
-	"google.golang.org/grpc"
 
 	_ "github.com/qiyouForSql/grpcforunconflict/balancer/grpclb"      // Register the grpclb load balancing policy.
 	_ "github.com/qiyouForSql/grpcforunconflict/balancer/rls"         // Register the RLS load balancing policy.
 	_ "github.com/qiyouForSql/grpcforunconflict/xds/googledirectpath" // Register xDS resolver required for c2p directpath.
 
-	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 const (
@@ -60,8 +59,8 @@ var (
 )
 
 type clientConfig struct {
-	tc   testgrpc.TestServiceClient
-	opts []grpc.DialOption
+	tc   testgrpcforunconflict.TestServiceClient
+	opts []grpcforunconflict.DialOption
 	uri  string
 }
 
@@ -91,20 +90,20 @@ func main() {
 	// create clients as specified in flags
 	var clients []clientConfig
 	for i := range uris {
-		var opts []grpc.DialOption
+		var opts []grpcforunconflict.DialOption
 		switch creds[i] {
 		case computeEngineCredsName:
-			opts = append(opts, grpc.WithCredentialsBundle(google.NewComputeEngineCredentials()))
+			opts = append(opts, grpcforunconflict.WithCredentialsBundle(google.NewComputeEngineCredentials()))
 		case insecureCredsName:
-			opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+			opts = append(opts, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 		}
-		cc, err := grpc.Dial(uris[i], opts...)
+		cc, err := grpcforunconflict.Dial(uris[i], opts...)
 		if err != nil {
 			logger.Fatalf("Fail to dial %v: %v", uris[i], err)
 		}
 		defer cc.Close()
 		clients = append(clients, clientConfig{
-			tc:   testgrpc.NewTestServiceClient(cc),
+			tc:   testgrpcforunconflict.NewTestServiceClient(cc),
 			opts: opts,
 			uri:  uris[i],
 		})

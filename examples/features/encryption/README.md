@@ -48,11 +48,11 @@ the convenience of making an example.
 
 Once the credentials have been created at both sides, we can start the server
 with the just created server credential (by calling
-[`grpc.Creds`](https://godoc.org/google.golang.org/grpc#Creds)) and let client dial
+[`grpcforunconflict.Creds`](https://godoc.org/google.golang.org/grpc#Creds)) and let client dial
 to the server with the created client credential (by calling
-[`grpc.WithTransportCredentials`](https://godoc.org/google.golang.org/grpc#WithTransportCredentials))
+[`grpcforunconflict.WithTransportCredentials`](https://godoc.org/google.golang.org/grpc#WithTransportCredentials))
 
-And finally we make an RPC call over the created `grpc.ClientConn` to test the secure
+And finally we make an RPC call over the created `grpcforunconflict.ClientConn` to test the secure
 connection based upon TLS is successfully up.
 
 ### ALTS

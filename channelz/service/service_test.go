@@ -281,7 +281,7 @@ func (*OtherSecurityValue) ProtoMessage()    {}
 
 func init() {
 	// Ad-hoc registering the proto type here to facilitate UnmarshalAny of OtherSecurityValue.
-	proto.RegisterType((*OtherSecurityValue)(nil), "grpc.credentials.OtherChannelzSecurityValue")
+	proto.RegisterType((*OtherSecurityValue)(nil), "grpcforunconflict.credentials.OtherChannelzSecurityValue")
 }
 
 func (s) TestGetTopChannels(t *testing.T) {

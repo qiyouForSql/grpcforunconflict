@@ -24,6 +24,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict"
 	"github.com/qiyouForSql/grpcforunconflict/balancer"
 	"github.com/qiyouForSql/grpcforunconflict/balancer/base"
 	"github.com/qiyouForSql/grpcforunconflict/codes"
@@ -35,7 +36,6 @@ import (
 	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"github.com/qiyouForSql/grpcforunconflict/resolver/manual"
 	"github.com/qiyouForSql/grpcforunconflict/status"
-	"google.golang.org/grpc"
 )
 
 func (s) TestConfigSelectorStatusCodes(t *testing.T) {
@@ -173,7 +173,7 @@ func (s) TestCallCredsFromDialOptionsStatusCodes(t *testing.T) {
 			errChan := make(chan error, 1)
 			creds := &testPerRPCCredentials{errChan: errChan}
 
-			if err := ss.Start(nil, grpc.WithPerRPCCredentials(creds)); err != nil {
+			if err := ss.Start(nil, grpcforunconflict.WithPerRPCCredentials(creds)); err != nil {
 				t.Fatalf("Error starting endpoint server: %v", err)
 			}
 			defer ss.Stop()
@@ -226,7 +226,7 @@ func (s) TestCallCredsFromCallOptionsStatusCodes(t *testing.T) {
 
 			errChan <- tc.credsErr
 
-			if _, err := ss.Client.EmptyCall(ctx, &testpb.Empty{}, grpc.PerRPCCredentials(creds)); status.Code(err) != status.Code(tc.want) || !strings.Contains(err.Error(), status.Convert(tc.want).Message()) {
+			if _, err := ss.Client.EmptyCall(ctx, &testpb.Empty{}, grpcforunconflict.PerRPCCredentials(creds)); status.Code(err) != status.Code(tc.want) || !strings.Contains(err.Error(), status.Convert(tc.want).Message()) {
 				t.Fatalf("client.EmptyCall(_, _) = _, %v; want _, %v", err, tc.want)
 			}
 		})

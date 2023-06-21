@@ -72,7 +72,7 @@ func streamingCall(c pb.EchoClient, requestID int, message string, want codes.Co
 func main() {
 	flag.Parse()
 
-	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpcforunconflict.Dial(*addr, grpcforunconflict.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
