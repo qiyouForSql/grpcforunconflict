@@ -29,16 +29,14 @@ import (
 	"net"
 	"strings"
 
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/authz"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/examples/data"
-	"google.golang.org/grpc/metadata"
-	"google.golang.org/grpc/status"
-
-	"google.golang.org/grpc/examples/features/authz/token"
-	pb "google.golang.org/grpc/examples/features/proto/echo"
+	"github.com/qiyouForSql/grpcforunconflict/authz"
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/credentials"
+	"github.com/qiyouForSql/grpcforunconflict/examples/data"
+	"github.com/qiyouForSql/grpcforunconflict/examples/features/authz/token"
+	pb "github.com/qiyouForSql/grpcforunconflict/examples/features/proto/echo"
+	"github.com/qiyouForSql/grpcforunconflict/metadata"
+	"github.com/qiyouForSql/grpcforunconflict/status"
 )
 
 const (

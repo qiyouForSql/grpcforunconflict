@@ -28,13 +28,13 @@ import (
 	"sync"
 	"time"
 
+	lbgrpc "github.com/qiyouForSql/grpcforunconflict/balancer/grpclb/grpc_lb_v1"
+	lbpb "github.com/qiyouForSql/grpcforunconflict/balancer/grpclb/grpc_lb_v1"
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/grpclog"
+	"github.com/qiyouForSql/grpcforunconflict/internal/pretty"
+	"github.com/qiyouForSql/grpcforunconflict/status"
 	"google.golang.org/grpc"
-	lbgrpc "google.golang.org/grpc/balancer/grpclb/grpc_lb_v1"
-	lbpb "google.golang.org/grpc/balancer/grpclb/grpc_lb_v1"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/grpclog"
-	"google.golang.org/grpc/internal/pretty"
-	"google.golang.org/grpc/status"
 )
 
 var logger = grpclog.Component("fake_grpclb")

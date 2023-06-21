@@ -23,11 +23,11 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	"google.golang.org/grpc/balancer"
-	_ "google.golang.org/grpc/balancer/roundrobin"
-	_ "google.golang.org/grpc/balancer/weightedtarget"
-	internalserviceconfig "google.golang.org/grpc/internal/serviceconfig"
-	"google.golang.org/grpc/xds/internal/xdsclient/bootstrap"
+	"github.com/qiyouForSql/grpcforunconflict/balancer"
+	_ "github.com/qiyouForSql/grpcforunconflict/balancer/roundrobin"
+	_ "github.com/qiyouForSql/grpcforunconflict/balancer/weightedtarget"
+	internalserviceconfig "github.com/qiyouForSql/grpcforunconflict/internal/serviceconfig"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/bootstrap"
 )
 
 const (

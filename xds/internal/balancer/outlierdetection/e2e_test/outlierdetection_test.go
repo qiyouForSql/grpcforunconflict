@@ -27,20 +27,20 @@ import (
 	"time"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
+	"github.com/qiyouForSql/grpcforunconflict/internal"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
+	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
+	"github.com/qiyouForSql/grpcforunconflict/peer"
+	"github.com/qiyouForSql/grpcforunconflict/resolver"
+	"github.com/qiyouForSql/grpcforunconflict/resolver/manual"
+	"github.com/qiyouForSql/grpcforunconflict/serviceconfig"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/internal"
-	"google.golang.org/grpc/internal/grpctest"
-	"google.golang.org/grpc/internal/stubserver"
-	"google.golang.org/grpc/peer"
-	"google.golang.org/grpc/resolver"
-	"google.golang.org/grpc/resolver/manual"
-	"google.golang.org/grpc/serviceconfig"
 
-	testgrpc "google.golang.org/grpc/interop/grpc_testing"
-	testpb "google.golang.org/grpc/interop/grpc_testing"
+	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
+	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 
-	_ "google.golang.org/grpc/xds/internal/balancer/outlierdetection" // To register helper functions which register/unregister Outlier Detection LB Policy.
+	_ "github.com/qiyouForSql/grpcforunconflict/xds/internal/balancer/outlierdetection" // To register helper functions which register/unregister Outlier Detection LB Policy.
 )
 
 var defaultTestTimeout = 5 * time.Second

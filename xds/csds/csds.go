@@ -29,12 +29,12 @@ import (
 	"io"
 	"sync"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/grpclog"
-	internalgrpclog "google.golang.org/grpc/internal/grpclog"
-	"google.golang.org/grpc/status"
-	"google.golang.org/grpc/xds/internal/xdsclient"
-	"google.golang.org/grpc/xds/internal/xdsclient/xdsresource"
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/grpclog"
+	internalgrpclog "github.com/qiyouForSql/grpcforunconflict/internal/grpclog"
+	"github.com/qiyouForSql/grpcforunconflict/status"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/xdsresource"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	v3adminpb "github.com/envoyproxy/go-control-plane/envoy/admin/v3"

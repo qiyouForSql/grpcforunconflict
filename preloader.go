@@ -16,11 +16,11 @@
  *
  */
 
-package grpc
+package grpcforunconflict
 
 import (
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/status"
 )
 
 // PreparedMsg is responsible for creating a Marshalled and Compressed object.

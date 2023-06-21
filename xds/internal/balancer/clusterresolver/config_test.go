@@ -25,11 +25,11 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	"google.golang.org/grpc/balancer"
-	iserviceconfig "google.golang.org/grpc/internal/serviceconfig"
-	"google.golang.org/grpc/xds/internal/balancer/outlierdetection"
-	"google.golang.org/grpc/xds/internal/balancer/ringhash"
-	"google.golang.org/grpc/xds/internal/xdsclient/bootstrap"
+	"github.com/qiyouForSql/grpcforunconflict/balancer"
+	iserviceconfig "github.com/qiyouForSql/grpcforunconflict/internal/serviceconfig"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/balancer/outlierdetection"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/balancer/ringhash"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/bootstrap"
 )
 
 func TestDiscoveryMechanismTypeMarshalJSON(t *testing.T) {

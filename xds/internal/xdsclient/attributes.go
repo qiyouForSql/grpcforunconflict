@@ -17,7 +17,7 @@
 
 package xdsclient
 
-import "google.golang.org/grpc/resolver"
+import "github.com/qiyouForSql/grpcforunconflict/resolver"
 
 type clientKeyType string
 

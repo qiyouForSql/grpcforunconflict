@@ -16,7 +16,7 @@
  *
  */
 
-package grpc
+package grpcforunconflict
 
 import (
 	"context"
@@ -25,11 +25,11 @@ import (
 	"testing"
 	"time"
 
-	"google.golang.org/grpc/balancer"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/connectivity"
-	"google.golang.org/grpc/internal/transport"
-	"google.golang.org/grpc/status"
+	"github.com/qiyouForSql/grpcforunconflict/balancer"
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/connectivity"
+	"github.com/qiyouForSql/grpcforunconflict/internal/transport"
+	"github.com/qiyouForSql/grpcforunconflict/status"
 )
 
 const goroutineCount = 5

@@ -24,8 +24,8 @@
 package dns
 
 import (
-	"google.golang.org/grpc/internal/resolver/dns"
-	"google.golang.org/grpc/resolver"
+	"github.com/qiyouForSql/grpcforunconflict/internal/resolver/dns"
+	"github.com/qiyouForSql/grpcforunconflict/resolver"
 )
 
 // NewBuilder creates a dnsBuilder which is used to factory DNS resolvers.

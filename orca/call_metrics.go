@@ -22,10 +22,10 @@ import (
 	"context"
 	"sync"
 
+	grpcinternal "github.com/qiyouForSql/grpcforunconflict/internal"
+	"github.com/qiyouForSql/grpcforunconflict/metadata"
+	"github.com/qiyouForSql/grpcforunconflict/orca/internal"
 	"google.golang.org/grpc"
-	grpcinternal "google.golang.org/grpc/internal"
-	"google.golang.org/grpc/metadata"
-	"google.golang.org/grpc/orca/internal"
 	"google.golang.org/protobuf/proto"
 )
 

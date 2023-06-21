@@ -28,14 +28,14 @@ import (
 	"sync"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict/benchmark"
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/credentials"
+	"github.com/qiyouForSql/grpcforunconflict/internal/syscall"
+	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
+	"github.com/qiyouForSql/grpcforunconflict/status"
+	"github.com/qiyouForSql/grpcforunconflict/testdata"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/benchmark"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/internal/syscall"
-	testpb "google.golang.org/grpc/interop/grpc_testing"
-	"google.golang.org/grpc/status"
-	"google.golang.org/grpc/testdata"
 )
 
 var (

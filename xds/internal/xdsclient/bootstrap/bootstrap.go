@@ -30,15 +30,15 @@ import (
 
 	v3corepb "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
 	"github.com/golang/protobuf/jsonpb"
+	"github.com/qiyouForSql/grpcforunconflict/credentials"
+	"github.com/qiyouForSql/grpcforunconflict/credentials/google"
+	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
+	"github.com/qiyouForSql/grpcforunconflict/credentials/tls/certprovider"
+	"github.com/qiyouForSql/grpcforunconflict/internal"
+	"github.com/qiyouForSql/grpcforunconflict/internal/envconfig"
+	"github.com/qiyouForSql/grpcforunconflict/internal/pretty"
+	"github.com/qiyouForSql/grpcforunconflict/xds/bootstrap"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/credentials/google"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/credentials/tls/certprovider"
-	"google.golang.org/grpc/internal"
-	"google.golang.org/grpc/internal/envconfig"
-	"google.golang.org/grpc/internal/pretty"
-	"google.golang.org/grpc/xds/bootstrap"
 )
 
 const (

@@ -28,11 +28,11 @@ import (
 	"testing"
 
 	lru "github.com/hashicorp/golang-lru"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/credentials/tls/certprovider"
-	"google.golang.org/grpc/internal/grpctest"
-	"google.golang.org/grpc/security/advancedtls/internal/testutils"
-	"google.golang.org/grpc/security/advancedtls/testdata"
+	"github.com/qiyouForSql/grpcforunconflict/credentials"
+	"github.com/qiyouForSql/grpcforunconflict/credentials/tls/certprovider"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
+	"github.com/qiyouForSql/grpcforunconflict/security/advancedtls/internal/testutils"
+	"github.com/qiyouForSql/grpcforunconflict/security/advancedtls/testdata"
 )
 
 type s struct {

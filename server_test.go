@@ -16,7 +16,7 @@
  *
  */
 
-package grpc
+package grpcforunconflict
 
 import (
 	"context"
@@ -28,8 +28,8 @@ import (
 	"time"
 
 	"github.com/google/go-cmp/cmp"
-	"google.golang.org/grpc/internal/transport"
-	"google.golang.org/grpc/status"
+	"github.com/qiyouForSql/grpcforunconflict/internal/transport"
+	"github.com/qiyouForSql/grpcforunconflict/status"
 )
 
 type emptyServiceServer interface{}

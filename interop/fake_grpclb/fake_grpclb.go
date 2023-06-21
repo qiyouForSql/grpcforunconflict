@@ -25,12 +25,12 @@ import (
 	"flag"
 	"strings"
 
+	"github.com/qiyouForSql/grpcforunconflict/credentials"
+	"github.com/qiyouForSql/grpcforunconflict/credentials/alts"
+	"github.com/qiyouForSql/grpcforunconflict/grpclog"
+	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/fakegrpclb"
+	"github.com/qiyouForSql/grpcforunconflict/testdata"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/credentials/alts"
-	"google.golang.org/grpc/grpclog"
-	"google.golang.org/grpc/internal/testutils/fakegrpclb"
-	"google.golang.org/grpc/testdata"
 )
 
 var (

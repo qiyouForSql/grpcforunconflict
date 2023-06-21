@@ -31,11 +31,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict/internal/channelz"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
+	"github.com/qiyouForSql/grpcforunconflict/internal/syscall"
+	"github.com/qiyouForSql/grpcforunconflict/keepalive"
 	"golang.org/x/net/http2"
-	"google.golang.org/grpc/internal/channelz"
-	"google.golang.org/grpc/internal/grpctest"
-	"google.golang.org/grpc/internal/syscall"
-	"google.golang.org/grpc/keepalive"
 )
 
 const defaultTestTimeout = 10 * time.Second

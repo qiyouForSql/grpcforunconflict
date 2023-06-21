@@ -25,14 +25,14 @@ import (
 	"sync/atomic"
 	"time"
 
-	"google.golang.org/grpc/balancer"
-	"google.golang.org/grpc/balancer/rls/internal/keys"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/connectivity"
-	internalgrpclog "google.golang.org/grpc/internal/grpclog"
-	rlspb "google.golang.org/grpc/internal/proto/grpc_lookup_v1"
-	"google.golang.org/grpc/metadata"
-	"google.golang.org/grpc/status"
+	"github.com/qiyouForSql/grpcforunconflict/balancer"
+	"github.com/qiyouForSql/grpcforunconflict/balancer/rls/internal/keys"
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/connectivity"
+	internalgrpclog "github.com/qiyouForSql/grpcforunconflict/internal/grpclog"
+	rlspb "github.com/qiyouForSql/grpcforunconflict/internal/proto/grpc_lookup_v1"
+	"github.com/qiyouForSql/grpcforunconflict/metadata"
+	"github.com/qiyouForSql/grpcforunconflict/status"
 )
 
 var (

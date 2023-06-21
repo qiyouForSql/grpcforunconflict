@@ -29,7 +29,7 @@ import (
 	v3httppb "github.com/envoyproxy/go-control-plane/envoy/extensions/filters/network/http_connection_manager/v3"
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes"
-	"google.golang.org/grpc/xds/internal/httpfilter"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/httpfilter"
 	"google.golang.org/protobuf/types/known/anypb"
 )
 

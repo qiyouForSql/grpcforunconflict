@@ -30,10 +30,10 @@ import (
 	anypb "github.com/golang/protobuf/ptypes/any"
 	wrapperspb "github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/google/go-cmp/cmp"
-	"google.golang.org/grpc/internal/pretty"
-	"google.golang.org/grpc/internal/testutils"
-	"google.golang.org/grpc/xds/internal"
-	"google.golang.org/grpc/xds/internal/xdsclient/xdsresource/version"
+	"github.com/qiyouForSql/grpcforunconflict/internal/pretty"
+	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/xdsresource/version"
 )
 
 func (s) TestEDSParseRespProto(t *testing.T) {

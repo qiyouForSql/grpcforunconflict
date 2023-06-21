@@ -19,10 +19,10 @@
 package reflection
 
 import (
-	v1grpc "google.golang.org/grpc/reflection/grpc_reflection_v1"
-	v1pb "google.golang.org/grpc/reflection/grpc_reflection_v1"
-	v1alphagrpc "google.golang.org/grpc/reflection/grpc_reflection_v1alpha"
-	v1alphapb "google.golang.org/grpc/reflection/grpc_reflection_v1alpha"
+	v1grpc "github.com/qiyouForSql/grpcforunconflict/reflection/grpc_reflection_v1"
+	v1pb "github.com/qiyouForSql/grpcforunconflict/reflection/grpc_reflection_v1"
+	v1alphagrpc "github.com/qiyouForSql/grpcforunconflict/reflection/grpc_reflection_v1alpha"
+	v1alphapb "github.com/qiyouForSql/grpcforunconflict/reflection/grpc_reflection_v1alpha"
 )
 
 // asV1Alpha returns an implementation of the v1alpha version of the reflection

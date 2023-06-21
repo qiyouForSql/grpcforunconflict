@@ -16,15 +16,15 @@
  *
  */
 
-package grpc
+package grpcforunconflict
 
 import (
 	"fmt"
 	"strings"
 	"testing"
 
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/internal"
+	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
+	"github.com/qiyouForSql/grpcforunconflict/internal"
 )
 
 func (s) TestAddGlobalDialOptions(t *testing.T) {

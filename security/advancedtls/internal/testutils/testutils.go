@@ -24,7 +24,7 @@ import (
 	"fmt"
 	"os"
 
-	"google.golang.org/grpc/security/advancedtls/testdata"
+	"github.com/qiyouForSql/grpcforunconflict/security/advancedtls/testdata"
 )
 
 // CertStore contains all the certificates used in the integration tests.

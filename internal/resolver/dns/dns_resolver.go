@@ -32,13 +32,13 @@ import (
 	"sync"
 	"time"
 
-	grpclbstate "google.golang.org/grpc/balancer/grpclb/state"
-	"google.golang.org/grpc/grpclog"
-	"google.golang.org/grpc/internal/backoff"
-	"google.golang.org/grpc/internal/envconfig"
-	"google.golang.org/grpc/internal/grpcrand"
-	"google.golang.org/grpc/resolver"
-	"google.golang.org/grpc/serviceconfig"
+	grpclbstate "github.com/qiyouForSql/grpcforunconflict/balancer/grpclb/state"
+	"github.com/qiyouForSql/grpcforunconflict/grpclog"
+	"github.com/qiyouForSql/grpcforunconflict/internal/backoff"
+	"github.com/qiyouForSql/grpcforunconflict/internal/envconfig"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpcrand"
+	"github.com/qiyouForSql/grpcforunconflict/resolver"
+	"github.com/qiyouForSql/grpcforunconflict/serviceconfig"
 )
 
 // EnableSRVLookups controls whether the DNS resolver attempts to fetch gRPCLB

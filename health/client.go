@@ -24,13 +24,13 @@ import (
 	"io"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/connectivity"
+	healthpb "github.com/qiyouForSql/grpcforunconflict/health/grpc_health_v1"
+	"github.com/qiyouForSql/grpcforunconflict/internal"
+	"github.com/qiyouForSql/grpcforunconflict/internal/backoff"
+	"github.com/qiyouForSql/grpcforunconflict/status"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/connectivity"
-	healthpb "google.golang.org/grpc/health/grpc_health_v1"
-	"google.golang.org/grpc/internal"
-	"google.golang.org/grpc/internal/backoff"
-	"google.golang.org/grpc/status"
 )
 
 var (

@@ -24,19 +24,19 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpcsync"
+	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
+	rlstest "github.com/qiyouForSql/grpcforunconflict/internal/testutils/rls"
+	"github.com/qiyouForSql/grpcforunconflict/metadata"
+	"github.com/qiyouForSql/grpcforunconflict/status"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/internal/grpcsync"
-	"google.golang.org/grpc/internal/stubserver"
-	rlstest "google.golang.org/grpc/internal/testutils/rls"
-	"google.golang.org/grpc/metadata"
-	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/durationpb"
 
-	rlspb "google.golang.org/grpc/internal/proto/grpc_lookup_v1"
-	testgrpc "google.golang.org/grpc/interop/grpc_testing"
-	testpb "google.golang.org/grpc/interop/grpc_testing"
+	rlspb "github.com/qiyouForSql/grpcforunconflict/internal/proto/grpc_lookup_v1"
+	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
+	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 // Test verifies the scenario where there is no matching entry in the data cache

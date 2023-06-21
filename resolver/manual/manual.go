@@ -23,7 +23,7 @@ package manual
 import (
 	"sync"
 
-	"google.golang.org/grpc/resolver"
+	"github.com/qiyouForSql/grpcforunconflict/resolver"
 )
 
 // NewBuilderWithScheme creates a new test resolver builder with the given scheme.

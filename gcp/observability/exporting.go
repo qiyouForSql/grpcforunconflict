@@ -23,12 +23,10 @@ import (
 	"fmt"
 	"time"
 
-	"google.golang.org/api/option"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/internal"
-	"google.golang.org/grpc/stats/opencensus"
-
 	gcplogging "cloud.google.com/go/logging"
+	"github.com/qiyouForSql/grpcforunconflict/internal"
+	"github.com/qiyouForSql/grpcforunconflict/stats/opencensus"
+	"google.golang.org/api/option"
 )
 
 // cOptsDisableLogTrace are client options for the go client libraries which are

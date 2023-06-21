@@ -24,8 +24,8 @@ import (
 	"go.opencensus.io/trace"
 	"go.opencensus.io/trace/propagation"
 
-	"google.golang.org/grpc/stats"
-	"google.golang.org/grpc/status"
+	"github.com/qiyouForSql/grpcforunconflict/stats"
+	"github.com/qiyouForSql/grpcforunconflict/status"
 )
 
 // traceInfo is data used for recording traces.

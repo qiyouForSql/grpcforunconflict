@@ -27,11 +27,9 @@ import (
 	"net"
 	"time"
 
-	"google.golang.org/grpc"
-
-	echogrpc "google.golang.org/grpc/examples/features/proto/echo"
-	echopb "google.golang.org/grpc/examples/features/proto/echo"
-	"google.golang.org/grpc/examples/features/stats_monitoring/statshandler"
+	echogrpc "github.com/qiyouForSql/grpcforunconflict/examples/features/proto/echo"
+	echopb "github.com/qiyouForSql/grpcforunconflict/examples/features/proto/echo"
+	"github.com/qiyouForSql/grpcforunconflict/examples/features/stats_monitoring/statshandler"
 )
 
 var port = flag.Int("port", 50051, "the port to serve on")

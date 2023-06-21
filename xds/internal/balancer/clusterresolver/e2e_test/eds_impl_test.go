@@ -24,30 +24,30 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
+	"github.com/qiyouForSql/grpcforunconflict/internal"
+	"github.com/qiyouForSql/grpcforunconflict/internal/balancergroup"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
+	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
+	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
+	rrutil "github.com/qiyouForSql/grpcforunconflict/internal/testutils/roundrobin"
+	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/xds/e2e"
+	"github.com/qiyouForSql/grpcforunconflict/resolver"
+	"github.com/qiyouForSql/grpcforunconflict/resolver/manual"
+	"github.com/qiyouForSql/grpcforunconflict/serviceconfig"
+	"github.com/qiyouForSql/grpcforunconflict/status"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/balancer/priority"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/internal"
-	"google.golang.org/grpc/internal/balancergroup"
-	"google.golang.org/grpc/internal/grpctest"
-	"google.golang.org/grpc/internal/stubserver"
-	"google.golang.org/grpc/internal/testutils"
-	rrutil "google.golang.org/grpc/internal/testutils/roundrobin"
-	"google.golang.org/grpc/internal/testutils/xds/e2e"
-	"google.golang.org/grpc/resolver"
-	"google.golang.org/grpc/resolver/manual"
-	"google.golang.org/grpc/serviceconfig"
-	"google.golang.org/grpc/status"
-	"google.golang.org/grpc/xds/internal/balancer/priority"
-	"google.golang.org/grpc/xds/internal/xdsclient"
 
 	v3corepb "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
 	v3endpointpb "github.com/envoyproxy/go-control-plane/envoy/config/endpoint/v3"
 	wrapperspb "github.com/golang/protobuf/ptypes/wrappers"
-	testgrpc "google.golang.org/grpc/interop/grpc_testing"
-	testpb "google.golang.org/grpc/interop/grpc_testing"
+	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
+	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 
-	_ "google.golang.org/grpc/xds/internal/balancer/clusterresolver" // Register the "cluster_resolver_experimental" LB policy.
+	_ "github.com/qiyouForSql/grpcforunconflict/xds/internal/balancer/clusterresolver" // Register the "cluster_resolver_experimental" LB policy.
 )
 
 const (

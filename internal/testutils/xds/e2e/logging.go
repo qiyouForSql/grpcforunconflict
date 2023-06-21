@@ -21,7 +21,7 @@ package e2e
 import (
 	"fmt"
 
-	"google.golang.org/grpc/grpclog"
+	"github.com/qiyouForSql/grpcforunconflict/grpclog"
 )
 
 var logger = grpclog.Component("xds-e2e")

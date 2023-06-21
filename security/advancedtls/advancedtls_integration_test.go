@@ -29,13 +29,12 @@ import (
 	"testing"
 	"time"
 
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/credentials/tls/certprovider"
-	"google.golang.org/grpc/credentials/tls/certprovider/pemfile"
-	pb "google.golang.org/grpc/examples/helloworld/helloworld"
-	"google.golang.org/grpc/security/advancedtls/internal/testutils"
-	"google.golang.org/grpc/security/advancedtls/testdata"
+	"github.com/qiyouForSql/grpcforunconflict/credentials"
+	"github.com/qiyouForSql/grpcforunconflict/credentials/tls/certprovider"
+	"github.com/qiyouForSql/grpcforunconflict/credentials/tls/certprovider/pemfile"
+	pb "github.com/qiyouForSql/grpcforunconflict/examples/helloworld/helloworld"
+	"github.com/qiyouForSql/grpcforunconflict/security/advancedtls/internal/testutils"
+	"github.com/qiyouForSql/grpcforunconflict/security/advancedtls/testdata"
 )
 
 const (

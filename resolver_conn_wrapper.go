@@ -16,19 +16,19 @@
  *
  */
 
-package grpc
+package grpcforunconflict
 
 import (
 	"context"
 	"strings"
 	"sync"
 
-	"google.golang.org/grpc/balancer"
-	"google.golang.org/grpc/internal/channelz"
-	"google.golang.org/grpc/internal/grpcsync"
-	"google.golang.org/grpc/internal/pretty"
-	"google.golang.org/grpc/resolver"
-	"google.golang.org/grpc/serviceconfig"
+	"github.com/qiyouForSql/grpcforunconflict/balancer"
+	"github.com/qiyouForSql/grpcforunconflict/internal/channelz"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpcsync"
+	"github.com/qiyouForSql/grpcforunconflict/internal/pretty"
+	"github.com/qiyouForSql/grpcforunconflict/resolver"
+	"github.com/qiyouForSql/grpcforunconflict/serviceconfig"
 )
 
 // resolverStateUpdater wraps the single method used by ccResolverWrapper to

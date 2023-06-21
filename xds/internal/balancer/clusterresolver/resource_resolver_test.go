@@ -19,10 +19,10 @@
 package clusterresolver
 
 import (
-	"google.golang.org/grpc/resolver"
-	"google.golang.org/grpc/resolver/manual"
-	xdstestutils "google.golang.org/grpc/xds/internal/testutils"
-	"google.golang.org/grpc/xds/internal/xdsclient/xdsresource"
+	"github.com/qiyouForSql/grpcforunconflict/resolver"
+	"github.com/qiyouForSql/grpcforunconflict/resolver/manual"
+	xdstestutils "github.com/qiyouForSql/grpcforunconflict/xds/internal/testutils"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/xdsresource"
 )
 
 const (

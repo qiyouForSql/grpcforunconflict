@@ -27,13 +27,13 @@ import (
 
 	"github.com/golang/protobuf/ptypes"
 	durationpb "github.com/golang/protobuf/ptypes/duration"
-	"google.golang.org/grpc/balancer"
-	"google.golang.org/grpc/balancer/rls/internal/keys"
-	"google.golang.org/grpc/internal"
-	"google.golang.org/grpc/internal/pretty"
-	rlspb "google.golang.org/grpc/internal/proto/grpc_lookup_v1"
-	"google.golang.org/grpc/resolver"
-	"google.golang.org/grpc/serviceconfig"
+	"github.com/qiyouForSql/grpcforunconflict/balancer"
+	"github.com/qiyouForSql/grpcforunconflict/balancer/rls/internal/keys"
+	"github.com/qiyouForSql/grpcforunconflict/internal"
+	"github.com/qiyouForSql/grpcforunconflict/internal/pretty"
+	rlspb "github.com/qiyouForSql/grpcforunconflict/internal/proto/grpc_lookup_v1"
+	"github.com/qiyouForSql/grpcforunconflict/resolver"
+	"github.com/qiyouForSql/grpcforunconflict/serviceconfig"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 

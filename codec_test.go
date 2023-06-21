@@ -16,13 +16,13 @@
  *
  */
 
-package grpc
+package grpcforunconflict
 
 import (
 	"testing"
 
-	"google.golang.org/grpc/encoding"
-	"google.golang.org/grpc/encoding/proto"
+	"github.com/qiyouForSql/grpcforunconflict/encoding"
+	"github.com/qiyouForSql/grpcforunconflict/encoding/proto"
 )
 
 func (s) TestGetCodecForProtoIsNotNil(t *testing.T) {

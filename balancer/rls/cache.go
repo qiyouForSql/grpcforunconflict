@@ -22,9 +22,9 @@ import (
 	"container/list"
 	"time"
 
-	"google.golang.org/grpc/internal/backoff"
-	internalgrpclog "google.golang.org/grpc/internal/grpclog"
-	"google.golang.org/grpc/internal/grpcsync"
+	"github.com/qiyouForSql/grpcforunconflict/internal/backoff"
+	internalgrpclog "github.com/qiyouForSql/grpcforunconflict/internal/grpclog"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpcsync"
 )
 
 // cacheKey represents the key used to uniquely identify an entry in the data

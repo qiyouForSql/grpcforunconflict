@@ -25,17 +25,17 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	_ "google.golang.org/grpc/balancer/roundrobin" // To register round_robin load balancer.
-	"google.golang.org/grpc/internal/balancer/stub"
-	"google.golang.org/grpc/internal/envconfig"
-	"google.golang.org/grpc/internal/grpctest"
-	iserviceconfig "google.golang.org/grpc/internal/serviceconfig"
-	"google.golang.org/grpc/internal/testutils"
-	"google.golang.org/grpc/serviceconfig"
-	_ "google.golang.org/grpc/xds" // Register the xDS LB Registry Converters.
-	"google.golang.org/grpc/xds/internal/balancer/ringhash"
-	"google.golang.org/grpc/xds/internal/balancer/wrrlocality"
-	"google.golang.org/grpc/xds/internal/xdsclient/xdsresource"
+	_ "github.com/qiyouForSql/grpcforunconflict/balancer/roundrobin" // To register round_robin load balancer.
+	"github.com/qiyouForSql/grpcforunconflict/internal/balancer/stub"
+	"github.com/qiyouForSql/grpcforunconflict/internal/envconfig"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
+	iserviceconfig "github.com/qiyouForSql/grpcforunconflict/internal/serviceconfig"
+	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
+	"github.com/qiyouForSql/grpcforunconflict/serviceconfig"
+	_ "github.com/qiyouForSql/grpcforunconflict/xds" // Register the xDS LB Registry Converters.
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/balancer/ringhash"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/balancer/wrrlocality"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/xdsresource"
 	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	v3xdsxdstypepb "github.com/cncf/xds/go/xds/type/v3"

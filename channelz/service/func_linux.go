@@ -23,8 +23,8 @@ import (
 
 	"github.com/golang/protobuf/ptypes"
 	durpb "github.com/golang/protobuf/ptypes/duration"
-	channelzpb "google.golang.org/grpc/channelz/grpc_channelz_v1"
-	"google.golang.org/grpc/internal/channelz"
+	channelzpb "github.com/qiyouForSql/grpcforunconflict/channelz/grpc_channelz_v1"
+	"github.com/qiyouForSql/grpcforunconflict/internal/channelz"
 	"google.golang.org/protobuf/types/known/anypb"
 )
 

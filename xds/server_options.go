@@ -21,8 +21,8 @@ package xds
 import (
 	"net"
 
+	"github.com/qiyouForSql/grpcforunconflict/connectivity"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/connectivity"
 )
 
 type serverOptions struct {

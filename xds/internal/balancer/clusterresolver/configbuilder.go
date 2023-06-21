@@ -23,17 +23,17 @@ import (
 	"fmt"
 	"sort"
 
-	"google.golang.org/grpc/balancer/weightedroundrobin"
-	"google.golang.org/grpc/internal/envconfig"
-	"google.golang.org/grpc/internal/hierarchy"
-	internalserviceconfig "google.golang.org/grpc/internal/serviceconfig"
-	"google.golang.org/grpc/resolver"
-	"google.golang.org/grpc/xds/internal"
-	"google.golang.org/grpc/xds/internal/balancer/clusterimpl"
-	"google.golang.org/grpc/xds/internal/balancer/outlierdetection"
-	"google.golang.org/grpc/xds/internal/balancer/priority"
-	"google.golang.org/grpc/xds/internal/balancer/wrrlocality"
-	"google.golang.org/grpc/xds/internal/xdsclient/xdsresource"
+	"github.com/qiyouForSql/grpcforunconflict/balancer/weightedroundrobin"
+	"github.com/qiyouForSql/grpcforunconflict/internal/envconfig"
+	"github.com/qiyouForSql/grpcforunconflict/internal/hierarchy"
+	internalserviceconfig "github.com/qiyouForSql/grpcforunconflict/internal/serviceconfig"
+	"github.com/qiyouForSql/grpcforunconflict/resolver"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/balancer/clusterimpl"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/balancer/outlierdetection"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/balancer/priority"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/balancer/wrrlocality"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/xdsresource"
 )
 
 const million = 1000000

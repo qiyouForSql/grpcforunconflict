@@ -36,8 +36,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"google.golang.org/grpc/credentials/tls/certprovider"
-	"google.golang.org/grpc/grpclog"
+	"github.com/qiyouForSql/grpcforunconflict/credentials/tls/certprovider"
+	"github.com/qiyouForSql/grpcforunconflict/grpclog"
 )
 
 const defaultCertRefreshDuration = 1 * time.Hour

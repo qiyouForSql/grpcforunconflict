@@ -17,8 +17,8 @@
 package internal
 
 import (
-	"google.golang.org/grpc/attributes"
-	"google.golang.org/grpc/resolver"
+	"github.com/qiyouForSql/grpcforunconflict/attributes"
+	"github.com/qiyouForSql/grpcforunconflict/resolver"
 )
 
 // handshakeClusterNameKey is the type used as the key to store cluster name in

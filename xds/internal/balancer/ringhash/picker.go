@@ -21,11 +21,11 @@ package ringhash
 import (
 	"fmt"
 
-	"google.golang.org/grpc/balancer"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/connectivity"
-	"google.golang.org/grpc/internal/grpclog"
-	"google.golang.org/grpc/status"
+	"github.com/qiyouForSql/grpcforunconflict/balancer"
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/connectivity"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpclog"
+	"github.com/qiyouForSql/grpcforunconflict/status"
 )
 
 type picker struct {

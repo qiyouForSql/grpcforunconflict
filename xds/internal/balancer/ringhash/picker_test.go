@@ -24,11 +24,11 @@ import (
 	"time"
 
 	"github.com/google/go-cmp/cmp"
-	"google.golang.org/grpc/balancer"
-	"google.golang.org/grpc/connectivity"
-	"google.golang.org/grpc/grpclog"
-	igrpclog "google.golang.org/grpc/internal/grpclog"
-	"google.golang.org/grpc/internal/testutils"
+	"github.com/qiyouForSql/grpcforunconflict/balancer"
+	"github.com/qiyouForSql/grpcforunconflict/connectivity"
+	"github.com/qiyouForSql/grpcforunconflict/grpclog"
+	igrpclog "github.com/qiyouForSql/grpcforunconflict/internal/grpclog"
+	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
 )
 
 func newTestRing(cStats []connectivity.State) *ring {

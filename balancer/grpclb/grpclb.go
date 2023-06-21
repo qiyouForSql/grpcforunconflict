@@ -20,7 +20,7 @@
 //
 // To install grpclb balancer, import this package as:
 //
-//	import _ "google.golang.org/grpc/balancer/grpclb"
+//	import _ "github.com/qiyouForSql/grpcforunconflict/balancer/grpclb"
 package grpclb
 
 import (
@@ -30,19 +30,19 @@ import (
 	"sync"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict/balancer"
+	grpclbstate "github.com/qiyouForSql/grpcforunconflict/balancer/grpclb/state"
+	"github.com/qiyouForSql/grpcforunconflict/connectivity"
+	"github.com/qiyouForSql/grpcforunconflict/credentials"
+	"github.com/qiyouForSql/grpcforunconflict/grpclog"
+	"github.com/qiyouForSql/grpcforunconflict/internal"
+	"github.com/qiyouForSql/grpcforunconflict/internal/backoff"
+	"github.com/qiyouForSql/grpcforunconflict/internal/resolver/dns"
+	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/balancer"
-	grpclbstate "google.golang.org/grpc/balancer/grpclb/state"
-	"google.golang.org/grpc/connectivity"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/grpclog"
-	"google.golang.org/grpc/internal"
-	"google.golang.org/grpc/internal/backoff"
-	"google.golang.org/grpc/internal/resolver/dns"
-	"google.golang.org/grpc/resolver"
 
 	durationpb "github.com/golang/protobuf/ptypes/duration"
-	lbpb "google.golang.org/grpc/balancer/grpclb/grpc_lb_v1"
+	lbpb "github.com/qiyouForSql/grpcforunconflict/balancer/grpclb/grpc_lb_v1"
 )
 
 const (

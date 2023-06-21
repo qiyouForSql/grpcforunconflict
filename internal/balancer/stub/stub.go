@@ -22,8 +22,8 @@ package stub
 import (
 	"encoding/json"
 
-	"google.golang.org/grpc/balancer"
-	"google.golang.org/grpc/serviceconfig"
+	"github.com/qiyouForSql/grpcforunconflict/balancer"
+	"github.com/qiyouForSql/grpcforunconflict/serviceconfig"
 )
 
 // BalancerFuncs contains all balancer.Balancer functions with a preceding

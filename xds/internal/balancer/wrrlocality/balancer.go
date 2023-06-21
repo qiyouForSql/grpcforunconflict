@@ -27,13 +27,13 @@ import (
 	"errors"
 	"fmt"
 
-	"google.golang.org/grpc/balancer"
-	"google.golang.org/grpc/balancer/weightedtarget"
-	"google.golang.org/grpc/internal/grpclog"
-	internalserviceconfig "google.golang.org/grpc/internal/serviceconfig"
-	"google.golang.org/grpc/resolver"
-	"google.golang.org/grpc/serviceconfig"
-	"google.golang.org/grpc/xds/internal"
+	"github.com/qiyouForSql/grpcforunconflict/balancer"
+	"github.com/qiyouForSql/grpcforunconflict/balancer/weightedtarget"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpclog"
+	internalserviceconfig "github.com/qiyouForSql/grpcforunconflict/internal/serviceconfig"
+	"github.com/qiyouForSql/grpcforunconflict/resolver"
+	"github.com/qiyouForSql/grpcforunconflict/serviceconfig"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal"
 )
 
 // Name is the name of wrr_locality balancer.

@@ -21,8 +21,8 @@ package test
 import (
 	"testing"
 
-	"google.golang.org/grpc/resolver/manual"
-	"google.golang.org/grpc/serviceconfig"
+	"github.com/qiyouForSql/grpcforunconflict/resolver/manual"
+	"github.com/qiyouForSql/grpcforunconflict/serviceconfig"
 )
 
 // parseServiceConfig is a test helper which uses the manual resolver to parse

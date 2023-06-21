@@ -25,17 +25,17 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
+	xdscreds "github.com/qiyouForSql/grpcforunconflict/credentials/xds"
+	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
+	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/xds/e2e"
+	"github.com/qiyouForSql/grpcforunconflict/status"
+	"github.com/qiyouForSql/grpcforunconflict/xds"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/credentials/insecure"
-	xdscreds "google.golang.org/grpc/credentials/xds"
-	"google.golang.org/grpc/internal/testutils"
-	"google.golang.org/grpc/internal/testutils/xds/e2e"
-	"google.golang.org/grpc/status"
-	"google.golang.org/grpc/xds"
 
-	testgrpc "google.golang.org/grpc/interop/grpc_testing"
-	testpb "google.golang.org/grpc/interop/grpc_testing"
+	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
+	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 type testService struct {

@@ -24,11 +24,11 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
+	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
+	"github.com/qiyouForSql/grpcforunconflict/status"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/internal/stubserver"
-	testpb "google.golang.org/grpc/interop/grpc_testing"
-	"google.golang.org/grpc/status"
 )
 
 // TestInvoke verifies a straightforward invocation of ClientConn.Invoke().

@@ -25,8 +25,8 @@ import (
 	"fmt"
 	"strings"
 
-	"google.golang.org/grpc/metadata"
-	"google.golang.org/grpc/resolver"
+	"github.com/qiyouForSql/grpcforunconflict/metadata"
+	"github.com/qiyouForSql/grpcforunconflict/resolver"
 )
 
 type mdKeyType string

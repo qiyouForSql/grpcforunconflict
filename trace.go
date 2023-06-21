@@ -16,7 +16,7 @@
  *
  */
 
-package grpc
+package grpcforunconflict
 
 import (
 	"bytes"

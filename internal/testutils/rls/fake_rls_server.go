@@ -25,12 +25,12 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	rlsgrpc "github.com/qiyouForSql/grpcforunconflict/internal/proto/grpc_lookup_v1"
+	rlspb "github.com/qiyouForSql/grpcforunconflict/internal/proto/grpc_lookup_v1"
+	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
+	"github.com/qiyouForSql/grpcforunconflict/status"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	rlsgrpc "google.golang.org/grpc/internal/proto/grpc_lookup_v1"
-	rlspb "google.golang.org/grpc/internal/proto/grpc_lookup_v1"
-	"google.golang.org/grpc/internal/testutils"
-	"google.golang.org/grpc/status"
 )
 
 // RouteLookupResponse wraps an RLS response and the associated error to be sent

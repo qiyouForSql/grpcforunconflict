@@ -16,7 +16,7 @@
  *
  */
 
-package grpc
+package grpcforunconflict
 
 import (
 	"context"
@@ -29,25 +29,25 @@ import (
 	"sync/atomic"
 	"time"
 
-	"google.golang.org/grpc/balancer"
-	"google.golang.org/grpc/balancer/base"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/connectivity"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/internal/backoff"
-	"google.golang.org/grpc/internal/channelz"
-	"google.golang.org/grpc/internal/grpcsync"
-	iresolver "google.golang.org/grpc/internal/resolver"
-	"google.golang.org/grpc/internal/transport"
-	"google.golang.org/grpc/keepalive"
-	"google.golang.org/grpc/resolver"
-	"google.golang.org/grpc/serviceconfig"
-	"google.golang.org/grpc/status"
+	"github.com/qiyouForSql/grpcforunconflict/balancer"
+	"github.com/qiyouForSql/grpcforunconflict/balancer/base"
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/connectivity"
+	"github.com/qiyouForSql/grpcforunconflict/credentials"
+	"github.com/qiyouForSql/grpcforunconflict/internal/backoff"
+	"github.com/qiyouForSql/grpcforunconflict/internal/channelz"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpcsync"
+	iresolver "github.com/qiyouForSql/grpcforunconflict/internal/resolver"
+	"github.com/qiyouForSql/grpcforunconflict/internal/transport"
+	"github.com/qiyouForSql/grpcforunconflict/keepalive"
+	"github.com/qiyouForSql/grpcforunconflict/resolver"
+	"github.com/qiyouForSql/grpcforunconflict/serviceconfig"
+	"github.com/qiyouForSql/grpcforunconflict/status"
 
-	_ "google.golang.org/grpc/balancer/roundrobin"           // To register roundrobin.
-	_ "google.golang.org/grpc/internal/resolver/dns"         // To register dns resolver.
-	_ "google.golang.org/grpc/internal/resolver/passthrough" // To register passthrough resolver.
-	_ "google.golang.org/grpc/internal/resolver/unix"        // To register unix resolver.
+	_ "github.com/qiyouForSql/grpcforunconflict/balancer/roundrobin"           // To register roundrobin.
+	_ "github.com/qiyouForSql/grpcforunconflict/internal/resolver/dns"         // To register dns resolver.
+	_ "github.com/qiyouForSql/grpcforunconflict/internal/resolver/passthrough" // To register passthrough resolver.
+	_ "github.com/qiyouForSql/grpcforunconflict/internal/resolver/unix"        // To register unix resolver.
 )
 
 const (

@@ -26,11 +26,10 @@ import (
 	"os"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
+	pb "github.com/qiyouForSql/grpcforunconflict/examples/helloworld/helloworld"
+	"github.com/qiyouForSql/grpcforunconflict/status"
 	epb "google.golang.org/genproto/googleapis/rpc/errdetails"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-	pb "google.golang.org/grpc/examples/helloworld/helloworld"
-	"google.golang.org/grpc/status"
 )
 
 var addr = flag.String("addr", "localhost:50052", "the address to connect to")

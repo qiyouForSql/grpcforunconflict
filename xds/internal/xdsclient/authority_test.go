@@ -25,20 +25,20 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"google.golang.org/grpc/internal/grpcsync"
-	util "google.golang.org/grpc/internal/testutils"
-	"google.golang.org/grpc/internal/testutils/xds/e2e"
-	"google.golang.org/grpc/xds/internal"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpcsync"
+	util "github.com/qiyouForSql/grpcforunconflict/internal/testutils"
+	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/xds/e2e"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal"
 
-	"google.golang.org/grpc/xds/internal/testutils"
-	xdstestutils "google.golang.org/grpc/xds/internal/testutils"
-	"google.golang.org/grpc/xds/internal/xdsclient/bootstrap"
-	"google.golang.org/grpc/xds/internal/xdsclient/xdsresource"
-	"google.golang.org/grpc/xds/internal/xdsclient/xdsresource/version"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/testutils"
+	xdstestutils "github.com/qiyouForSql/grpcforunconflict/xds/internal/testutils"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/bootstrap"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/xdsresource"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/xdsresource/version"
 
 	v3corepb "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
 	v3listenerpb "github.com/envoyproxy/go-control-plane/envoy/config/listener/v3"
-	_ "google.golang.org/grpc/xds/internal/httpfilter/router" // Register the router filter.
+	_ "github.com/qiyouForSql/grpcforunconflict/xds/internal/httpfilter/router" // Register the router filter.
 )
 
 var emptyServerOpts = e2e.ManagementServerOptions{}

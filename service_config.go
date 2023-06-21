@@ -16,7 +16,7 @@
  *
  */
 
-package grpc
+package grpcforunconflict
 
 import (
 	"encoding/json"
@@ -25,10 +25,10 @@ import (
 	"reflect"
 	"time"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/internal"
-	internalserviceconfig "google.golang.org/grpc/internal/serviceconfig"
-	"google.golang.org/grpc/serviceconfig"
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/internal"
+	internalserviceconfig "github.com/qiyouForSql/grpcforunconflict/internal/serviceconfig"
+	"github.com/qiyouForSql/grpcforunconflict/serviceconfig"
 )
 
 const maxInt = int(^uint(0) >> 1)

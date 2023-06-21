@@ -26,10 +26,8 @@ import (
 	"log"
 	"net"
 
-	"google.golang.org/grpc"
-
-	ecpb "google.golang.org/grpc/examples/features/proto/echo"
-	hwpb "google.golang.org/grpc/examples/helloworld/helloworld"
+	ecpb "github.com/qiyouForSql/grpcforunconflict/examples/features/proto/echo"
+	hwpb "github.com/qiyouForSql/grpcforunconflict/examples/helloworld/helloworld"
 )
 
 var port = flag.Int("port", 50051, "the port to serve on")

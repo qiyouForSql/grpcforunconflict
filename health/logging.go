@@ -18,6 +18,6 @@
 
 package health
 
-import "google.golang.org/grpc/grpclog"
+import "github.com/qiyouForSql/grpcforunconflict/grpclog"
 
 var logger = grpclog.Component("health_service")

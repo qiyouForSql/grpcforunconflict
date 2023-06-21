@@ -25,10 +25,10 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
+	"github.com/qiyouForSql/grpcforunconflict/grpclog"
+	metricspb "github.com/qiyouForSql/grpcforunconflict/stress/grpc_testing"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/grpclog"
-	metricspb "google.golang.org/grpc/stress/grpc_testing"
 )
 
 var (

@@ -26,16 +26,16 @@ import (
 	"io"
 	"net"
 
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/credentials"
+	core "github.com/qiyouForSql/grpcforunconflict/credentials/alts/internal"
+	"github.com/qiyouForSql/grpcforunconflict/credentials/alts/internal/authinfo"
+	"github.com/qiyouForSql/grpcforunconflict/credentials/alts/internal/conn"
+	altsgrpc "github.com/qiyouForSql/grpcforunconflict/credentials/alts/internal/proto/grpc_gcp"
+	altspb "github.com/qiyouForSql/grpcforunconflict/credentials/alts/internal/proto/grpc_gcp"
+	"github.com/qiyouForSql/grpcforunconflict/internal/envconfig"
 	"golang.org/x/sync/semaphore"
 	grpc "google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/credentials"
-	core "google.golang.org/grpc/credentials/alts/internal"
-	"google.golang.org/grpc/credentials/alts/internal/authinfo"
-	"google.golang.org/grpc/credentials/alts/internal/conn"
-	altsgrpc "google.golang.org/grpc/credentials/alts/internal/proto/grpc_gcp"
-	altspb "google.golang.org/grpc/credentials/alts/internal/proto/grpc_gcp"
-	"google.golang.org/grpc/internal/envconfig"
 )
 
 const (

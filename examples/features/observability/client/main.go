@@ -25,10 +25,10 @@ import (
 	"log"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
+	pb "github.com/qiyouForSql/grpcforunconflict/examples/helloworld/helloworld"
+	"github.com/qiyouForSql/grpcforunconflict/gcp/observability"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-	pb "google.golang.org/grpc/examples/helloworld/helloworld"
-	"google.golang.org/grpc/gcp/observability"
 )
 
 const (

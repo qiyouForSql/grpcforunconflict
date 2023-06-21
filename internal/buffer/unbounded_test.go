@@ -23,7 +23,7 @@ import (
 	"sync"
 	"testing"
 
-	"google.golang.org/grpc/internal/grpctest"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
 )
 
 const (

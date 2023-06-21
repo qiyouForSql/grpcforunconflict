@@ -16,19 +16,19 @@
  *
  */
 
-package grpc
+package grpcforunconflict
 
 import (
 	"context"
 	"io"
 	"sync"
 
-	"google.golang.org/grpc/balancer"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/internal/channelz"
-	istatus "google.golang.org/grpc/internal/status"
-	"google.golang.org/grpc/internal/transport"
-	"google.golang.org/grpc/status"
+	"github.com/qiyouForSql/grpcforunconflict/balancer"
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/internal/channelz"
+	istatus "github.com/qiyouForSql/grpcforunconflict/internal/status"
+	"github.com/qiyouForSql/grpcforunconflict/internal/transport"
+	"github.com/qiyouForSql/grpcforunconflict/status"
 )
 
 // pickerWrapper is a wrapper of balancer.Picker. It blocks on certain pick

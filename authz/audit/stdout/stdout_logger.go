@@ -25,8 +25,8 @@ import (
 	"os"
 	"time"
 
-	"google.golang.org/grpc/authz/audit"
-	"google.golang.org/grpc/grpclog"
+	"github.com/qiyouForSql/grpcforunconflict/authz/audit"
+	"github.com/qiyouForSql/grpcforunconflict/grpclog"
 )
 
 var grpcLogger = grpclog.Component("authz-audit")

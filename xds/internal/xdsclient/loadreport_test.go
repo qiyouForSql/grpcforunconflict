@@ -24,11 +24,11 @@ import (
 	"time"
 
 	"github.com/google/go-cmp/cmp"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/internal/testutils/xds/fakeserver"
-	"google.golang.org/grpc/status"
-	xdstestutils "google.golang.org/grpc/xds/internal/testutils"
-	"google.golang.org/grpc/xds/internal/xdsclient/bootstrap"
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/xds/fakeserver"
+	"github.com/qiyouForSql/grpcforunconflict/status"
+	xdstestutils "github.com/qiyouForSql/grpcforunconflict/xds/internal/testutils"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/bootstrap"
 	"google.golang.org/protobuf/testing/protocmp"
 
 	v3corepb "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"

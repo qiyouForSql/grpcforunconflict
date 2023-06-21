@@ -25,7 +25,7 @@ import (
 	"net"
 	"path/filepath"
 
-	"google.golang.org/grpc/stats"
+	"github.com/qiyouForSql/grpcforunconflict/stats"
 )
 
 // Handler implements [stats.Handler](https://pkg.go.dev/google.golang.org/grpc/stats#Handler) interface.

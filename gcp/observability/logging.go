@@ -31,13 +31,12 @@ import (
 	"github.com/google/uuid"
 	"go.opencensus.io/trace"
 
-	"google.golang.org/grpc"
-	binlogpb "google.golang.org/grpc/binarylog/grpc_binarylog_v1"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/internal"
-	iblog "google.golang.org/grpc/internal/binarylog"
-	"google.golang.org/grpc/internal/grpcutil"
-	"google.golang.org/grpc/stats/opencensus"
+	binlogpb "github.com/qiyouForSql/grpcforunconflict/binarylog/grpc_binarylog_v1"
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/internal"
+	iblog "github.com/qiyouForSql/grpcforunconflict/internal/binarylog"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpcutil"
+	"github.com/qiyouForSql/grpcforunconflict/stats/opencensus"
 )
 
 var lExporter loggingExporter

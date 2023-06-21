@@ -26,8 +26,8 @@ import (
 	"path"
 	"testing"
 
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/testdata"
+	"github.com/qiyouForSql/grpcforunconflict/credentials"
+	"github.com/qiyouForSql/grpcforunconflict/testdata"
 )
 
 const (

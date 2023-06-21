@@ -27,13 +27,11 @@ import (
 	"net"
 	"time"
 
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/internal"
-	"google.golang.org/grpc/orca"
-	"google.golang.org/grpc/status"
-
-	pb "google.golang.org/grpc/examples/features/proto/echo"
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	pb "github.com/qiyouForSql/grpcforunconflict/examples/features/proto/echo"
+	"github.com/qiyouForSql/grpcforunconflict/internal"
+	"github.com/qiyouForSql/grpcforunconflict/orca"
+	"github.com/qiyouForSql/grpcforunconflict/status"
 )
 
 var port = flag.Int("port", 50051, "the port to serve on")

@@ -27,20 +27,20 @@ import (
 	"testing"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict/internal"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
+	"github.com/qiyouForSql/grpcforunconflict/internal/stubserver"
+	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/roundrobin"
+	"github.com/qiyouForSql/grpcforunconflict/orca"
+	"github.com/qiyouForSql/grpcforunconflict/peer"
+	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/internal"
-	"google.golang.org/grpc/internal/grpctest"
-	"google.golang.org/grpc/internal/stubserver"
-	"google.golang.org/grpc/internal/testutils/roundrobin"
-	"google.golang.org/grpc/orca"
-	"google.golang.org/grpc/peer"
-	"google.golang.org/grpc/resolver"
 
-	wrr "google.golang.org/grpc/balancer/weightedroundrobin"
-	iwrr "google.golang.org/grpc/balancer/weightedroundrobin/internal"
+	wrr "github.com/qiyouForSql/grpcforunconflict/balancer/weightedroundrobin"
+	iwrr "github.com/qiyouForSql/grpcforunconflict/balancer/weightedroundrobin/internal"
 
-	testgrpc "google.golang.org/grpc/interop/grpc_testing"
-	testpb "google.golang.org/grpc/interop/grpc_testing"
+	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
+	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 type s struct {

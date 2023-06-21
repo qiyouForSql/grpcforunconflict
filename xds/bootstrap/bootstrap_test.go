@@ -21,7 +21,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"google.golang.org/grpc/credentials"
+	"github.com/qiyouForSql/grpcforunconflict/credentials"
 )
 
 const testCredsBuilderName = "test_creds"

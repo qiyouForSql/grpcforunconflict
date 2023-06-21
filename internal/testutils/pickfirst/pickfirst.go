@@ -25,12 +25,12 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict/peer"
+	"github.com/qiyouForSql/grpcforunconflict/resolver"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/peer"
-	"google.golang.org/grpc/resolver"
 
-	testgrpc "google.golang.org/grpc/interop/grpc_testing"
-	testpb "google.golang.org/grpc/interop/grpc_testing"
+	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
+	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 // CheckRPCsToBackend makes a bunch of RPCs on the given ClientConn and verifies

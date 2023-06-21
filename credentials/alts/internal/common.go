@@ -23,7 +23,7 @@ import (
 	"context"
 	"net"
 
-	"google.golang.org/grpc/credentials"
+	"github.com/qiyouForSql/grpcforunconflict/credentials"
 )
 
 const (

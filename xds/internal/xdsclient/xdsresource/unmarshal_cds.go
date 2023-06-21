@@ -31,12 +31,12 @@ import (
 	v3tlspb "github.com/envoyproxy/go-control-plane/envoy/extensions/transport_sockets/tls/v3"
 	"github.com/golang/protobuf/proto"
 
-	"google.golang.org/grpc/internal/envconfig"
-	"google.golang.org/grpc/internal/pretty"
-	iserviceconfig "google.golang.org/grpc/internal/serviceconfig"
-	"google.golang.org/grpc/internal/xds/matcher"
-	"google.golang.org/grpc/xds/internal/xdsclient/xdslbregistry"
-	"google.golang.org/grpc/xds/internal/xdsclient/xdsresource/version"
+	"github.com/qiyouForSql/grpcforunconflict/internal/envconfig"
+	"github.com/qiyouForSql/grpcforunconflict/internal/pretty"
+	iserviceconfig "github.com/qiyouForSql/grpcforunconflict/internal/serviceconfig"
+	"github.com/qiyouForSql/grpcforunconflict/internal/xds/matcher"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/xdslbregistry"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/xdsresource/version"
 	"google.golang.org/protobuf/types/known/anypb"
 )
 

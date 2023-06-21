@@ -23,7 +23,7 @@ package passthrough
 import (
 	"errors"
 
-	"google.golang.org/grpc/resolver"
+	"github.com/qiyouForSql/grpcforunconflict/resolver"
 )
 
 const scheme = "passthrough"

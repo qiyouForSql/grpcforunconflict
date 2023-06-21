@@ -16,7 +16,7 @@
  *
  */
 
-package grpc
+package grpcforunconflict
 
 import (
 	"context"
@@ -27,24 +27,24 @@ import (
 	"sync"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict/balancer"
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/encoding"
+	"github.com/qiyouForSql/grpcforunconflict/internal/balancerload"
+	"github.com/qiyouForSql/grpcforunconflict/internal/binarylog"
+	"github.com/qiyouForSql/grpcforunconflict/internal/channelz"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpcrand"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpcutil"
+	imetadata "github.com/qiyouForSql/grpcforunconflict/internal/metadata"
+	iresolver "github.com/qiyouForSql/grpcforunconflict/internal/resolver"
+	"github.com/qiyouForSql/grpcforunconflict/internal/serviceconfig"
+	istatus "github.com/qiyouForSql/grpcforunconflict/internal/status"
+	"github.com/qiyouForSql/grpcforunconflict/internal/transport"
+	"github.com/qiyouForSql/grpcforunconflict/metadata"
+	"github.com/qiyouForSql/grpcforunconflict/peer"
+	"github.com/qiyouForSql/grpcforunconflict/stats"
+	"github.com/qiyouForSql/grpcforunconflict/status"
 	"golang.org/x/net/trace"
-	"google.golang.org/grpc/balancer"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/encoding"
-	"google.golang.org/grpc/internal/balancerload"
-	"google.golang.org/grpc/internal/binarylog"
-	"google.golang.org/grpc/internal/channelz"
-	"google.golang.org/grpc/internal/grpcrand"
-	"google.golang.org/grpc/internal/grpcutil"
-	imetadata "google.golang.org/grpc/internal/metadata"
-	iresolver "google.golang.org/grpc/internal/resolver"
-	"google.golang.org/grpc/internal/serviceconfig"
-	istatus "google.golang.org/grpc/internal/status"
-	"google.golang.org/grpc/internal/transport"
-	"google.golang.org/grpc/metadata"
-	"google.golang.org/grpc/peer"
-	"google.golang.org/grpc/stats"
-	"google.golang.org/grpc/status"
 )
 
 // StreamHandler defines the handler called by gRPC server to complete the

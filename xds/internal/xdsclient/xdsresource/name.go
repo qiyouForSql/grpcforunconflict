@@ -22,7 +22,7 @@ import (
 	"sort"
 	"strings"
 
-	"google.golang.org/grpc/internal/envconfig"
+	"github.com/qiyouForSql/grpcforunconflict/internal/envconfig"
 )
 
 // FederationScheme is the scheme of a federation resource name.

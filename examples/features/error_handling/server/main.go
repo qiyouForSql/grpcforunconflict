@@ -26,11 +26,9 @@ import (
 	"log"
 	"net"
 
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
-
-	pb "google.golang.org/grpc/examples/helloworld/helloworld"
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	pb "github.com/qiyouForSql/grpcforunconflict/examples/helloworld/helloworld"
+	"github.com/qiyouForSql/grpcforunconflict/status"
 )
 
 var port = flag.Int("port", 50052, "port number")

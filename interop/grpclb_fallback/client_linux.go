@@ -29,16 +29,16 @@ import (
 	"syscall"
 	"time"
 
+	_ "github.com/qiyouForSql/grpcforunconflict/balancer/grpclb"
+	"github.com/qiyouForSql/grpcforunconflict/credentials"
+	"github.com/qiyouForSql/grpcforunconflict/credentials/alts"
+	"github.com/qiyouForSql/grpcforunconflict/credentials/google"
+	_ "github.com/qiyouForSql/grpcforunconflict/xds/googledirectpath"
 	"golang.org/x/sys/unix"
 	"google.golang.org/grpc"
-	_ "google.golang.org/grpc/balancer/grpclb"
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/credentials/alts"
-	"google.golang.org/grpc/credentials/google"
-	_ "google.golang.org/grpc/xds/googledirectpath"
 
-	testgrpc "google.golang.org/grpc/interop/grpc_testing"
-	testpb "google.golang.org/grpc/interop/grpc_testing"
+	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
+	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 var (

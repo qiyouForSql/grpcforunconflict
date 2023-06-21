@@ -27,20 +27,20 @@ import (
 	"net"
 	"os"
 
+	"github.com/qiyouForSql/grpcforunconflict/admin"
+	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
+	"github.com/qiyouForSql/grpcforunconflict/grpclog"
+	"github.com/qiyouForSql/grpcforunconflict/health"
+	"github.com/qiyouForSql/grpcforunconflict/metadata"
+	"github.com/qiyouForSql/grpcforunconflict/reflection"
+	"github.com/qiyouForSql/grpcforunconflict/xds"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/admin"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/grpclog"
-	"google.golang.org/grpc/health"
-	"google.golang.org/grpc/metadata"
-	"google.golang.org/grpc/reflection"
-	"google.golang.org/grpc/xds"
 
-	xdscreds "google.golang.org/grpc/credentials/xds"
-	healthgrpc "google.golang.org/grpc/health/grpc_health_v1"
-	healthpb "google.golang.org/grpc/health/grpc_health_v1"
-	testgrpc "google.golang.org/grpc/interop/grpc_testing"
-	testpb "google.golang.org/grpc/interop/grpc_testing"
+	xdscreds "github.com/qiyouForSql/grpcforunconflict/credentials/xds"
+	healthgrpc "github.com/qiyouForSql/grpcforunconflict/health/grpc_health_v1"
+	healthpb "github.com/qiyouForSql/grpcforunconflict/health/grpc_health_v1"
+	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
+	testpb "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 var (

@@ -30,20 +30,20 @@ package xds
 import (
 	"fmt"
 
+	"github.com/qiyouForSql/grpcforunconflict/internal"
+	internaladmin "github.com/qiyouForSql/grpcforunconflict/internal/admin"
+	"github.com/qiyouForSql/grpcforunconflict/resolver"
+	"github.com/qiyouForSql/grpcforunconflict/xds/csds"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/internal"
-	internaladmin "google.golang.org/grpc/internal/admin"
-	"google.golang.org/grpc/resolver"
-	"google.golang.org/grpc/xds/csds"
 
-	_ "google.golang.org/grpc/credentials/tls/certprovider/pemfile"           // Register the file watcher certificate provider plugin.
-	_ "google.golang.org/grpc/xds/internal/balancer"                          // Register the balancers.
-	_ "google.golang.org/grpc/xds/internal/clusterspecifier/rls"              // Register the RLS cluster specifier plugin. Note that this does not register the RLS LB policy.
-	_ "google.golang.org/grpc/xds/internal/httpfilter/fault"                  // Register the fault injection filter.
-	_ "google.golang.org/grpc/xds/internal/httpfilter/rbac"                   // Register the RBAC filter.
-	_ "google.golang.org/grpc/xds/internal/httpfilter/router"                 // Register the router filter.
-	_ "google.golang.org/grpc/xds/internal/resolver"                          // Register the xds_resolver.
-	_ "google.golang.org/grpc/xds/internal/xdsclient/xdslbregistry/converter" // Register the xDS LB Registry Converters.
+	_ "github.com/qiyouForSql/grpcforunconflict/credentials/tls/certprovider/pemfile"           // Register the file watcher certificate provider plugin.
+	_ "github.com/qiyouForSql/grpcforunconflict/xds/internal/balancer"                          // Register the balancers.
+	_ "github.com/qiyouForSql/grpcforunconflict/xds/internal/clusterspecifier/rls"              // Register the RLS cluster specifier plugin. Note that this does not register the RLS LB policy.
+	_ "github.com/qiyouForSql/grpcforunconflict/xds/internal/httpfilter/fault"                  // Register the fault injection filter.
+	_ "github.com/qiyouForSql/grpcforunconflict/xds/internal/httpfilter/rbac"                   // Register the RBAC filter.
+	_ "github.com/qiyouForSql/grpcforunconflict/xds/internal/httpfilter/router"                 // Register the router filter.
+	_ "github.com/qiyouForSql/grpcforunconflict/xds/internal/resolver"                          // Register the xds_resolver.
+	_ "github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/xdslbregistry/converter" // Register the xDS LB Registry Converters.
 
 	v3statusgrpc "github.com/envoyproxy/go-control-plane/envoy/service/status/v3"
 )

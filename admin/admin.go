@@ -30,9 +30,9 @@
 package admin
 
 import (
+	channelzservice "github.com/qiyouForSql/grpcforunconflict/channelz/service"
+	internaladmin "github.com/qiyouForSql/grpcforunconflict/internal/admin"
 	"google.golang.org/grpc"
-	channelzservice "google.golang.org/grpc/channelz/service"
-	internaladmin "google.golang.org/grpc/internal/admin"
 )
 
 func init() {

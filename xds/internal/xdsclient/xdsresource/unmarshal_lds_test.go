@@ -26,12 +26,12 @@ import (
 	v2xdspb "github.com/envoyproxy/go-control-plane/envoy/api/v2"
 	"github.com/golang/protobuf/proto"
 	"github.com/google/go-cmp/cmp"
-	"google.golang.org/grpc/internal/envconfig"
-	"google.golang.org/grpc/internal/pretty"
-	"google.golang.org/grpc/internal/testutils"
-	"google.golang.org/grpc/internal/testutils/xds/e2e"
-	"google.golang.org/grpc/xds/internal/httpfilter"
-	"google.golang.org/grpc/xds/internal/xdsclient/xdsresource/version"
+	"github.com/qiyouForSql/grpcforunconflict/internal/envconfig"
+	"github.com/qiyouForSql/grpcforunconflict/internal/pretty"
+	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
+	"github.com/qiyouForSql/grpcforunconflict/internal/testutils/xds/e2e"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/httpfilter"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/xdsclient/xdsresource/version"
 	"google.golang.org/protobuf/types/known/durationpb"
 
 	v1udpaudpatypepb "github.com/cncf/udpa/go/udpa/type/v1"
@@ -49,8 +49,8 @@ import (
 	spb "github.com/golang/protobuf/ptypes/struct"
 	wrapperspb "github.com/golang/protobuf/ptypes/wrappers"
 
-	_ "google.golang.org/grpc/xds/internal/httpfilter/rbac"   // Register the RBAC HTTP filter.
-	_ "google.golang.org/grpc/xds/internal/httpfilter/router" // Register the router filter.
+	_ "github.com/qiyouForSql/grpcforunconflict/xds/internal/httpfilter/rbac"   // Register the RBAC HTTP filter.
+	_ "github.com/qiyouForSql/grpcforunconflict/xds/internal/httpfilter/router" // Register the router filter.
 )
 
 func (s) TestUnmarshalListener_ClientSide(t *testing.T) {

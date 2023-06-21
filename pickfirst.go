@@ -16,18 +16,18 @@
  *
  */
 
-package grpc
+package grpcforunconflict
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
 
-	"google.golang.org/grpc/balancer"
-	"google.golang.org/grpc/connectivity"
-	"google.golang.org/grpc/internal/envconfig"
-	"google.golang.org/grpc/internal/grpcrand"
-	"google.golang.org/grpc/serviceconfig"
+	"github.com/qiyouForSql/grpcforunconflict/balancer"
+	"github.com/qiyouForSql/grpcforunconflict/connectivity"
+	"github.com/qiyouForSql/grpcforunconflict/internal/envconfig"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpcrand"
+	"github.com/qiyouForSql/grpcforunconflict/serviceconfig"
 )
 
 // PickFirstBalancerName is the name of the pick_first balancer.

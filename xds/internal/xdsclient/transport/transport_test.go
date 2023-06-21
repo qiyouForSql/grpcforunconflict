@@ -21,9 +21,9 @@ import (
 	"testing"
 
 	v3corepb "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
+	xdstestutils "github.com/qiyouForSql/grpcforunconflict/xds/internal/testutils"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/internal/grpctest"
-	xdstestutils "google.golang.org/grpc/xds/internal/testutils"
 )
 
 type s struct {

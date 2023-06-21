@@ -25,11 +25,11 @@ import (
 	"time"
 	"unsafe"
 
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/grpclog"
+	"github.com/qiyouForSql/grpcforunconflict/internal/xds/rbac"
+	"github.com/qiyouForSql/grpcforunconflict/status"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/grpclog"
-	"google.golang.org/grpc/internal/xds/rbac"
-	"google.golang.org/grpc/status"
 )
 
 var logger = grpclog.Component("authz")

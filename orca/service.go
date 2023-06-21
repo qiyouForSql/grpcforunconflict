@@ -22,11 +22,11 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/internal"
+	ointernal "github.com/qiyouForSql/grpcforunconflict/orca/internal"
+	"github.com/qiyouForSql/grpcforunconflict/status"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/internal"
-	ointernal "google.golang.org/grpc/orca/internal"
-	"google.golang.org/grpc/status"
 
 	v3orcaservicegrpc "github.com/cncf/xds/go/xds/service/orca/v3"
 	v3orcaservicepb "github.com/cncf/xds/go/xds/service/orca/v3"

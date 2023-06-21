@@ -38,9 +38,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict/grpclog"
 	"golang.org/x/crypto/cryptobyte"
 	cbasn1 "golang.org/x/crypto/cryptobyte/asn1"
-	"google.golang.org/grpc/grpclog"
 )
 
 var grpclogLogger = grpclog.Component("advancedtls")

@@ -23,7 +23,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"google.golang.org/grpc/resolver"
+	"github.com/qiyouForSql/grpcforunconflict/resolver"
 )
 
 // LocalityID is xds.Locality without XXX fields, so it can be used as map

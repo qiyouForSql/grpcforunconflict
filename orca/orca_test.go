@@ -24,10 +24,10 @@ import (
 
 	"github.com/golang/protobuf/proto"
 	"github.com/google/go-cmp/cmp"
-	"google.golang.org/grpc/internal/grpctest"
-	"google.golang.org/grpc/internal/pretty"
-	"google.golang.org/grpc/metadata"
-	"google.golang.org/grpc/orca/internal"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
+	"github.com/qiyouForSql/grpcforunconflict/internal/pretty"
+	"github.com/qiyouForSql/grpcforunconflict/metadata"
+	"github.com/qiyouForSql/grpcforunconflict/orca/internal"
 
 	v3orcapb "github.com/cncf/xds/go/xds/data/orca/v3"
 )

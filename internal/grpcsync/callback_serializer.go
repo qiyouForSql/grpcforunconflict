@@ -22,7 +22,7 @@ import (
 	"context"
 	"sync"
 
-	"google.golang.org/grpc/internal/buffer"
+	"github.com/qiyouForSql/grpcforunconflict/internal/buffer"
 )
 
 // CallbackSerializer provides a mechanism to schedule callbacks in a

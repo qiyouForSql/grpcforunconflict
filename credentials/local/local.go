@@ -35,7 +35,7 @@ import (
 	"net"
 	"strings"
 
-	"google.golang.org/grpc/credentials"
+	"github.com/qiyouForSql/grpcforunconflict/credentials"
 )
 
 // info contains the auth information for a local connection.

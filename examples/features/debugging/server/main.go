@@ -25,11 +25,9 @@ import (
 	"net"
 	"time"
 
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/channelz/service"
-	"google.golang.org/grpc/internal/grpcrand"
-
-	pb "google.golang.org/grpc/examples/helloworld/helloworld"
+	"github.com/qiyouForSql/grpcforunconflict/channelz/service"
+	pb "github.com/qiyouForSql/grpcforunconflict/examples/helloworld/helloworld"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpcrand"
 )
 
 var (

@@ -21,7 +21,7 @@ package grpcutil
 import (
 	"testing"
 
-	"google.golang.org/grpc/internal/envconfig"
+	"github.com/qiyouForSql/grpcforunconflict/internal/envconfig"
 )
 
 func TestRegisteredCompressors(t *testing.T) {

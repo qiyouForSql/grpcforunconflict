@@ -21,9 +21,9 @@ package grpclb
 import (
 	"encoding/json"
 
+	"github.com/qiyouForSql/grpcforunconflict/balancer/roundrobin"
+	"github.com/qiyouForSql/grpcforunconflict/serviceconfig"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/balancer/roundrobin"
-	"google.golang.org/grpc/serviceconfig"
 )
 
 const (

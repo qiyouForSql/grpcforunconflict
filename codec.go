@@ -16,11 +16,11 @@
  *
  */
 
-package grpc
+package grpcforunconflict
 
 import (
-	"google.golang.org/grpc/encoding"
-	_ "google.golang.org/grpc/encoding/proto" // to register the Codec for "proto"
+	"github.com/qiyouForSql/grpcforunconflict/encoding"
+	_ "github.com/qiyouForSql/grpcforunconflict/encoding/proto" // to register the Codec for "proto"
 )
 
 // baseCodec contains the functionality of both Codec and encoding.Codec, but

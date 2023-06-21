@@ -28,11 +28,11 @@ import (
 	"strings"
 	"sync"
 
-	"google.golang.org/grpc/attributes"
-	"google.golang.org/grpc/credentials/tls/certprovider"
-	"google.golang.org/grpc/internal"
-	"google.golang.org/grpc/internal/xds/matcher"
-	"google.golang.org/grpc/resolver"
+	"github.com/qiyouForSql/grpcforunconflict/attributes"
+	"github.com/qiyouForSql/grpcforunconflict/credentials/tls/certprovider"
+	"github.com/qiyouForSql/grpcforunconflict/internal"
+	"github.com/qiyouForSql/grpcforunconflict/internal/xds/matcher"
+	"github.com/qiyouForSql/grpcforunconflict/resolver"
 )
 
 func init() {

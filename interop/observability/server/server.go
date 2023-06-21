@@ -25,11 +25,9 @@ import (
 	"log"
 	"net"
 
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/gcp/observability"
-	"google.golang.org/grpc/interop"
-
-	testgrpc "google.golang.org/grpc/interop/grpc_testing"
+	"github.com/qiyouForSql/grpcforunconflict/gcp/observability"
+	"github.com/qiyouForSql/grpcforunconflict/interop"
+	testgrpc "github.com/qiyouForSql/grpcforunconflict/interop/grpc_testing"
 )
 
 var (

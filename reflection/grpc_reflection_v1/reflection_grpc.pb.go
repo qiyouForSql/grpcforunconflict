@@ -30,8 +30,8 @@ package grpc_reflection_v1
 import (
 	context "context"
 	grpc "google.golang.org/grpc"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
+	codes "github.com/qiyouForSql/grpcforunconflict/codes"
+	status "github.com/qiyouForSql/grpcforunconflict/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file

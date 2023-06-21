@@ -24,8 +24,8 @@ import (
 	"strings"
 	"sync"
 
-	"google.golang.org/grpc/grpclog"
-	internalgrpclog "google.golang.org/grpc/internal/grpclog"
+	"github.com/qiyouForSql/grpcforunconflict/grpclog"
+	internalgrpclog "github.com/qiyouForSql/grpcforunconflict/internal/grpclog"
 )
 
 const logPrefix = "[googlecloud]"

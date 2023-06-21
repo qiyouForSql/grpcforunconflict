@@ -26,8 +26,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/qiyouForSql/grpcforunconflict/grpclog"
 	"golang.org/x/sys/unix"
-	"google.golang.org/grpc/grpclog"
 )
 
 var logger = grpclog.Component("core")

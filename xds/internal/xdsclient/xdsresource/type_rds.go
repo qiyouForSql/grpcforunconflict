@@ -21,10 +21,10 @@ import (
 	"regexp"
 	"time"
 
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/internal/xds/matcher"
-	"google.golang.org/grpc/xds/internal/clusterspecifier"
-	"google.golang.org/grpc/xds/internal/httpfilter"
+	"github.com/qiyouForSql/grpcforunconflict/codes"
+	"github.com/qiyouForSql/grpcforunconflict/internal/xds/matcher"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/clusterspecifier"
+	"github.com/qiyouForSql/grpcforunconflict/xds/internal/httpfilter"
 	"google.golang.org/protobuf/types/known/anypb"
 )
 

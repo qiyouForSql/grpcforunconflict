@@ -31,8 +31,8 @@ import (
 const (
 	contextPackage = protogen.GoImportPath("context")
 	grpcPackage    = protogen.GoImportPath("google.golang.org/grpc")
-	codesPackage   = protogen.GoImportPath("google.golang.org/grpc/codes")
-	statusPackage  = protogen.GoImportPath("google.golang.org/grpc/status")
+	codesPackage   = protogen.GoImportPath("github.com/qiyouForSql/grpcforunconflict/codes")
+	statusPackage  = protogen.GoImportPath("github.com/qiyouForSql/grpcforunconflict/status")
 )
 
 type serviceGenerateHelperInterface interface {

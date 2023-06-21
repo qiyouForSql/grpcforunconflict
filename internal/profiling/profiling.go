@@ -38,7 +38,7 @@ import (
 	"sync/atomic"
 	"time"
 
-	"google.golang.org/grpc/internal/profiling/buffer"
+	"github.com/qiyouForSql/grpcforunconflict/internal/profiling/buffer"
 )
 
 // 0 or 1 representing profiling off and on, respectively. Use IsEnabled and

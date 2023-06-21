@@ -25,7 +25,7 @@ import (
 	"testing"
 	"time"
 
-	"google.golang.org/grpc/internal/grpcrand"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpcrand"
 )
 
 // Tests both marshalling and unmarshalling of Durations.

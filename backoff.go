@@ -19,12 +19,12 @@
 // See internal/backoff package for the backoff implementation. This file is
 // kept for the exported types and API backward compatibility.
 
-package grpc
+package grpcforunconflict
 
 import (
 	"time"
 
-	"google.golang.org/grpc/backoff"
+	"github.com/qiyouForSql/grpcforunconflict/backoff"
 )
 
 // DefaultBackoffConfig uses values specified for backoff in

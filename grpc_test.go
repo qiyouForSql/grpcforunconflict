@@ -16,12 +16,12 @@
  *
  */
 
-package grpc
+package grpcforunconflict
 
 import (
 	"testing"
 
-	"google.golang.org/grpc/internal/grpctest"
+	"github.com/qiyouForSql/grpcforunconflict/internal/grpctest"
 )
 
 type s struct {

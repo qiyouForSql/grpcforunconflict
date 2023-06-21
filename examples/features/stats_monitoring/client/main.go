@@ -25,12 +25,10 @@ import (
 	"log"
 	"time"
 
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-
-	echogrpc "google.golang.org/grpc/examples/features/proto/echo"
-	echopb "google.golang.org/grpc/examples/features/proto/echo"
-	"google.golang.org/grpc/examples/features/stats_monitoring/statshandler"
+	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
+	echogrpc "github.com/qiyouForSql/grpcforunconflict/examples/features/proto/echo"
+	echopb "github.com/qiyouForSql/grpcforunconflict/examples/features/proto/echo"
+	"github.com/qiyouForSql/grpcforunconflict/examples/features/stats_monitoring/statshandler"
 )
 
 var addr = flag.String("addr", "localhost:50051", "the address to connect to")

@@ -16,16 +16,16 @@
  *
  */
 
-package grpc
+package grpcforunconflict
 
 import (
 	"context"
 	"net"
 	"testing"
 
-	"google.golang.org/grpc/credentials"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/testdata"
+	"github.com/qiyouForSql/grpcforunconflict/credentials"
+	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
+	"github.com/qiyouForSql/grpcforunconflict/testdata"
 )
 
 func (s) TestClientConnAuthority(t *testing.T) {

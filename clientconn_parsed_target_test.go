@@ -16,7 +16,7 @@
  *
  */
 
-package grpc
+package grpcforunconflict
 
 import (
 	"context"
@@ -28,10 +28,10 @@ import (
 	"time"
 
 	"github.com/google/go-cmp/cmp"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/internal/testutils"
+	"github.com/qiyouForSql/grpcforunconflict/credentials/insecure"
+	"github.com/qiyouForSql/grpcforunconflict/internal/testutils"
 
-	"google.golang.org/grpc/resolver"
+	"github.com/qiyouForSql/grpcforunconflict/resolver"
 )
 
 func (s) TestParsedTarget_Success_WithoutCustomDialer(t *testing.T) {
