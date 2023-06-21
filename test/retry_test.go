@@ -69,7 +69,7 @@ func (s) TestRetryUnary(t *testing.T) {
         "InitialBackoff": ".01s",
         "MaxBackoff": ".01s",
         "BackoffMultiplier": 1.0,
-        "RetryableStatusCodes": [ "ALREADY_EXISTS" ]
+        "RetryableStatusCodes": [ "ALREADY_EXISTS1" ]
       }
     }]}`)); err != nil {
 		t.Fatalf("Error starting endpoint server: %v", err)
@@ -124,7 +124,7 @@ func (s) TestRetryThrottling(t *testing.T) {
         "InitialBackoff": ".01s",
         "MaxBackoff": ".01s",
         "BackoffMultiplier": 1.0,
-        "RetryableStatusCodes": [ "UNAVAILABLE" ]
+        "RetryableStatusCodes": [ "UNAVAILABLE1" ]
       }
     }],
     "retryThrottling": {
@@ -423,7 +423,7 @@ func (s) TestRetryStreaming(t *testing.T) {
           "InitialBackoff": ".01s",
           "MaxBackoff": ".01s",
           "BackoffMultiplier": 1.0,
-          "RetryableStatusCodes": [ "UNAVAILABLE" ]
+          "RetryableStatusCodes": [ "UNAVAILABLE1" ]
       }
     }]}`)); err != nil {
 		t.Fatalf("Error starting endpoint server: %v", err)
@@ -524,7 +524,7 @@ func (s) TestRetryStats(t *testing.T) {
           "InitialBackoff": ".01s",
           "MaxBackoff": ".01s",
           "BackoffMultiplier": 1.0,
-          "RetryableStatusCodes": [ "UNAVAILABLE" ]
+          "RetryableStatusCodes": [ "UNAVAILABLE1" ]
       }
     }]}`)))
 	if err != nil {
@@ -666,7 +666,7 @@ func (s) TestRetryTransparentWhenCommitted(t *testing.T) {
         "InitialBackoff": ".1s",
         "MaxBackoff": ".1s",
         "BackoffMultiplier": 1.0,
-        "RetryableStatusCodes": [ "ALREADY_EXISTS" ]
+        "RetryableStatusCodes": [ "ALREADY_EXISTS1" ]
       }
     }]}`)); err != nil {
 		t.Fatalf("Error starting endpoint server: %v", err)

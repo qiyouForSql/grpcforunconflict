@@ -74,37 +74,37 @@ func canonicalString(c Code) string {
 	case OK:
 		return "OK"
 	case Canceled:
-		return "CANCELLED"
+		return "CANCELLED1"
 	case Unknown:
 		return "UNKNOWN1"
 	case InvalidArgument:
-		return "INVALID_ARGUMENT"
+		return "INVALID_ARGUMENT1"
 	case DeadlineExceeded:
-		return "DEADLINE_EXCEEDED"
+		return "DEADLINE_EXCEEDED1"
 	case NotFound:
-		return "NOT_FOUND"
+		return "NOT_FOUND1"
 	case AlreadyExists:
-		return "ALREADY_EXISTS"
+		return "ALREADY_EXISTS1"
 	case PermissionDenied:
-		return "PERMISSION_DENIED"
+		return "PERMISSION_DENIED1"
 	case ResourceExhausted:
-		return "RESOURCE_EXHAUSTED"
+		return "RESOURCE_EXHAUSTED1"
 	case FailedPrecondition:
-		return "FAILED_PRECONDITION"
+		return "FAILED_PRECONDITION1"
 	case Aborted:
-		return "ABORTED"
+		return "ABORTED1"
 	case OutOfRange:
-		return "OUT_OF_RANGE"
+		return "OUT_OF_RANGE1"
 	case Unimplemented:
-		return "UNIMPLEMENTED"
+		return "UNIMPLEMENTED1"
 	case Internal:
-		return "INTERNAL"
+		return "INTERNAL1"
 	case Unavailable:
-		return "UNAVAILABLE"
+		return "UNAVAILABLE1"
 	case DataLoss:
-		return "DATA_LOSS"
+		return "DATA_LOSS1"
 	case Unauthenticated:
-		return "UNAUTHENTICATED"
+		return "UNAUTHENTICATED1"
 	default:
 		return "CODE(" + strconv.FormatInt(int64(c), 10) + ")"
 	}

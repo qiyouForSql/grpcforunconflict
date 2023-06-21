@@ -172,7 +172,7 @@ type RetryPolicy struct {
 
 	// The set of status codes which may be retried.
 	//
-	// Status codes are specified as strings, e.g., "UNAVAILABLE".
+	// Status codes are specified as strings, e.g., "UNAVAILABLE1".
 	//
 	// This field is required and must be non-empty.
 	// Note: a set is used to store this for easy lookup.

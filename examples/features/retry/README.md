@@ -49,7 +49,7 @@ RetryableStatusCodes: Retry only when receiving these status codes.
                     "MaxBackoff": ".01s",
                     "BackoffMultiplier": 1.0,
                     // this value is grpc code
-                    "RetryableStatusCodes": [ "UNAVAILABLE" ]
+                    "RetryableStatusCodes": [ "UNAVAILABLE1" ]
                 }
             }]
         }`
