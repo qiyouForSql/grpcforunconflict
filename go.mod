@@ -1,4 +1,4 @@
-module google.golang.org/grpc
+module github.com/qiyouForSql/grpcforunconflict
 
 go 1.17
 
